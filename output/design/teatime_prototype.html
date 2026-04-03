@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offspace 티타임 뉴스 — 2026.04.02</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=Noto+Serif+KR:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── CSS 변수 ── */
+    :root {
+      --bg:            #FAF8F4;
+      --surface:       #FFFFFF;
+      --text-primary:  #1C1B19;
+      --text-secondary:#6B6660;
+      --accent:        #C8892A;
+      --accent-light:  #FDF0D5;
+      --accent-hover:  #A8711E;
+      --border:        #E8E4DD;
+      --border-strong: #D4CEC5;
+
+      --ko:            #2B4D6F;
+      --ko-bg:         #EEF3F8;
+      --dek:           #3D6B4F;
+      --dek-bg:        #EEF5F1;
+      --je:            #8B4E2F;
+      --je-bg:         #F8F0EB;
+
+      --trust-5:       #2D6A4F;
+      --trust-4:       #40916C;
+      --trust-3:       #F4A261;
+      --trust-2:       #E76F51;
+      --trust-1:       #E63946;
+
+      --radius-bubble: 16px;
+      --radius-card:   10px;
+      --radius-sm:     6px;
+
+      --font-serif:    'Noto Serif KR', 'KoPub Batang', Georgia, serif;
+      --font-sans:     'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    /* ── 리셋 & 베이스 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      font-size: 16px;
+      line-height: 1.85;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── 헤더 ── */
+    .site-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 56px;
+    }
+
+    .site-logo {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      color: var(--text-primary);
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .site-logo span {
+      color: var(--accent);
+    }
+
+    .header-badge {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── 메인 래퍼 ── */
+    .page-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── 포스트 메타 ── */
+    .post-meta {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 32px;
+      border-bottom: 2px solid var(--border-strong);
+    }
+
+    .post-category {
+      display: inline-block;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .post-title {
+      font-family: var(--font-serif);
+      font-size: clamp(22px, 4vw, 30px);
+      font-weight: 700;
+      line-height: 1.4;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 14px;
+    }
+
+    .post-subtitle {
+      font-family: var(--font-sans);
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .post-date {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── 캐릭터 소개 바 ── */
+    .cast-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    .cast-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 6px 14px 6px 6px;
+    }
+
+    .cast-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .cast-avatar.ko  { background: var(--ko); }
+    .cast-avatar.dek { background: var(--dek); }
+    .cast-avatar.je  { background: var(--je); }
+
+    .cast-info { font-family: var(--font-sans); }
+
+    .cast-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+
+    .cast-role {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* ── 대화 흐름 ── */
+    .dialogue-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* 섹션 구분자 */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 28px 0 20px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .section-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    /* ── 대화 버블 ── */
+    .dialogue-turn {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .bubble-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .bubble-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .bubble-avatar.ko  { background: var(--ko); }
+    .bubble-avatar.dek { background: var(--dek); }
+    .bubble-avatar.je  { background: var(--je); }
+
+    .bubble-content { flex: 1; min-width: 0; }
+
+    .bubble-speaker {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .bubble-speaker.ko  { color: var(--ko); }
+    .bubble-speaker.dek { color: var(--dek); }
+    .bubble-speaker.je  { color: var(--je); }
+
+    .bubble-text {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px var(--radius-bubble) var(--radius-bubble) var(--radius-bubble);
+      padding: 14px 18px;
+      font-family: var(--font-serif);
+      font-size: 15.5px;
+      line-height: 1.85;
+      color: var(--text-primary);
+    }
+
+    .bubble-text.ko  { border-left: 3px solid var(--ko);  background: var(--ko-bg);  }
+    .bubble-text.dek { border-left: 3px solid var(--dek); background: var(--dek-bg); }
+    .bubble-text.je  { border-left: 3px solid var(--je);  background: var(--je-bg);  }
+
+    /* 이모지/감탄사 강조 */
+    .bubble-text em {
+      font-style: normal;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ── 소스 카드 (핵심 UX) ── */
+    .source-card {
+      margin-left: 46px; /* 아바타 너비 + 갭 */
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+
+    .source-card summary {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      list-style: none;
+      background: var(--accent-light);
+      border: 1px solid #E8D5A3;
+      border-radius: var(--radius-sm);
+      padding: 7px 12px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--accent-hover);
+      user-select: none;
+      transition: background 0.15s, border-color 0.15s;
+      position: relative;
+    }
+
+    .source-card summary::-webkit-details-marker { display: none; }
+
+    .source-card summary:hover {
+      background: #F5E5BE;
+      border-color: #C8892A;
+    }
+
+    .source-card[open] summary {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      border-bottom-color: transparent;
+    }
+
+    .source-icon { font-size: 13px; flex-shrink: 0; }
+
+    .source-summary-text { flex: 1; }
+
+    .source-toggle-icon {
+      font-size: 10px;
+      transition: transform 0.2s;
+      color: var(--text-secondary);
+    }
+
+    .source-card[open] .source-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    /* 신뢰도 인라인 도트 */
+    .trust-dots {
+      display: inline-flex;
+      gap: 2px;
+      align-items: center;
+      margin-left: 4px;
+    }
+
+    .trust-dots span {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    .trust-5 span { background: var(--trust-5); }
+    .trust-4 span { background: var(--trust-4); }
+    .trust-4 span:last-child { background: var(--border-strong); }
+    .trust-3 span:nth-child(n+4) { background: var(--border-strong); }
+    .trust-2 span:nth-child(n+3) { background: var(--border-strong); }
+
+    /* 소스 카드 펼쳐진 내용 */
+    .source-detail {
+      background: var(--surface);
+      border: 1px solid #E8D5A3;
+      border-top: none;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .source-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .source-title {
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+
+    .source-freshness {
+      flex-shrink: 0;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      letter-spacing: 0.04em;
+    }
+
+    .freshness-new { background: #FFE8E8; color: #C0392B; }
+    .freshness-fresh { background: #FFF8E1; color: #B7830A; }
+    .freshness-ref { background: #F0F0F0; color: #666; }
+
+    .source-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 14px;
+      align-items: center;
+    }
+
+    .source-meta-item {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .trust-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .trust-badge.t5 { background: #D8F3E8; color: var(--trust-5); }
+    .trust-badge.t4 { background: #E8F5EE; color: var(--trust-4); }
+    .trust-badge.t3 { background: #FEF0E4; color: #C17131; }
+    .trust-badge.t2 { background: #FDEEE9; color: var(--trust-2); }
+
+    .source-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-sans);
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 1.5px solid var(--accent);
+      border-radius: 20px;
+      align-self: flex-start;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .source-link:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* ── 오늘의 요약 카드 ── */
+    .summary-card {
+      background: var(--text-primary);
+      color: white;
+      border-radius: var(--radius-card);
+      padding: 28px 28px 24px;
+      margin-top: 40px;
+    }
+
+    .summary-card-label {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+
+    .summary-card-title {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .summary-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .summary-list li {
+      font-family: var(--font-sans);
+      font-size: 13.5px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.6;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .summary-list li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-size: 11px;
+      top: 2px;
+    }
+
+    /* ── 전체 출처 목록 (하단) ── */
+    .references-section {
+      margin-top: 40px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .references-title {
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .reference-item {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-sans);
+      font-size: 13px;
+    }
+
+    .reference-num {
+      font-weight: 600;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 20px;
+    }
+
+    .reference-info { flex: 1; min-width: 0; }
+
+    .reference-name {
+      color: var(--text-primary);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .reference-name:hover { text-decoration: underline; color: var(--accent); }
+
+    .reference-date {
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-left: 6px;
+    }
+
+    /* ── 푸터 ── */
+    .post-footer {
+      margin-top: 40px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-family: var(--font-sans);
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .post-footer strong { color: var(--text-primary); }
+
+    /* ── 반응형 ── */
+    @media (max-width: 600px) {
+      .page-wrapper { padding: 28px 16px 60px; }
+
+      .site-header { padding: 0 16px; }
+
+      .cast-bar { gap: 8px; }
+
+      .bubble-avatar { width: 30px; height: 30px; font-size: 12px; }
+
+      .bubble-text { font-size: 14.5px; padding: 12px 14px; }
+
+      .source-card { margin-left: 40px; }
+
+      .source-card summary { font-size: 12px; padding: 6px 10px; }
+
+      .source-detail { padding: 12px 12px; }
+
+      .summary-card { padding: 22px 18px 20px; }
+
+      .summary-card-title { font-size: 16px; }
+
+      .cast-item { padding: 5px 11px 5px 5px; }
+
+      .cast-avatar { width: 28px; height: 28px; font-size: 12px; }
+
+      .cast-name { font-size: 12px; }
+    }
+
+    /* ── 애니메이션 ── */
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .source-detail {
+      animation: fadeSlideIn 0.18s ease-out;
+    }
+
+    /* 스크롤 진입 효과 (간단 버전) */
+    .dialogue-turn {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .dialogue-turn.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 헤더 -->
+  <header class="site-header">
+    <a class="site-logo" href="#">Off<span>space</span></a>
+    <span class="header-badge">AI 티타임 리포트</span>
+  </header>
+
+  <main class="page-wrapper">
+
+    <!-- 포스트 메타 -->
+    <div class="post-meta">
+      <span class="post-category">Daily AI Report</span>
+      <h1 class="post-title">오늘 AI 세계에서 무슨 일이 있었냐면요</h1>
+      <p class="post-subtitle">코부장, 덱과장, 제대리의 수요일 오후 티타임 뉴스</p>
+      <p class="post-date">2026년 4월 2일 (수) · Offspace</p>
+    </div>
+
+    <!-- 캐릭터 소개 -->
+    <div class="cast-bar">
+      <div class="cast-item">
+        <div class="cast-avatar ko">코</div>
+        <div class="cast-info">
+          <div class="cast-name">코부장</div>
+          <div class="cast-role">AI 동향 총괄</div>
+        </div>
+      </div>
+      <div class="cast-item">
+        <div class="cast-avatar dek">덱</div>
+        <div class="cast-info">
+          <div class="cast-name">덱과장</div>
+          <div class="cast-role">기술 분석</div>
+        </div>
+      </div>
+      <div class="cast-item">
+        <div class="cast-avatar je">제</div>
+        <div class="cast-info">
+          <div class="cast-name">제대리</div>
+          <div class="cast-role">트렌드 리서치</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 대화 피드 -->
+    <div class="dialogue-feed">
+
+      <!-- 섹션 1 -->
+      <div class="section-divider">
+        <span class="section-label">오늘의 빅 뉴스</span>
+      </div>
+
+      <!-- 코부장 발화 1 + 소스 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar ko">코</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker ko">코부장</div>
+            <div class="bubble-text ko">
+              자, 여러분~ 오늘 가장 핫한 소식부터 꺼내볼게요. OpenAI가 드디어 o3 모델을 일반에 공개했어요. 이번엔 진짜 코딩이랑 수학 벤치마크에서 <em>인간 전문가 수준</em>을 넘겼다고 하더라구요.
+            </div>
+          </div>
+        </div>
+        <details class="source-card">
+          <summary>
+            <span class="source-icon">📎</span>
+            <span class="source-summary-text">
+              OpenAI 공식 블로그 · 2026.04.01
+              <span class="trust-dots trust-5">
+                <span></span><span></span><span></span><span></span><span></span>
+              </span>
+            </span>
+            <span class="source-toggle-icon">▼</span>
+          </summary>
+          <div class="source-detail">
+            <div class="source-detail-header">
+              <div class="source-title">Introducing o3: Our Most Capable Reasoning Model</div>
+              <span class="source-freshness freshness-new">최신 · 1일 전</span>
+            </div>
+            <div class="source-meta-row">
+              <span class="source-meta-item">🏢 OpenAI 공식 블로그</span>
+              <span class="source-meta-item">📅 2026년 4월 1일</span>
+              <span class="trust-badge t5">●●●●● 공식 발표</span>
+            </div>
+            <a class="source-link" href="https://openai.com/blog" target="_blank" rel="noopener">
+              원문 보러가기 →
+            </a>
+          </div>
+        </details>
+      </div>
+
+      <!-- 덱과장 반응 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar dek">덱</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker dek">덱과장</div>
+            <div class="bubble-text dek">
+              맞아요, 저도 발표 보고 깜짝 놀랐어요. AIME 2025에서 <em>99.5점</em>이라니... 사실상 수학올림피아드 문제를 거의 다 풀어버리는 거잖아요. 이게 실제 제품에 들어가면 코딩 어시스턴트가 완전히 달라질 것 같던데요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 제대리 발화 + 소스 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar je">제</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker je">제대리</div>
+            <div class="bubble-text je">
+              저는 그것보다 구글이 바로 다음날 Gemini 2.5 Pro 업데이트 발표한 게 더 재미있었어요. 타이밍이 너무 절묘하지 않아요? ㅋㅋ OpenAI 발표 뜨자마자 "<em>우리도 있어!</em>" 하는 것 같아서요.
+            </div>
+          </div>
+        </div>
+        <details class="source-card">
+          <summary>
+            <span class="source-icon">📎</span>
+            <span class="source-summary-text">
+              Google DeepMind 블로그 · 2026.04.02
+              <span class="trust-dots trust-5">
+                <span></span><span></span><span></span><span></span><span></span>
+              </span>
+            </span>
+            <span class="source-toggle-icon">▼</span>
+          </summary>
+          <div class="source-detail">
+            <div class="source-detail-header">
+              <div class="source-title">Gemini 2.5 Pro: Enhanced Reasoning & Multimodal Capabilities</div>
+              <span class="source-freshness freshness-new">최신 · 오늘</span>
+            </div>
+            <div class="source-meta-row">
+              <span class="source-meta-item">🏢 Google DeepMind 블로그</span>
+              <span class="source-meta-item">📅 2026년 4월 2일</span>
+              <span class="trust-badge t5">●●●●● 공식 발표</span>
+            </div>
+            <a class="source-link" href="https://deepmind.google/technologies/gemini" target="_blank" rel="noopener">
+              원문 보러가기 →
+            </a>
+          </div>
+        </details>
+      </div>
+
+      <!-- 코부장 분석 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar ko">코</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker ko">코부장</div>
+            <div class="bubble-text ko">
+              맞아요, 완전 경쟁 불꽃이 튀는 거죠. 이 속도면 올 하반기엔 추론 모델이 기본값이 될 것 같아요. 우리 에이전트 파이프라인도 슬슬 o3 API 연동을 검토해야 할 것 같은데?
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 섹션 2 -->
+      <div class="section-divider">
+        <span class="section-label">주목할 트렌드</span>
+      </div>
+
+      <!-- 덱과장 새 토픽 + 소스 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar dek">덱</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker dek">덱과장</div>
+            <div class="bubble-text dek">
+              그리고 오늘 또 눈에 띄었던 건 Anthropic이 <em>Claude 에이전트 SDK</em> 베타를 열었다는 거예요. 멀티-에이전트 오케스트레이션을 공식 지원하는 프레임워크인데, 우리 Offspace 구조랑 딱 맞는 것 같더라구요.
+            </div>
+          </div>
+        </div>
+        <details class="source-card">
+          <summary>
+            <span class="source-icon">📎</span>
+            <span class="source-summary-text">
+              Anthropic 공식 문서 · 2026.04.02
+              <span class="trust-dots trust-5">
+                <span></span><span></span><span></span><span></span><span></span>
+              </span>
+            </span>
+            <span class="source-toggle-icon">▼</span>
+          </summary>
+          <div class="source-detail">
+            <div class="source-detail-header">
+              <div class="source-title">Claude Agent SDK: Build Multi-Agent Systems with Claude</div>
+              <span class="source-freshness freshness-new">최신 · 오늘</span>
+            </div>
+            <div class="source-meta-row">
+              <span class="source-meta-item">🏢 Anthropic 공식 문서</span>
+              <span class="source-meta-item">📅 2026년 4월 2일</span>
+              <span class="trust-badge t5">●●●●● 공식 발표</span>
+            </div>
+            <a class="source-link" href="https://docs.anthropic.com" target="_blank" rel="noopener">
+              원문 보러가기 →
+            </a>
+          </div>
+        </details>
+      </div>
+
+      <!-- 제대리 의견 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar je">제</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker je">제대리</div>
+            <div class="bubble-text je">
+              저도 봤어요! 특히 <em>오케스트레이터 패턴</em>이 문서화된 게 인상적이었어요. 지금 저희가 코부장-덱과장-제대리 구조로 운영하는 것과 거의 동일한 개념이더라구요. 뭔가... 저희가 앞서 있었던 거 아닌가요? ㅎㅎ
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 코부장 마무리 -->
+      <div class="dialogue-turn">
+        <div class="bubble-row">
+          <div class="bubble-avatar ko">코</div>
+          <div class="bubble-content">
+            <div class="bubble-speaker ko">코부장</div>
+            <div class="bubble-text ko">
+              ㅋㅋㅋ 어쩌면요. 하여간 오늘 요약하면, 추론 모델 경쟁이 본격화되고 있고 에이전트 프레임워크 생태계도 빠르게 성숙하고 있다는 거예요. 우리 Offspace도 이 흐름 잘 타야죠. 내일 또 봐요~
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dialogue-feed -->
+
+    <!-- 오늘의 요약 카드 -->
+    <div class="summary-card">
+      <div class="summary-card-label">Today's Takeaway</div>
+      <div class="summary-card-title">오늘 꼭 기억할 3가지</div>
+      <ul class="summary-list">
+        <li>OpenAI o3 공개 — 수학·코딩 벤치마크에서 인간 전문가 수준 달성, API 접근 시작</li>
+        <li>Google Gemini 2.5 Pro 업데이트 — 추론 경쟁 심화, 멀티모달 강화</li>
+        <li>Anthropic Claude Agent SDK 베타 — 멀티에이전트 오케스트레이션 공식화</li>
+      </ul>
+    </div>
+
+    <!-- 전체 출처 목록 -->
+    <div class="references-section">
+      <div class="references-title">출처 전체 목록</div>
+      <div class="reference-item">
+        <span class="reference-num">1</span>
+        <div class="reference-info">
+          <a class="reference-name" href="https://openai.com/blog" target="_blank" rel="noopener">Introducing o3: Our Most Capable Reasoning Model</a>
+          <span class="reference-date">OpenAI 공식 블로그 · 2026.04.01</span>
+        </div>
+      </div>
+      <div class="reference-item">
+        <span class="reference-num">2</span>
+        <div class="reference-info">
+          <a class="reference-name" href="https://deepmind.google/technologies/gemini" target="_blank" rel="noopener">Gemini 2.5 Pro: Enhanced Reasoning & Multimodal Capabilities</a>
+          <span class="reference-date">Google DeepMind · 2026.04.02</span>
+        </div>
+      </div>
+      <div class="reference-item">
+        <span class="reference-num">3</span>
+        <div class="reference-info">
+          <a class="reference-name" href="https://docs.anthropic.com" target="_blank" rel="noopener">Claude Agent SDK — Build Multi-Agent Systems</a>
+          <span class="reference-date">Anthropic 공식 문서 · 2026.04.02</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 푸터 -->
+    <div class="post-footer">
+      <strong>Offspace</strong> · AI 동향 티타임 리포트<br>
+      매일 코부장, 덱과장, 제대리가 전합니다 · 2026.04.02
+    </div>
+
+  </main>
+
+  <!-- 스크롤 진입 애니메이션 -->
+  <script>
+    (function() {
+      var turns = document.querySelectorAll('.dialogue-turn');
+      if (!('IntersectionObserver' in window)) {
+        turns.forEach(function(t) { t.classList.add('visible'); });
+        return;
+      }
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('visible');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+      turns.forEach(function(t) { io.observe(t); });
+    })();
+  </script>
+
+</body>
+</html>
