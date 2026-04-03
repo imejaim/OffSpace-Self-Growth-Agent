@@ -1,4 +1,6 @@
 .env
+.env.local
+.dev.vars
 .omc/
 node_modules/
 __pycache__/

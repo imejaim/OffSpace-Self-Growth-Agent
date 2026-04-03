@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ────────────────────────────────────────────────── */
+:root {
+  /* Brand palette */
+  --color-coral:    #FF6B6B;
+  --color-coral-light: #FF8E8E;
+  --color-coral-dark:  #E05555;
+  --color-navy:     #2C3E50;
+  --color-navy-light: #3D5166;
+  --color-yellow:   #F7DC6F;
+  --color-yellow-dark: #D4B942;
+
+  /* Surface / text */
+  --color-bg:       #FFF9F5;
+  --color-bg-card:  #FFFFFF;
+  --color-bg-muted: #FFF0E8;
+  --color-text:     #2D3436;
+  --color-text-muted: #636E72;
+  --color-border:   #F0E6DE;
+
+  /* Character identity colors */
+  --color-ko:   #4A90D9;   /* 코부장 — blue */
+  --color-dek:  #E67E22;   /* 덱과장 — orange */
+  --color-je:   #27AE60;   /* 제대리 — green */
+  --color-ceo:  #9B59B6;   /* 대표님/사용자 — purple */
+
+  /* Spacing rhythm */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 5rem;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+
+  /* Shadow */
+  --shadow-card: 0 2px 12px rgba(44, 62, 80, 0.06);
+  --shadow-hover: 0 6px 24px rgba(44, 62, 80, 0.12);
+}
+
+/* ─── Tailwind v4 Theme Registration ──────────────────────────────── */
+@theme inline {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+
+  /* Expose brand tokens to Tailwind utilities */
+  --color-coral:        var(--color-coral);
+  --color-coral-light:  var(--color-coral-light);
+  --color-coral-dark:   var(--color-coral-dark);
+  --color-navy:         var(--color-navy);
+  --color-navy-light:   var(--color-navy-light);
+  --color-yellow:       var(--color-yellow);
+  --color-yellow-dark:  var(--color-yellow-dark);
+  --color-bg:           var(--color-bg);
+  --color-bg-card:      var(--color-bg-card);
+  --color-bg-muted:     var(--color-bg-muted);
+  --color-muted:        var(--color-text-muted);
+  --color-border:       var(--color-border);
+  --color-ko:           var(--color-ko);
+  --color-dek:          var(--color-dek);
+  --color-je:           var(--color-je);
+  --color-ceo:          var(--color-ceo);
+}
+
+/* ─── Base Styles ──────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Typography ───────────────────────────────────────────────────── */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--color-navy);
+  letter-spacing: -0.02em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ─── Character Badge Component ────────────────────────────────────── */
+.badge-ko  { background: var(--color-ko);  color: #fff; }
+.badge-dek { background: var(--color-dek); color: #fff; }
+.badge-je  { background: var(--color-je);  color: #fff; }
+.badge-ceo { background: var(--color-ceo); color: #fff; }
+
+/* ─── Card ──────────────────────────────────────────────────────────── */
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* ─── Button ─────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  background: var(--color-coral);
+  color: #fff;
+  font-weight: 700;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-pill);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+  letter-spacing: -0.01em;
+}
+
+.btn-primary:hover {
+  background: var(--color-coral-dark);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  background: transparent;
+  color: var(--color-navy);
+  font-weight: 600;
+  padding: 0.75rem 1.75rem;
+  border-radius: var(--radius-pill);
+  border: 2px solid var(--color-border);
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--color-navy);
+  background: var(--color-bg-muted);
+}
+
+/* ─── Nav / Footer links ────────────────────────────────────────────── */
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: var(--color-navy);
+}
+
+.footer-link {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+  transition: color 0.15s ease;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--color-coral);
+}
+
+/* ─── Section divider ───────────────────────────────────────────────── */
+.section-divider {
+  width: 40px;
+  height: 4px;
+  background: var(--color-coral);
+  border-radius: 2px;
+  margin: 0 auto var(--space-lg);
+}
