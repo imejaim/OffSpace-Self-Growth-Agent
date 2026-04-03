@@ -10,7 +10,7 @@ function CharBadge({
   name,
   char,
 }: {
-  name: "ko" | "dek" | "je" | "ceo";
+  name: "ko" | "oh" | "jem" | "ceo";
   char: string;
 }) {
   return (
@@ -113,7 +113,6 @@ export default function HomePage() {
               letterSpacing: "0.02em",
             }}
           >
-            <span>☕</span>
             <span>오늘의 AI 티타임 — {TODAY}</span>
           </div>
 
@@ -140,7 +139,7 @@ export default function HomePage() {
               marginBottom: "2.5rem",
             }}
           >
-            코부장, 덱과장, 제대리가 오늘의 AI 뉴스를 읽고 얘기합니다.
+            코부장, 오과장, 젬대리가 오늘의 AI 뉴스를 읽고 얘기합니다.
             <br />
             그 대화에 <strong style={{ color: "var(--color-navy)" }}>당신도 끼어들어 보세요.</strong>
           </p>
@@ -166,8 +165,8 @@ export default function HomePage() {
           >
             {[
               { char: "코", name: "ko" as const, label: "코부장" },
-              { char: "덱", name: "dek" as const, label: "덱과장" },
-              { char: "제", name: "je" as const, label: "제대리" },
+              { char: "오", name: "oh" as const, label: "오과장" },
+              { char: "젬", name: "jem" as const, label: "젬대리" },
             ].map(({ char, name, label }) => (
               <div
                 key={name}
@@ -192,9 +191,9 @@ export default function HomePage() {
                     background:
                       name === "ko"
                         ? "var(--color-ko)"
-                        : name === "dek"
-                        ? "var(--color-dek)"
-                        : "var(--color-je)",
+                        : name === "oh"
+                        ? "var(--color-oh)"
+                        : "var(--color-jem)",
                   }}
                 >
                   {char}
@@ -284,15 +283,15 @@ export default function HomePage() {
                   text: "오늘 GPT-5 발표 소식 봤어? 멀티모달 추론이 엄청 올라갔더라고.",
                 },
                 {
-                  name: "dek" as const,
-                  char: "덱",
-                  label: "덱과장",
+                  name: "oh" as const,
+                  char: "오",
+                  label: "오과장",
                   text: "봤지. 근데 우리 입장에선 오픈소스 모델 동향이 더 중요하지 않나?",
                 },
                 {
-                  name: "je" as const,
-                  char: "제",
-                  label: "제대리",
+                  name: "jem" as const,
+                  char: "젬",
+                  label: "젬대리",
                   text: "저는 Gemini 2.5 Pro 쪽이 더 실용적인 것 같던데요!",
                 },
               ].map(({ name, char, label, text }) => (
@@ -309,9 +308,9 @@ export default function HomePage() {
                         color:
                           name === "ko"
                             ? "var(--color-ko)"
-                            : name === "dek"
-                            ? "var(--color-dek)"
-                            : "var(--color-je)",
+                            : name === "oh"
+                            ? "var(--color-oh)"
+                            : "var(--color-jem)",
                         marginRight: "0.5rem",
                       }}
                     >
@@ -341,8 +340,7 @@ export default function HomePage() {
                   fontWeight: 500,
                 }}
               >
-                <span style={{ fontSize: "1rem" }}>✋</span>
-                <span>여기서 끼어들 수 있어요 — 지금 바로 참여해보세요</span>
+                <span>어디든 끼어들어 궁금한 것을 더 물어보고 의견 남길 수 있어요</span>
               </div>
             </div>
 
@@ -401,8 +399,8 @@ export default function HomePage() {
             <StepCard
               step="②"
               title="캐릭터들이 대화합니다"
-              desc="코부장·덱과장·제대리가 각자의 시각으로 뉴스를 얘기하며 티타임을 가집니다."
-              accent="var(--color-dek)"
+              desc="코부장·오과장·젬대리가 각자의 시각으로 뉴스를 얘기하며 티타임을 가집니다."
+              accent="var(--color-oh)"
             />
             <StepCard
               step="③"
@@ -444,7 +442,7 @@ export default function HomePage() {
             AI 팀원들이 기다리고 있습니다.
           </p>
           <Link href="/teatime" className="btn-primary" style={{ fontSize: "1rem" }}>
-            지금 끼어들기 ✋
+            지금 끼어들기 →
           </Link>
         </div>
       </section>

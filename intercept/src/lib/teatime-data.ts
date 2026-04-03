@@ -3,14 +3,13 @@ export interface Character {
   name: string;
   role: string;
   color: string;
-  emoji: string;
 }
 
 export interface Message {
   id: string;
   characterId: string;
   content: string;
-  type: 'normal' | 'intercept-point' | 'intercept-answer';
+  type: 'normal' | 'intercept-answer';
 }
 
 export interface Reference {
@@ -24,7 +23,6 @@ export interface Reference {
 export interface Topic {
   id: string;
   title: string;
-  icon: string;
   messages: Message[];
   references: Reference[];
 }
@@ -43,28 +41,24 @@ export const CHARACTERS: Record<string, Character> = {
     name: '코부장',
     role: '개발부장',
     color: '#4A90D9',
-    emoji: '🔵',
   },
-  dek: {
-    id: 'dek',
-    name: '덱과장',
+  oh: {
+    id: 'oh',
+    name: '오과장',
     role: '기획과장',
     color: '#E67E22',
-    emoji: '🟠',
   },
-  je: {
-    id: 'je',
-    name: '제대리',
+  jem: {
+    id: 'jem',
+    name: '젬대리',
     role: '개발대리',
     color: '#27AE60',
-    emoji: '🟢',
   },
   user: {
     id: 'user',
     name: '나',
     role: '독자',
     color: '#9B59B6',
-    emoji: '💜',
   },
 };
 
@@ -72,16 +66,15 @@ export const SAMPLE_TEATIME: TeaTime = {
   id: 'teatime-2026-04-03',
   date: '2026-04-03',
   title: 'Offspace 티타임 Vol.2',
-  intro: '코부장, 덱과장, 제대리가 아침 커피 한 잔 들고 모였다.',
+  intro: '코부장, 오과장, 젬대리가 아침 커피 한 잔 들고 모였다.',
   topics: [
     {
       id: 'topic-hotnews',
       title: '핫뉴스',
-      icon: '🔥',
       messages: [
         {
           id: 'msg-hn-1',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             '대표님 이거 보셨어요? OpenAI가 **1,220억 달러 투자 유치** 마감했대요. 기업가치가 **8,520억 달러**... 어제(4월 2일) 나온 기사인데 진짜 숫자가 미쳤어요.',
           type: 'normal',
@@ -95,7 +88,7 @@ export const SAMPLE_TEATIME: TeaTime = {
         },
         {
           id: 'msg-hn-3',
-          characterId: 'dek',
+          characterId: 'oh',
           content:
             'Q1 전체로 보면 VC 투자가 **2,970억 달러**로 역대 최고인데, AI 스타트업이 81% 가져갔어요. 그리고 Alibaba가 **Qwen3.6-Plus**를 며칠 만에 또 냈더라고요. 3일 만에 세 번째 모델 릴리즈래요.',
           type: 'normal',
@@ -108,14 +101,8 @@ export const SAMPLE_TEATIME: TeaTime = {
           type: 'normal',
         },
         {
-          id: 'msg-hn-intercept',
-          characterId: 'kobu',
-          content: 'AI 신약 개발, 여러분은 어떻게 생각하세요?',
-          type: 'intercept-point',
-        },
-        {
           id: 'msg-hn-5',
-          characterId: 'je',
+          characterId: 'jem',
           content: '우와 AI가 만든 약이 진짜 사람한테 테스트되는 거예요?',
           type: 'normal',
         },
@@ -154,18 +141,17 @@ export const SAMPLE_TEATIME: TeaTime = {
     {
       id: 'topic-agents',
       title: 'AI 에이전트',
-      icon: '🤖',
       messages: [
         {
           id: 'msg-ag-1',
-          characterId: 'dek',
+          characterId: 'oh',
           content:
             '에이전트 쪽 숫자가 확 올라왔어요. Gartner 전망에 따르면 올해 말까지 **기업 앱 40%에 AI 에이전트가 탑재**된대요. 작년엔 5% 미만이었는데.',
           type: 'normal',
         },
         {
           id: 'msg-ag-2',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             'Deloitte 보고서도 봤는데, **기업 75%가 올해 안에 AI 에이전트 배포 계획** 있다고 하더라고요!',
           type: 'normal',
@@ -178,14 +164,8 @@ export const SAMPLE_TEATIME: TeaTime = {
           type: 'normal',
         },
         {
-          id: 'msg-ag-intercept',
-          characterId: 'dek',
-          content: '우리 팀도 에이전트 만드는 입장에서 — 어떤 게 제일 중요할까요?',
-          type: 'intercept-point',
-        },
-        {
           id: 'msg-ag-4',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             '프로토콜 표준화도 진행 중이에요! Google이랑 Shopify가 **Universal Commerce Protocol(UCP)** 공동 개발했고, Anthropic의 **MCP(Model Context Protocol)**도 에이전트 통신 표준으로 자리잡고 있대요.',
           type: 'normal',
@@ -199,7 +179,7 @@ export const SAMPLE_TEATIME: TeaTime = {
         },
         {
           id: 'msg-ag-6',
-          characterId: 'dek',
+          characterId: 'oh',
           content:
             '우리도 에이전트 만드는 입장에서 MCP 표준은 꼭 따라가야 할 것 같아요.',
           type: 'normal',
@@ -232,31 +212,24 @@ export const SAMPLE_TEATIME: TeaTime = {
     {
       id: 'topic-models',
       title: 'AI 모델 트렌드',
-      icon: '💡',
       messages: [
         {
           id: 'msg-md-1',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             '모델 쪽은요, 전체적으로 **274개 이상 모델이 트래킹**되고 있는데, 큰 트렌드가 두 개예요.',
           type: 'normal',
         },
         {
           id: 'msg-md-2',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             '하나는 **온디바이스 AI 이동**이에요! 3B~30B 파라미터 모델들이 스마트폰, 자동차, 산업장비에서 **로컬로 돌아가는 쪽**으로 확 옮겨가고 있대요.',
           type: 'normal',
         },
         {
-          id: 'msg-md-intercept',
-          characterId: 'kobu',
-          content: '온디바이스 AI, 온프레미스 AI — 어떻게 다를까요?',
-          type: 'intercept-point',
-        },
-        {
           id: 'msg-md-3',
-          characterId: 'dek',
+          characterId: 'oh',
           content:
             '인프라 쪽에선 **vLLM Model Runner V2(MRV2)**가 3월에 나왔는데, 완전 새로 짠 거래요. 추론 속도가 16K tok/s에서 **25K tok/s로 56% 향상**됐어요.',
           type: 'normal',
@@ -270,7 +243,7 @@ export const SAMPLE_TEATIME: TeaTime = {
         },
         {
           id: 'msg-md-5',
-          characterId: 'je',
+          characterId: 'jem',
           content:
             '팩트체크도 중요해요! gpt-oss 초기 발표는 작년이고, 올해는 확장판이에요. 시점이 헷갈리기 쉬워요 ㅋㅋ',
           type: 'normal',

@@ -12,17 +12,17 @@
   --color-yellow-dark: #D4B942;
 
   /* Surface / text */
-  --color-bg:       #FFF9F5;
+  --color-bg:       #FFFFFF;
   --color-bg-card:  #FFFFFF;
-  --color-bg-muted: #FFF0E8;
+  --color-bg-muted: #F8F9FA;
   --color-text:     #2D3436;
   --color-text-muted: #636E72;
-  --color-border:   #F0E6DE;
+  --color-border:   #E9ECEF;
 
   /* Character identity colors */
   --color-ko:   #4A90D9;   /* 코부장 — blue */
-  --color-dek:  #E67E22;   /* 덱과장 — orange */
-  --color-je:   #27AE60;   /* 제대리 — green */
+  --color-oh:   #E67E22;   /* 오과장 — orange */
+  --color-jem:  #27AE60;   /* 젬대리 — green */
   --color-ceo:  #9B59B6;   /* 대표님/사용자 — purple */
 
   /* Spacing rhythm */
@@ -67,8 +67,8 @@
   --color-muted:        var(--color-text-muted);
   --color-border:       var(--color-border);
   --color-ko:           var(--color-ko);
-  --color-dek:          var(--color-dek);
-  --color-je:           var(--color-je);
+  --color-oh:           var(--color-oh);
+  --color-jem:          var(--color-jem);
   --color-ceo:          var(--color-ceo);
 }
 
@@ -105,8 +105,8 @@ a {
 
 /* ─── Character Badge Component ────────────────────────────────────── */
 .badge-ko  { background: var(--color-ko);  color: #fff; }
-.badge-dek { background: var(--color-dek); color: #fff; }
-.badge-je  { background: var(--color-je);  color: #fff; }
+.badge-oh  { background: var(--color-oh);  color: #fff; }
+.badge-jem { background: var(--color-jem); color: #fff; }
 .badge-ceo { background: var(--color-ceo); color: #fff; }
 
 /* ─── Card ──────────────────────────────────────────────────────────── */
@@ -194,4 +194,435 @@ a {
   background: var(--color-coral);
   border-radius: 2px;
   margin: 0 auto var(--space-lg);
+}
+
+/* ─── Teatime Page ───────────────────────────────────────────────────── */
+
+.teatime-root {
+  background: #ffffff;
+  min-height: 100vh;
+  color: #111111;
+}
+
+.teatime-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 0;
+}
+
+.teatime-header-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1.25rem;
+}
+
+.teatime-pub {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #111111;
+}
+
+.teatime-date {
+  font-size: 0.8rem;
+  color: #666666;
+}
+
+.teatime-main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.teatime-masthead {
+  margin-bottom: 2rem;
+}
+
+.teatime-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 0 0 0.6rem;
+}
+
+.teatime-intro {
+  font-size: 1rem;
+  color: #444444;
+  margin: 0 0 0.75rem;
+  line-height: 1.6;
+}
+
+.teatime-byline {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.byline-char {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.teatime-intercept-hint {
+  font-size: 0.78rem;
+  color: #888888;
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid #e0e0e0;
+  line-height: 1.5;
+}
+
+.teatime-rule {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 0 0 2.5rem;
+}
+
+/* ─── Topic ──────────────────────────────────────────────────────────── */
+
+.topic-section {
+  margin-bottom: 3rem;
+}
+
+.topic-heading {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111111;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.topic-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ─── Conversation Line ──────────────────────────────────────────────── */
+
+.conversation-line {
+  position: relative;
+  padding: 0.15rem 0;
+}
+
+.conversation-msg {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 0.45em;
+  padding: 0.45rem 0.5rem;
+  border-radius: 3px;
+  transition: background 0.12s ease;
+  cursor: default;
+  line-height: 1.65;
+}
+
+.conversation-line:hover .conversation-msg {
+  background: #f7f7f7;
+}
+
+.char-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.char-role {
+  font-size: 0.75rem;
+  color: #999999;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.char-role::before {
+  content: '(';
+}
+
+.char-role::after {
+  content: ')';
+}
+
+.msg-text {
+  font-size: 0.925rem;
+  color: #222222;
+  line-height: 1.65;
+  flex: 1;
+  min-width: 0;
+}
+
+.msg-text strong {
+  font-weight: 700;
+  color: #111111;
+}
+
+.intercept-hint {
+  font-size: 0.72rem;
+  color: #aaaaaa;
+  border: 1px solid #dddddd;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  margin-left: auto;
+  white-space: nowrap;
+  align-self: center;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+}
+
+.conversation-line:hover .intercept-hint {
+  color: #555555;
+  border-color: #aaaaaa;
+}
+
+/* ─── Intercept Trigger ──────────────────────────────────────────────── */
+
+.intercept-trigger {
+  display: none;
+  font-size: 0.72rem;
+  color: #aaaaaa;
+  background: transparent;
+  border: 1px solid #dddddd;
+  padding: 0.1rem 0.45rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 0.1s, border-color 0.1s;
+  margin-left: 0.5rem;
+}
+
+.conversation-line:hover .intercept-trigger {
+  display: inline-block;
+}
+
+/* ─── Intercept Panel ────────────────────────────────────────────────── */
+
+.intercept-panel {
+  margin: 0.25rem 0.5rem 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-left: 2px solid #cccccc;
+  background: #fafafa;
+}
+
+.intercept-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.intercept-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #9B59B6;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.intercept-input {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  color: #111111;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #cccccc;
+  padding: 0.2rem 0;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.intercept-input:focus {
+  border-bottom-color: #555555;
+}
+
+.intercept-input::placeholder {
+  color: #bbbbbb;
+}
+
+.intercept-submit {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: #444444;
+  border: none;
+  padding: 0.25rem 0.65rem;
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+}
+
+.intercept-submit:hover {
+  background: #111111;
+}
+
+.intercept-submit:disabled {
+  background: #cccccc;
+  cursor: default;
+}
+
+.intercept-cancel {
+  font-size: 0.78rem;
+  color: #999999;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.3rem;
+  transition: color 0.12s;
+}
+
+.intercept-cancel:hover {
+  color: #444444;
+}
+
+/* ─── Intercept Thread ───────────────────────────────────────────────── */
+
+.intercept-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.intercept-user-msg,
+.intercept-char-msg {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45em;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.intercept-name-user {
+  font-weight: 700;
+  color: #9B59B6;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.intercept-char-name {
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.intercept-msg-text {
+  color: #333333;
+}
+
+.intercept-loading {
+  font-size: 0.85rem;
+  color: #aaaaaa;
+  letter-spacing: 0.15em;
+}
+
+.intercept-close {
+  align-self: flex-end;
+  font-size: 0.75rem;
+  color: #999999;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.1rem 0;
+  transition: color 0.12s;
+  margin-top: 0.25rem;
+}
+
+.intercept-close:hover {
+  color: #444444;
+}
+
+/* ─── References ─────────────────────────────────────────────────────── */
+
+.reference-section {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.reference-heading {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #888888;
+  margin: 0 0 0.6rem;
+}
+
+.reference-list {
+  list-style: disc;
+  padding-left: 1.2rem;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.reference-list li {
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.reference-link {
+  color: #0066cc;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.1s;
+}
+
+.reference-link:hover {
+  color: #003d99;
+}
+
+.reference-meta {
+  display: inline;
+  color: #888888;
+  font-size: 0.78rem;
+  margin-left: 0.5em;
+}
+
+.reference-stars {
+  color: #ccaa00;
+  letter-spacing: -0.05em;
+}
+
+/* ─── Teatime Footer ─────────────────────────────────────────────────── */
+
+.teatime-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.78rem;
+  color: #aaaaaa;
+  text-align: center;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────── */
+
+@media (max-width: 600px) {
+  .teatime-main {
+    padding: 1.5rem 1rem 3rem;
+  }
+
+  .teatime-title {
+    font-size: 1.4rem;
+  }
+
+  .conversation-msg {
+    padding: 0.4rem 0.25rem;
+  }
+
+  .intercept-input-row {
+    flex-wrap: wrap;
+  }
+
+  .intercept-input {
+    width: 100%;
+  }
 }

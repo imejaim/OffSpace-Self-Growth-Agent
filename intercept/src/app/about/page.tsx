@@ -21,15 +21,15 @@ const CHARACTERS: Character[] = [
     description: '기술 트렌드의 큰 그림을 그리는 베테랑. 복잡한 기술 이슈를 꿰뚫는 날카로운 시각으로 팀을 이끈다.',
   },
   {
-    name: '덱과장',
+    name: '오과장',
     role: '기획과장',
-    color: 'var(--color-dek)',
+    color: 'var(--color-oh)',
     description: '비즈니스 임팩트와 시장 동향에 밝은 전략가. AI 기술이 실제 사업에 미치는 영향을 가장 먼저 파악한다.',
   },
   {
-    name: '제대리',
+    name: '젬대리',
     role: '개발대리',
-    color: 'var(--color-je)',
+    color: 'var(--color-jem)',
     description: '최신 기술에 열정적인 주니어 개발자. 새로운 것이라면 무조건 써봐야 직성이 풀리는 탐구형 인재.',
   },
 ]
@@ -127,7 +127,7 @@ export default function AboutPage() {
               {
                 step: '01',
                 title: '매일 아침 티타임',
-                desc: '코부장, 덱과장, 제대리가 그날의 AI 뉴스를 가볍고 솔직하게 수다 형식으로 풀어냅니다.',
+                desc: '코부장, 오과장, 젬대리가 그날의 AI 뉴스를 가볍고 솔직하게 수다 형식으로 풀어냅니다.',
               },
               {
                 step: '02',
@@ -339,7 +339,7 @@ export default function AboutPage() {
               lineHeight: 1.6,
             }}
           >
-            코부장, 덱과장, 제대리의 AI 뉴스 대화에 끼어들어 보세요.
+            코부장, 오과장, 젬대리의 AI 뉴스 대화에 끼어들어 보세요.
           </p>
           <Link href="/teatime" className="btn-primary">
             티타임 바로가기 →

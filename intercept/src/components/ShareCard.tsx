@@ -12,8 +12,8 @@ interface ShareCardProps {
 
 const CHARACTER_COLORS: Record<string, string> = {
   코부장: 'var(--color-ko)',
-  덱과장: 'var(--color-dek)',
-  제대리: 'var(--color-je)',
+  오과장: 'var(--color-oh)',
+  젬대리: 'var(--color-jem)',
 }
 
 export default function ShareCard({

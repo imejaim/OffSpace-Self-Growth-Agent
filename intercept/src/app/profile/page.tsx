@@ -12,15 +12,15 @@ interface Level {
   minCount: number
   maxCount: number
   color: string
-  emoji: string
+  label: string
 }
 
 const LEVELS: Level[] = [
-  { name: '신입', minCount: 0, maxCount: 5, color: '#95A5A6', emoji: '🌱' },
-  { name: '인턴', minCount: 6, maxCount: 20, color: '#3498DB', emoji: '📋' },
-  { name: '사원', minCount: 21, maxCount: 50, color: '#27AE60', emoji: '💼' },
-  { name: '대리', minCount: 51, maxCount: 100, color: '#E67E22', emoji: '⭐' },
-  { name: '과장', minCount: 101, maxCount: Infinity, color: '#9B59B6', emoji: '🏆' },
+  { name: '신입', minCount: 0, maxCount: 5, color: '#95A5A6', label: '신입' },
+  { name: '인턴', minCount: 6, maxCount: 20, color: '#3498DB', label: '인턴' },
+  { name: '사원', minCount: 21, maxCount: 50, color: '#27AE60', label: '사원' },
+  { name: '대리', minCount: 51, maxCount: 100, color: '#E67E22', label: '대리' },
+  { name: '과장', minCount: 101, maxCount: Infinity, color: '#9B59B6', label: '과장' },
 ]
 
 function getLevel(count: number): Level {
@@ -56,7 +56,7 @@ const MOCK_HISTORY: InterceptRecord[] = [
     id: 'demo2',
     date: '2026-04-02',
     topic: 'AI 에이전트 트렌드',
-    character: '덱과장',
+    character: '오과장',
     myQuestion: '에이전트가 실제 비즈니스에 쓰이려면 얼마나 더 걸릴까요?',
     aiAnswer:
       '이미 일부 기업에서는 반복적인 데이터 처리나 이메일 분류에 에이전트를 활용하고 있습니다. 2026년 하반기면 SMB 시장에도 본격 진입할 것으로 보입니다.',
@@ -65,7 +65,7 @@ const MOCK_HISTORY: InterceptRecord[] = [
     id: 'demo3',
     date: '2026-04-01',
     topic: '오픈소스 LLM 동향',
-    character: '제대리',
+    character: '젬대리',
     myQuestion: 'Llama 4가 나왔는데 이게 정말 GPT-4 급인가요?',
     aiAnswer:
       '벤치마크 기준으로는 특정 태스크에서 GPT-4o와 유사한 성능을 보이고 있습니다. 특히 코드 생성과 수학 추론에서 강점을 보이고, 로컬 실행이 가능하다는 점이 핵심 차별점입니다.',
@@ -74,8 +74,8 @@ const MOCK_HISTORY: InterceptRecord[] = [
 
 const CHARACTER_COLORS: Record<string, string> = {
   코부장: '#4A90D9',
-  덱과장: '#E67E22',
-  제대리: '#27AE60',
+  오과장: '#E67E22',
+  젬대리: '#27AE60',
 }
 
 // Mock stats
@@ -186,15 +186,17 @@ export default function ProfilePage() {
                 fontSize: '1.75rem',
                 lineHeight: 1,
                 marginBottom: '6px',
+                fontWeight: 900,
+                color: level.color,
               }}
             >
-              {level.emoji}
+              {level.label}
             </div>
             <div
               style={{
                 fontSize: '0.9375rem',
-                fontWeight: 900,
-                color: level.color,
+                fontWeight: 600,
+                color: 'var(--color-text-muted)',
               }}
             >
               {level.name}
@@ -229,7 +231,7 @@ export default function ProfilePage() {
                   fontWeight: 800,
                 }}
               >
-                {level.emoji} {level.name}
+                {level.label}
               </span>
               <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
                 {TOTAL_COUNT}회 달성
@@ -237,7 +239,7 @@ export default function ProfilePage() {
             </div>
             {nextLevel && (
               <span style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)' }}>
-                다음: {nextLevel.emoji} {nextLevel.name} ({nextLevel.minCount}회~)
+                다음: {nextLevel.label} ({nextLevel.minCount}회~)
               </span>
             )}
           </div>
@@ -301,7 +303,7 @@ export default function ProfilePage() {
                   transition: 'background 0.2s',
                 }}
               >
-                {l.emoji} {l.name}
+                {l.label}
               </span>
             ))}
           </div>

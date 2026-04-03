@@ -86,8 +86,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const CHARACTER_COLORS: Record<string, string> = {
   코부장: '#4A90D9',
-  덱과장: '#E67E22',
-  제대리: '#27AE60',
+  오과장: '#E67E22',
+  젬대리: '#27AE60',
 }
 
 export default async function SharePage({ params }: Props) {
@@ -310,7 +310,7 @@ export default async function SharePage({ params }: Props) {
               lineHeight: 1.6,
             }}
           >
-            코부장, 덱과장, 제대리의 티타임 대화에 끼어들어 보세요.
+            코부장, 오과장, 젬대리의 티타임 대화에 끼어들어 보세요.
           </p>
           <a href="/teatime" className="btn-primary">
             나도 끼어들어 보기 →
