@@ -20,6 +20,7 @@ interface CharacterState {
   bubbleVisible: boolean
   flipX: boolean       // face direction
   bobPhase: number     // walking bob animation phase
+  pinned: boolean      // pinned in place after drag
 }
 
 const CHARACTER_IDS = ['kobu', 'oh', 'jem'] as const
@@ -101,21 +102,21 @@ export default function FloatingCharacters() {
         targetX: w * 0.15, targetY: h * 0.3,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
-        flipX: false, bobPhase: 0,
+        flipX: false, bobPhase: 0, pinned: false,
       },
       {
         id: 'oh', x: w * 0.5, y: h * 0.15,
         targetX: w * 0.5, targetY: h * 0.15,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
-        flipX: false, bobPhase: Math.PI * 0.66,
+        flipX: false, bobPhase: Math.PI * 0.66, pinned: false,
       },
       {
         id: 'jem', x: w * 0.8, y: h * 0.6,
         targetX: w * 0.8, targetY: h * 0.6,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
-        flipX: true, bobPhase: Math.PI * 1.33,
+        flipX: true, bobPhase: Math.PI * 1.33, pinned: false,
       },
     ]
     setChars(initial)
@@ -177,6 +178,7 @@ export default function FloatingCharacters() {
 
       charsRef.current = charsRef.current.map((c, idx) => {
         if (dragRef.current?.id === c.id) return c
+        if (c.pinned) return c  // pinned characters don't move
 
         let { x, y, targetX, targetY, action, actionTimer, flipX, bobPhase } = c
 
@@ -301,6 +303,12 @@ export default function FloatingCharacters() {
   const handleClick = useCallback((id: string) => {
     charsRef.current = charsRef.current.map((c) => {
       if (c.id !== id) return c
+
+      // If pinned, unpin and return to following mode
+      if (c.pinned) {
+        return { ...c, pinned: false, action: 'excited', bubbleVisible: true, bubble: '다시 합류!' }
+      }
+
       // Cycle through fun actions
       const actions: ActionType[] = ['whispering', 'coffee', 'excited']
       const currentIdx = actions.indexOf(c.action)
@@ -354,7 +362,15 @@ export default function FloatingCharacters() {
       setChars([...charsRef.current])
     }
     function onMouseUp() {
-      dragRef.current = null
+      if (dragRef.current) {
+        // Pin the character at its dropped position
+        const id = dragRef.current.id
+        charsRef.current = charsRef.current.map((c) =>
+          c.id === id ? { ...c, pinned: true } : c
+        )
+        setChars([...charsRef.current])
+        dragRef.current = null
+      }
     }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
