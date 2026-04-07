@@ -474,21 +474,22 @@ export default function FloatingCharacters() {
 
             const actionEmoji = ACTION_EMOJIS[c.action]
 
-            // Determine bubble direction based on screen position
+            // Bubble goes AWAY from content center (outward)
+            // Left-side chars → bubble goes further left; right-side → further right
             const screenMidX = window.innerWidth / 2
-            const bubbleOnRight = c.x < screenMidX
-            const bubbleStyle: React.CSSProperties = bubbleOnRight
-              ? { // Bubble to the RIGHT of character
+            const charOnLeft = c.x < screenMidX
+            const bubbleStyle: React.CSSProperties = charOnLeft
+              ? { // Character on LEFT → bubble goes LEFT (away from content)
                   borderColor: char.color,
+                  right: SIZE / 2,
                   left: 'auto',
-                  right: '-10px',
-                  transform: 'translateX(100%)',
+                  bottom: SIZE + 8,
                 }
-              : { // Bubble to the LEFT of character
+              : { // Character on RIGHT → bubble goes RIGHT (away from content)
                   borderColor: char.color,
-                  left: '-10px',
+                  left: SIZE / 2,
                   right: 'auto',
-                  transform: 'translateX(-100%)',
+                  bottom: SIZE + 8,
                 }
 
             return (
