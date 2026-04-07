@@ -199,7 +199,36 @@ export default function FloatingCharacters() {
         let { x, y, targetX, targetY, action, actionTimer, flipX, bobPhase } = c
 
         // ── Determine target position ──
-        if (isTyping) {
+        const isLoading = document.body.classList.contains('intercept-loading')
+
+        if (isLoading) {
+          // Walk on the original message text while waiting for AI response
+          const msgEl = document.querySelector('.intercept-inline')?.closest('.conversation-line') as HTMLElement | null
+          if (msgEl) {
+            const rect = msgEl.getBoundingClientRect()
+            // Each character walks across the text area at different speeds
+            const phase = (now / 3000 + idx * 0.7) % 1  // 0→1 cycle, offset per char
+            const walkX = rect.left + phase * (rect.width - SIZE)
+            const walkY = rect.top + 10 + idx * 8  // stagger vertically
+            targetX = walkX
+            targetY = walkY
+            action = 'walking'
+            // Show excited bubbles
+            if (!c.bubbleVisible) {
+              const loadingBubbles = [
+                ['흠...', '좋은 질문이야', '잠깐만...'],
+                ['분석 중이에요!', '자료 확인 중...', '오? 이거 재밌는데'],
+                ['찾고 있어요!', '잠깐만요~', '어디 보자...'],
+              ]
+              const bubbles = loadingBubbles[idx] ?? ['...']
+              return {
+                ...c, targetX, targetY, action, flipX, bobPhase,
+                bubble: bubbles[Math.floor(Math.random() * bubbles.length)]!,
+                bubbleVisible: true,
+              }
+            }
+          }
+        } else if (isTyping) {
           // Gather far left of the input — outside Pretext OVERLAP_MARGIN (80px)
           const input = document.querySelector('.intercept-input:focus') as HTMLElement | null
           if (input) {
@@ -441,25 +470,25 @@ export default function FloatingCharacters() {
                 style={{
                   left: c.x,
                   top: c.y + bobY,
-                  transform: `scaleX(${c.flipX ? -scale : scale}) scaleY(${scale})`,
+                  transform: `scale(${scale})`,
                 }}
                 onMouseDown={(e) => onMouseDown(e, c.id)}
                 onClick={() => handleClick(c.id)}
               >
-                {/* Speech bubble */}
+                {/* Speech bubble — never flipped */}
                 {c.bubbleVisible && c.bubble && (
                   <div
                     className="floating-bubble"
                     style={{
                       borderColor: char.color,
-                      transform: c.flipX ? 'translateX(-50%) scaleX(-1)' : 'translateX(-50%)',
+                      transform: 'translateX(-50%)',
                     }}
                   >
                     <span className="floating-bubble-name" style={{ color: char.color }}>
                       {char.name}
                     </span>
                     <span className="floating-bubble-text">
-                      {c.flipX ? <span style={{ display: 'inline-block', transform: 'scaleX(-1)' }}>{c.bubble}</span> : c.bubble}
+                      {c.bubble}
                     </span>
                   </div>
                 )}
@@ -471,7 +500,7 @@ export default function FloatingCharacters() {
                   </div>
                 )}
 
-                {/* Avatar */}
+                {/* Avatar — only the image flips */}
                 <img
                   src={char.avatar}
                   alt={char.name}
@@ -481,6 +510,7 @@ export default function FloatingCharacters() {
                   style={{
                     outline: `2px solid ${char.color}`,
                     filter: c.action === 'coffee' ? 'sepia(0.3) saturate(1.4)' : undefined,
+                    transform: c.flipX ? 'scaleX(-1)' : undefined,
                   }}
                   draggable={false}
                 />

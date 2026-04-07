@@ -83,6 +83,7 @@ export default function InterceptButton({
     setMessages((prev) => [...prev, userMsg])
     setInputValue('')
     setIsLoading(true)
+    document.body.classList.add('intercept-loading')
 
     const historyContext = messages
       .map((m) =>
@@ -136,6 +137,7 @@ export default function InterceptButton({
       setMessages((prev) => [...prev, ...fallback])
     }
     setIsLoading(false)
+    document.body.classList.remove('intercept-loading')
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
