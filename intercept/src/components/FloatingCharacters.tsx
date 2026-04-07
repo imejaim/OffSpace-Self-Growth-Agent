@@ -141,16 +141,32 @@ export default function FloatingCharacters() {
 
   // ── Detect typing in intercept inputs ──
   useEffect(() => {
+    const listeningBubbles: Record<string, string[]> = {
+      kobu: ['뭐지? 누구지?', '흠, 궁금한 게 있나?', '쉿! 귀 쫑긋'],
+      oh:   ['뭔가 궁금한 게 있나?', '오? 끼어드시나요?', '어디 한번 봅시다'],
+      jem:  ['쉿! 귀 쫑긋', '오오 뭐라고 쓰는 거예요?', '두근두근...!'],
+    }
+
     function onFocusIn(e: FocusEvent) {
       const el = e.target as HTMLElement
       if (el?.classList?.contains('intercept-input')) {
         typingRef.current = true
+        // Show listening bubbles
+        charsRef.current = charsRef.current.map((c) => {
+          const bubbles = listeningBubbles[c.id] ?? ['...']
+          const bubble = bubbles[Math.floor(Math.random() * bubbles.length)]
+          return { ...c, bubble, bubbleVisible: true }
+        })
+        setChars([...charsRef.current])
       }
     }
     function onFocusOut(e: FocusEvent) {
       const el = e.target as HTMLElement
       if (el?.classList?.contains('intercept-input')) {
         typingRef.current = false
+        // Hide listening bubbles
+        charsRef.current = charsRef.current.map((c) => ({ ...c, bubbleVisible: false }))
+        setChars([...charsRef.current])
       }
     }
     document.addEventListener('focusin', onFocusIn)
@@ -184,16 +200,15 @@ export default function FloatingCharacters() {
 
         // ── Determine target position ──
         if (isTyping) {
-          // Gather near the focused intercept input
+          // Gather far left of the input — outside Pretext OVERLAP_MARGIN (80px)
           const input = document.querySelector('.intercept-input:focus') as HTMLElement | null
           if (input) {
             const rect = input.getBoundingClientRect()
-            // Position to the LEFT of the input, not on top of it
-            const cx = rect.left - 40
+            // Stay well outside text area: 160px+ left of input edge
+            const cx = rect.left - 160
             const cy = rect.top + rect.height / 2
-            // Stack vertically to the left side
-            const yOffsets = [-50, 0, 50]
-            targetX = cx - 60 - idx * 20
+            const yOffsets = [-45, 5, 55]
+            targetX = clamp(cx - idx * 15, 10, rect.left - 120)
             targetY = cy + yOffsets[idx]
             action = 'listening'
           }
@@ -277,6 +292,11 @@ export default function FloatingCharacters() {
 
     function showNext() {
       if (!mountedRef.current) return
+      // Don't override listening bubbles while user is typing
+      if (typingRef.current) {
+        timeoutId = setTimeout(showNext, 2000)
+        return
+      }
       const msg = msgs[msgIndexRef.current % msgs.length]
       msgIndexRef.current++
 
@@ -289,8 +309,10 @@ export default function FloatingCharacters() {
 
       timeoutId = setTimeout(() => {
         if (!mountedRef.current) return
-        charsRef.current = charsRef.current.map((c) => ({ ...c, bubbleVisible: false }))
-        setChars([...charsRef.current])
+        if (!typingRef.current) {
+          charsRef.current = charsRef.current.map((c) => ({ ...c, bubbleVisible: false }))
+          setChars([...charsRef.current])
+        }
         timeoutId = setTimeout(showNext, 2000)
       }, 4000)
     }
