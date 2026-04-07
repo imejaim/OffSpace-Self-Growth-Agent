@@ -196,15 +196,16 @@ export default function FloatingCharacters() {
             action = 'listening'
           }
         } else if (mouse.active) {
-          // Stay to the SIDE of the cursor so they don't block clicks
-          // Characters hang out ~120-180px away, mostly to the left/right
+          // All characters gather to the RIGHT of the cursor so they don't block clicks
           const offsets = [
-            { ox: -160, oy: -30 },   // 코부장: left side
-            { ox: -130, oy: -80 },   // 오과장: upper-left
-            { ox: 150, oy: -40 },    // 젬대리: right side
+            { ox: 100, oy: -40 },    // 코부장: right-upper
+            { ox: 120, oy: 10 },     // 오과장: right-middle
+            { ox: 100, oy: 60 },     // 젬대리: right-lower
           ]
           const off = offsets[idx]
-          targetX = mouse.x + off.ox
+          // If too close to right edge, flip to left side
+          const rightEdge = mouse.x + off.ox + SIZE > w - 20
+          targetX = rightEdge ? mouse.x - off.ox - SIZE : mouse.x + off.ox
           targetY = mouse.y + off.oy
           if (action === 'listening') action = 'idle'
         } else {
