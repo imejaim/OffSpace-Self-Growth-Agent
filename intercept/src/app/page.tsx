@@ -1,37 +1,10 @@
 'use client'
 
 import Link from "next/link";
+import Image from "next/image";
 
-const TODAY = "2026년 4월 3일";
+const TODAY = "2026년 4월 7일";
 const TODAY_TOPIC_COUNT = 5;
-
-/* ── Character badge ── */
-function CharBadge({
-  name,
-  char,
-}: {
-  name: "ko" | "oh" | "jem" | "ceo";
-  char: string;
-}) {
-  return (
-    <span
-      className={`badge-${name}`}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "2rem",
-        height: "2rem",
-        borderRadius: "50%",
-        fontSize: "0.75rem",
-        fontWeight: 700,
-        flexShrink: 0,
-      }}
-    >
-      {char}
-    </span>
-  );
-}
 
 /* ── Step card ── */
 function StepCard({
@@ -159,50 +132,44 @@ export default function HomePage() {
               marginTop: "3rem",
               display: "flex",
               justifyContent: "center",
-              gap: "1.5rem",
+              gap: "2rem",
               flexWrap: "wrap",
             }}
           >
             {[
-              { char: "코", name: "ko" as const, label: "코부장" },
-              { char: "오", name: "oh" as const, label: "오과장" },
-              { char: "젬", name: "jem" as const, label: "젬대리" },
-            ].map(({ char, name, label }) => (
+              { name: "ko" as const, label: "코부장", avatar: "/characters/Ko-bujang.svg" },
+              { name: "oh" as const, label: "오과장", avatar: "/characters/Oh-gwajang.svg" },
+              { name: "jem" as const, label: "젬대리", avatar: "/characters/Jem-daeri.svg" },
+            ].map(({ name, label, avatar }) => (
               <div
                 key={name}
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
-                  gap: "0.4rem",
+                  gap: "0.5rem",
                 }}
               >
-                <div
+                <Image
+                  src={avatar}
+                  alt={label}
+                  width={64}
+                  height={64}
                   style={{
-                    width: "3.5rem",
-                    height: "3.5rem",
-                    borderRadius: "50%",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "1.125rem",
-                    fontWeight: 800,
-                    color: "#fff",
-                    background:
+                    borderRadius: "var(--radius-md)",
+                    imageRendering: "pixelated",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "0.8rem",
+                    fontWeight: 700,
+                    color:
                       name === "ko"
                         ? "var(--color-ko)"
                         : name === "oh"
                         ? "var(--color-oh)"
                         : "var(--color-jem)",
-                  }}
-                >
-                  {char}
-                </div>
-                <span
-                  style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 600,
-                    color: "var(--color-text-muted)",
                   }}
                 >
                   {label}
@@ -278,28 +245,39 @@ export default function HomePage() {
               {[
                 {
                   name: "ko" as const,
-                  char: "코",
                   label: "코부장",
-                  text: "오늘 GPT-5 발표 소식 봤어? 멀티모달 추론이 엄청 올라갔더라고.",
+                  avatar: "/characters/Ko-bujang.svg",
+                  text: "OpenAI $122B 펀딩 마감이 역대급인데, IPO도 올해 안에 간다더라.",
                 },
                 {
                   name: "oh" as const,
-                  char: "오",
                   label: "오과장",
-                  text: "봤지. 근데 우리 입장에선 오픈소스 모델 동향이 더 중요하지 않나?",
+                  avatar: "/characters/Oh-gwajang.svg",
+                  text: "반도체 매출 49% 급증 전망까지. 근데 Anthropic Conway 소식 봤어요?",
                 },
                 {
                   name: "jem" as const,
-                  char: "젬",
                   label: "젬대리",
-                  text: "저는 Gemini 2.5 Pro 쪽이 더 실용적인 것 같던데요!",
+                  avatar: "/characters/Jem-daeri.svg",
+                  text: "Gemma 4가 Apache 2.0으로 바뀌었어요! 드디어 진짜 오픈소스!",
                 },
-              ].map(({ name, char, label, text }) => (
+              ].map(({ name, label, avatar, text }) => (
                 <div
                   key={name}
                   style={{ display: "flex", gap: "0.75rem", alignItems: "flex-start" }}
                 >
-                  <CharBadge name={name} char={char} />
+                  <Image
+                    src={avatar}
+                    alt={label}
+                    width={28}
+                    height={28}
+                    style={{
+                      borderRadius: "4px",
+                      imageRendering: "pixelated",
+                      flexShrink: 0,
+                      marginTop: "2px",
+                    }}
+                  />
                   <div style={{ flex: 1 }}>
                     <span
                       style={{

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
+import SplineCharacter from '@/components/SplineCharacter'
 
 export const metadata: Metadata = {
   title: '서비스 소개 — INTERCEPT',
@@ -11,6 +13,7 @@ interface Character {
   role: string
   color: string
   description: string
+  avatar: string
 }
 
 const CHARACTERS: Character[] = [
@@ -19,18 +22,21 @@ const CHARACTERS: Character[] = [
     role: '개발부장',
     color: 'var(--color-ko)',
     description: '기술 트렌드의 큰 그림을 그리는 베테랑. 복잡한 기술 이슈를 꿰뚫는 날카로운 시각으로 팀을 이끈다.',
+    avatar: '/characters/kobujang.svg',
   },
   {
     name: '오과장',
     role: '기획과장',
     color: 'var(--color-oh)',
     description: '비즈니스 임팩트와 시장 동향에 밝은 전략가. AI 기술이 실제 사업에 미치는 영향을 가장 먼저 파악한다.',
+    avatar: '/characters/ogwajang.svg',
   },
   {
     name: '젬대리',
     role: '개발대리',
     color: 'var(--color-jem)',
     description: '최신 기술에 열정적인 주니어 개발자. 새로운 것이라면 무조건 써봐야 직성이 풀리는 탐구형 인재.',
+    avatar: '/characters/jemdaeri.svg',
   },
 ]
 
@@ -223,31 +229,42 @@ export default function AboutPage() {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '10px',
+                    gap: '12px',
+                    marginBottom: '12px',
                   }}
                 >
-                  <span
+                  <Image
+                    src={char.avatar}
+                    alt={char.name}
+                    width={48}
+                    height={48}
                     style={{
-                      background: char.color,
-                      color: '#fff',
-                      borderRadius: 'var(--radius-pill)',
-                      padding: '4px 16px',
-                      fontSize: '0.875rem',
-                      fontWeight: 800,
+                      borderRadius: 'var(--radius-sm)',
+                      imageRendering: 'pixelated',
+                      flexShrink: 0,
                     }}
-                  >
-                    {char.name}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '0.8125rem',
-                      color: 'var(--color-text-muted)',
-                      fontWeight: 600,
-                    }}
-                  >
-                    {char.role}
-                  </span>
+                  />
+                  <div>
+                    <span
+                      style={{
+                        fontSize: '1rem',
+                        fontWeight: 800,
+                        color: char.color,
+                      }}
+                    >
+                      {char.name}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '0.8125rem',
+                        color: 'var(--color-text-muted)',
+                        fontWeight: 600,
+                        marginLeft: '8px',
+                      }}
+                    >
+                      {char.role}
+                    </span>
+                  </div>
                 </div>
                 <p
                   style={{
@@ -261,6 +278,48 @@ export default function AboutPage() {
                 </p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── 3D 캐릭터 쇼케이스 ───────────────────────────────── */}
+        <section style={{ marginBottom: 'var(--space-2xl)' }}>
+          <h2
+            style={{
+              fontSize: '1.25rem',
+              fontWeight: 800,
+              color: 'var(--color-navy)',
+              margin: '0 0 var(--space-md)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            3D로 만나는 Offspace
+          </h2>
+          <p
+            style={{
+              fontSize: '0.9375rem',
+              color: 'var(--color-text-muted)',
+              margin: '0 0 var(--space-lg)',
+              lineHeight: 1.6,
+            }}
+          >
+            Spline으로 구현한 입체 캐릭터 — 아직 실험 중입니다. 로딩이 느릴 수 있어요.
+          </p>
+          <div
+            className="card"
+            style={{
+              padding: 'var(--space-xl)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: 280,
+            }}
+          >
+            <SplineCharacter
+              fallbackSrc="/characters/kobujang.svg"
+              fallbackAlt="코부장 3D"
+              size={240}
+              accentColor="var(--color-ko)"
+            />
           </div>
         </section>
 
