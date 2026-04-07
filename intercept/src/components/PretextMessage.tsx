@@ -134,12 +134,15 @@ export default function PretextMessage({ text, children }: Props) {
         }
       }
 
+      // Disable Pretext when intercept inline is open inside this message
+      const hasInterceptOpen = wrapper.querySelector('.intercept-inline') !== null
+
       // Only count obstacles that actually overlap the text column width
       const textObstacles = obstacles.filter(o =>
         o.x + o.width + H_PAD > 0 && o.x - H_PAD < containerWidth
       )
 
-      if (textObstacles.length === 0) {
+      if (hasInterceptOpen || textObstacles.length === 0) {
         // No characters actually overlap text — use normal rendering
         if (activeRef.current) {
           activeRef.current = false

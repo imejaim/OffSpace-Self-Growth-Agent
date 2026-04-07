@@ -452,6 +452,8 @@ a {
   border: 1px solid #e8e8e8;
   border-radius: 10px;
   animation: intercept-inline-in 0.2s ease-out;
+  position: relative;
+  z-index: 20;
 }
 
 @keyframes intercept-inline-in {
