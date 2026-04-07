@@ -802,12 +802,10 @@ a {
 
 .floating-bubble {
   position: absolute;
-  bottom: 56px;
-  left: 50%;
-  transform: translateX(-50%);
-  min-width: 160px;
-  max-width: 240px;
-  background: rgba(255, 255, 255, 0.93);
+  bottom: 10px;
+  min-width: 140px;
+  max-width: 220px;
+  background: rgba(255, 255, 255, 0.95);
   border: 2px solid #ccc;
   border-radius: 10px;
   padding: 7px 10px 6px;
@@ -816,17 +814,7 @@ a {
   animation: bubble-in 0.2s ease-out;
   white-space: normal;
   word-break: keep-all;
-}
-
-.floating-bubble::after {
-  content: '';
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 6px solid transparent;
-  border-top-color: rgba(255,255,255,0.93);
-  filter: drop-shadow(0 1px 0 rgba(0,0,0,0.08));
+  z-index: 10;
 }
 
 .floating-bubble-name {

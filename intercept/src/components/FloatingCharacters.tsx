@@ -202,18 +202,24 @@ export default function FloatingCharacters() {
         const isLoading = document.body.classList.contains('intercept-loading')
 
         if (isLoading) {
-          // Walk on the original message text while waiting for AI response
-          const msgEl = document.querySelector('.intercept-inline')?.closest('.conversation-line') as HTMLElement | null
-          if (msgEl) {
-            const rect = msgEl.getBoundingClientRect()
-            // Each character walks across the text area at different speeds
-            const phase = (now / 3000 + idx * 0.7) % 1  // 0→1 cycle, offset per char
-            const walkX = rect.left + phase * (rect.width - SIZE)
-            const walkY = rect.top + 10 + idx * 8  // stagger vertically
-            targetX = walkX
-            targetY = walkY
+          // Gather near the intercept-inline area in a triangle while waiting
+          const inlineEl = document.querySelector('.intercept-inline') as HTMLElement | null
+          if (inlineEl) {
+            const rect = inlineEl.getBoundingClientRect()
+            // Triangle formation around the input area (like sitting around a table)
+            // One char above-left, one above-right, one below-center
+            const triangleOffsets = [
+              { ox: -70, oy: -50 },   // 코부장: above-left
+              { ox: rect.width + 20, oy: -40 },  // 오과장: above-right
+              { ox: rect.width / 2 - SIZE / 2, oy: rect.height + 10 },  // 젬대리: below-center
+            ]
+            const off = triangleOffsets[idx]!
+            // Add gentle sway animation
+            const sway = Math.sin(now / 1500 + idx * 2) * 8
+            targetX = clamp(rect.left + off.ox + sway, 10, w - SIZE - 10)
+            targetY = clamp(rect.top + off.oy, 10, h - SIZE - 10)
             action = 'walking'
-            // Show excited bubbles
+            // Show loading bubbles
             if (!c.bubbleVisible) {
               const loadingBubbles = [
                 ['흠...', '좋은 질문이야', '잠깐만...'],
@@ -229,27 +235,32 @@ export default function FloatingCharacters() {
             }
           }
         } else if (isTyping) {
-          // Gather far left of the input — outside Pretext OVERLAP_MARGIN (80px)
+          // Gather left of the input in triangle — outside Pretext OVERLAP_MARGIN (80px)
           const input = document.querySelector('.intercept-input:focus') as HTMLElement | null
           if (input) {
             const rect = input.getBoundingClientRect()
-            // Stay well outside text area: 160px+ left of input edge
-            const cx = rect.left - 160
+            // Triangle formation to the left — spread out to avoid bubble overlap
+            const cx = rect.left - 120
             const cy = rect.top + rect.height / 2
-            const yOffsets = [-45, 5, 55]
-            targetX = clamp(cx - idx * 15, 10, rect.left - 120)
-            targetY = cy + yOffsets[idx]
+            const triangleOffsets = [
+              { ox: 20, oy: -70 },    // 코부장: upper-right
+              { ox: -50, oy: -10 },   // 오과장: far-left center
+              { ox: 20, oy: 60 },     // 젬대리: lower-right
+            ]
+            const off = triangleOffsets[idx]!
+            targetX = clamp(cx + off.ox, 10, rect.left - 90)
+            targetY = cy + off.oy
             action = 'listening'
           }
         } else if (mouse.active) {
-          // All characters gather to the RIGHT of the cursor so they don't block clicks
-          const offsets = [
-            { ox: 100, oy: -40 },    // 코부장: right-upper
-            { ox: 120, oy: 10 },     // 오과장: right-middle
-            { ox: 100, oy: 60 },     // 젬대리: right-lower
+          // Triangle formation to the right of cursor
+          const triangleOffsets = [
+            { ox: 90, oy: -50 },     // 코부장: upper-right
+            { ox: 130, oy: 10 },     // 오과장: mid-far-right
+            { ox: 90, oy: 60 },      // 젬대리: lower-right
           ]
-          const off = offsets[idx]
-          // If too close to right edge, flip to left side
+          const off = triangleOffsets[idx]!
+          // If too close to right edge, mirror to left
           const rightEdge = mouse.x + off.ox + SIZE > w - 20
           targetX = rightEdge ? mouse.x - off.ox - SIZE : mouse.x + off.ox
           targetY = mouse.y + off.oy
@@ -463,6 +474,23 @@ export default function FloatingCharacters() {
 
             const actionEmoji = ACTION_EMOJIS[c.action]
 
+            // Determine bubble direction based on screen position
+            const screenMidX = window.innerWidth / 2
+            const bubbleOnRight = c.x < screenMidX
+            const bubbleStyle: React.CSSProperties = bubbleOnRight
+              ? { // Bubble to the RIGHT of character
+                  borderColor: char.color,
+                  left: 'auto',
+                  right: '-10px',
+                  transform: 'translateX(100%)',
+                }
+              : { // Bubble to the LEFT of character
+                  borderColor: char.color,
+                  left: '-10px',
+                  right: 'auto',
+                  transform: 'translateX(-100%)',
+                }
+
             return (
               <div
                 key={c.id}
@@ -475,14 +503,11 @@ export default function FloatingCharacters() {
                 onMouseDown={(e) => onMouseDown(e, c.id)}
                 onClick={() => handleClick(c.id)}
               >
-                {/* Speech bubble — never flipped */}
+                {/* Speech bubble — positioned based on screen location */}
                 {c.bubbleVisible && c.bubble && (
                   <div
                     className="floating-bubble"
-                    style={{
-                      borderColor: char.color,
-                      transform: 'translateX(-50%)',
-                    }}
+                    style={bubbleStyle}
                   >
                     <span className="floating-bubble-name" style={{ color: char.color }}>
                       {char.name}
