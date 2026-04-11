@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/AuthProvider";
+import { LoginButton } from "@/components/LoginButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +30,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col" style={{ background: "var(--color-bg)" }}>
+        <AuthProvider>
         {/* ── Header ── */}
         <header
           style={{
@@ -74,6 +77,7 @@ export default function RootLayout({
             <nav style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
               <a href="/teatime" className="nav-link">티타임</a>
               <a href="/about" className="nav-link">소개</a>
+              <LoginButton />
             </nav>
           </div>
         </header>
@@ -110,6 +114,7 @@ export default function RootLayout({
             </div>
           </div>
         </footer>
+        </AuthProvider>
       </body>
     </html>
   );
