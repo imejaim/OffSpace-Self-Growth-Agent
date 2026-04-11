@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+import { deductCredit, refundCredit } from '@/lib/credits'
+import { rateLimit } from '@/lib/rate-limit'
+import { getSessionInfo, checkInterceptAllowance } from '@/lib/auth-helpers'
 
+export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const SYSTEM_PROMPT = `당신은 INTERCEPT라는 AI 뉴스 토론 플랫폼의 세 캐릭터입니다. 사용자가 AI 캐릭터들의 대화에 끼어들었을 때, 해당 캐릭터들이 자연스럽게 반응해야 합니다.
@@ -28,6 +33,7 @@ interface InterceptRequest {
   conversationContext: string
   userMessage: string
   characterId?: string
+  sessionId?: string
 }
 
 interface CharacterResponse {
@@ -60,8 +66,14 @@ function buildUserPrompt(
 }
 
 export async function POST(request: NextRequest) {
-  const apiKey = process.env.GEMINI_API_KEY
+  // Rate limiting (IP-based)
+  const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown'
+  const { success: rateLimitOk } = rateLimit(ip)
+  if (!rateLimitOk) {
+    return NextResponse.json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' }, { status: 429 })
+  }
 
+  const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) {
     return NextResponse.json(
       { error: 'API 키가 설정되지 않았습니다. 잠시 후 다시 시도해 주세요.' },
@@ -79,13 +91,72 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { conversationContext, userMessage, characterId } = body
+  const { conversationContext, userMessage, characterId, sessionId } = body
 
   if (!conversationContext || !userMessage) {
     return NextResponse.json(
       { error: '대화 맥락과 메시지를 모두 입력해 주세요.' },
       { status: 400 }
     )
+  }
+
+  // Auth + tier check
+  const { userId, tier } = await getSessionInfo(request)
+  const resolvedSessionId = sessionId ?? null
+
+  // Fetch usage counts
+  const supabase = await createClient()
+  let dailyUsed = 0
+  let monthlyUsed = 0
+  let credits = 0
+
+  if (userId) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('daily_used, monthly_used, credits')
+      .eq('id', userId)
+      .single()
+
+    dailyUsed = profile?.daily_used ?? 0
+    monthlyUsed = profile?.monthly_used ?? 0
+    credits = profile?.credits ?? 0
+  } else if (resolvedSessionId) {
+    const { count } = await supabase
+      .from('intercepts')
+      .select('id', { count: 'exact', head: true })
+      .eq('session_id', resolvedSessionId)
+      .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+    dailyUsed = count ?? 0
+  }
+
+  // payperuse: check credits
+  if (tier === 'payperuse') {
+    if (credits <= 0) {
+      return NextResponse.json(
+        { error: '크레딧이 부족합니다. 크레딧을 충전해 주세요.' },
+        { status: 402 }
+      )
+    }
+  } else {
+    const allowance = checkInterceptAllowance(userId, tier, dailyUsed, monthlyUsed)
+    if (!allowance.allowed) {
+      return NextResponse.json({ error: allowance.reason }, { status: 402 })
+    }
+  }
+
+  // For payperuse, generate a placeholder intercept id for credit deduction
+  // We deduct before AI call, refund on failure
+  const interceptId = crypto.randomUUID()
+  let creditDeducted = false
+
+  if (tier === 'payperuse' && userId) {
+    try {
+      await deductCredit(userId, interceptId)
+      creditDeducted = true
+    } catch (err) {
+      console.error('[intercept] deductCredit failed:', err)
+      return NextResponse.json({ error: '크레딧 차감에 실패했습니다.' }, { status: 500 })
+    }
   }
 
   try {
@@ -117,6 +188,13 @@ export async function POST(request: NextRequest) {
     if (!geminiRes.ok) {
       const errText = await geminiRes.text()
       console.error('[Gemini API Error]', geminiRes.status, errText)
+
+      if (creditDeducted && userId) {
+        await refundCredit(userId, interceptId).catch((e) =>
+          console.error('[intercept] refundCredit failed:', e)
+        )
+      }
+
       return NextResponse.json(
         { error: 'AI 서비스에 일시적인 문제가 발생했습니다. 잠시 후 다시 시도해 주세요.' },
         { status: 502 }
@@ -127,7 +205,6 @@ export async function POST(request: NextRequest) {
     const rawText: string =
       geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
 
-    // Strip possible markdown code fences
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 
     let responses: CharacterResponse[]
@@ -135,14 +212,63 @@ export async function POST(request: NextRequest) {
       responses = JSON.parse(cleaned)
     } catch {
       console.error('[Gemini Parse Error] raw:', rawText)
+
+      if (creditDeducted && userId) {
+        await refundCredit(userId, interceptId).catch((e) =>
+          console.error('[intercept] refundCredit failed:', e)
+        )
+      }
+
       return NextResponse.json(
         { error: 'AI 응답을 처리하는 중 오류가 발생했습니다. 다시 시도해 주세요.' },
         { status: 500 }
       )
     }
 
+    // Save intercept to DB
+    const interceptData: Record<string, unknown> = {
+      id: interceptId,
+      user_message: userMessage,
+      ai_responses: responses,
+      conversation_context: conversationContext,
+      visibility: 'private',
+    }
+
+    if (userId) {
+      interceptData.user_id = userId
+    } else if (resolvedSessionId) {
+      interceptData.session_id = resolvedSessionId
+    }
+
+    await supabase.from('intercepts').insert(interceptData)
+
+    // Increment usage counters atomically to prevent race conditions
+    if (userId) {
+      const isMonthlyTier = tier === 'basic' || tier === 'pro'
+      if (tier === 'free' || isMonthlyTier) {
+        await supabase.rpc('increment_usage', {
+          p_user_id: userId,
+          p_field: isMonthlyTier ? 'monthly_used' : 'daily_used',
+        })
+      }
+    }
+
+    console.log(JSON.stringify({
+      type: 'intercept',
+      userId,
+      tier,
+      interceptId,
+      timestamp: new Date().toISOString(),
+    }))
+
     return NextResponse.json({ responses })
   } catch (err) {
+    if (creditDeducted && userId) {
+      await refundCredit(userId, interceptId).catch((e) =>
+        console.error('[intercept] refundCredit failed:', e)
+      )
+    }
+
     console.error('[Intercept Route Error]', err)
     return NextResponse.json(
       { error: '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.' },

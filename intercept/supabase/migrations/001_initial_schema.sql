@@ -242,6 +242,28 @@ END;
 $$;
 
 -- =============================================================================
+-- RPC: increment_usage
+-- Atomically increments daily_used or monthly_used for a user profile.
+-- Returns the new counter value.
+-- =============================================================================
+
+CREATE OR REPLACE FUNCTION increment_usage(p_user_id UUID, p_field TEXT)
+RETURNS INTEGER AS $$
+DECLARE
+  v_new_value INTEGER;
+BEGIN
+  IF p_field = 'daily_used' THEN
+    UPDATE profiles SET daily_used = daily_used + 1 WHERE id = p_user_id RETURNING daily_used INTO v_new_value;
+  ELSIF p_field = 'monthly_used' THEN
+    UPDATE profiles SET monthly_used = monthly_used + 1 WHERE id = p_user_id RETURNING monthly_used INTO v_new_value;
+  ELSE
+    RAISE EXCEPTION 'Invalid field: %', p_field;
+  END IF;
+  RETURN v_new_value;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- =============================================================================
 -- RPC: refund_credit
 -- Atomically refunds 1 credit to a user and records a 'refund' transaction.
 -- Returns the new credit balance.

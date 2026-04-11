@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
 import { LoginButton } from "@/components/LoginButton";
+import { NavMenu } from "@/components/NavMenu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -74,11 +75,7 @@ export default function RootLayout({
             </a>
 
             {/* Nav */}
-            <nav style={{ display: "flex", gap: "1.5rem", alignItems: "center" }}>
-              <a href="/teatime" className="nav-link">티타임</a>
-              <a href="/about" className="nav-link">소개</a>
-              <LoginButton />
-            </nav>
+            <NavMenu />
           </div>
         </header>
 

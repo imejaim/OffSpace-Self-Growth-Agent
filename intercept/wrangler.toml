@@ -1,0 +1,17 @@
+# Required secrets (set via: wrangler secret put <KEY>):
+# - PORTONE_TEST_SECRET_KEY
+# - PORTONE_WEBHOOK_SECRET
+# - PAYPAL_CLIENT_SECRET
+# - GEMINI_API_KEY
+# - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (public, can stay in [vars] if needed)
+
+name = "intercept"
+compatibility_date = "2026-04-11"
+compatibility_flags = ["nodejs_compat"]
+
+# Workers AI binding for Gemma 4 model access
+[ai]
+binding = "AI"
+
+[vars]
+NEXT_PUBLIC_SITE_URL = "https://interceptnews.app"

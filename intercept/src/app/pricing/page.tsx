@@ -1,4 +1,5 @@
 import SubscribeButton from './SubscribeButton'
+import PaymentSelector from '@/components/PaymentSelector'
 
 export const metadata = {
   title: 'Pricing — Intercept',
@@ -173,6 +174,22 @@ export default function PricingPage() {
           >
             Buy credits →
           </a>
+        </div>
+      </div>
+
+      {/* Korean payment section */}
+      <div className="mx-auto max-w-4xl mb-14">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+          <div className="mb-5">
+            <span className="inline-block rounded-sm bg-zinc-800 border border-zinc-700 px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-zinc-500 mb-3">
+              한국 전용
+            </span>
+            <h2 className="text-lg font-semibold text-white">한국 간편결제</h2>
+            <p className="text-sm text-zinc-400 mt-1">
+              카카오페이 · 네이버페이 · 카드 · 계좌이체로 크레딧을 충전하세요.
+            </p>
+          </div>
+          <PaymentSelector />
         </div>
       </div>
 
