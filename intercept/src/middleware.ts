@@ -2,10 +2,8 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-// ADDED: Cloudflare Workers는 Edge Runtime만 지원
-export const runtime = 'edge'
-
-export async function proxy(request: NextRequest) {
+// MODIFIED: proxy.ts → middleware.ts 변환 (Cloudflare Edge Runtime 호환)
+export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
   })
