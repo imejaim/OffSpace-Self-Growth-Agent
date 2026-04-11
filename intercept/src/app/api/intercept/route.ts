@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { deductCredit, refundCredit } from '@/lib/credits'
 import { rateLimit } from '@/lib/rate-limit'
 import { getSessionInfo, checkInterceptAllowance } from '@/lib/auth-helpers'
+import { generateInterceptResponse } from '@/lib/ai-router'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -71,14 +72,6 @@ export async function POST(request: NextRequest) {
   const { success: rateLimitOk } = rateLimit(ip)
   if (!rateLimitOk) {
     return NextResponse.json({ error: '요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' }, { status: 429 })
-  }
-
-  const apiKey = process.env.GEMINI_API_KEY
-  if (!apiKey) {
-    return NextResponse.json(
-      { error: 'API 키가 설정되지 않았습니다. 잠시 후 다시 시도해 주세요.' },
-      { status: 500 }
-    )
   }
 
   let body: InterceptRequest
@@ -160,34 +153,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: buildUserPrompt(conversationContext, userMessage, characterId) },
-              ],
-            },
-          ],
-          systemInstruction: {
-            parts: [{ text: SYSTEM_PROMPT }],
-          },
-          generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 1024,
-          },
-        }),
-      }
-    )
-
-    if (!geminiRes.ok) {
-      const errText = await geminiRes.text()
-      console.error('[Gemini API Error]', geminiRes.status, errText)
+    let rawText: string
+    try {
+      rawText = await generateInterceptResponse(
+        SYSTEM_PROMPT,
+        buildUserPrompt(conversationContext, userMessage, characterId)
+      )
+    } catch (aiErr) {
+      console.error('[AI Router Error]', aiErr)
 
       if (creditDeducted && userId) {
         await refundCredit(userId, interceptId).catch((e) =>
@@ -200,10 +173,6 @@ export async function POST(request: NextRequest) {
         { status: 502 }
       )
     }
-
-    const geminiData = await geminiRes.json()
-    const rawText: string =
-      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
 
     const cleaned = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
 

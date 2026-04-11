@@ -1,12 +1,12 @@
-# 세션 핸드오프 — 2026-04-07
+# 세션 핸드오프 — 2026-04-11
 
 > 다음 세션에서 이 문서를 읽고 이어서 진행하세요.
 
 ## 프로젝트 개요
 
-**Offspace Self-Growth Agent** — 스스로 진화하는 AI 에이전트 시스템.
-매일 AI 동향을 파악하고 코부장·오과장·젬대리 3인 티타임 대화로 정리.
+**Intercept (끼어들기)** — AI 캐릭터들의 뉴스 대화에 사용자가 끼어드는 인터랙티브 뉴스 플랫폼.
 GitHub: https://github.com/imejaim/OffSpace-Self-Growth-Agent
+도메인: https://interceptnews.app (Cloudflare, 2026-04-11 구매)
 
 ---
 
@@ -16,65 +16,87 @@ GitHub: https://github.com/imejaim/OffSpace-Self-Growth-Agent
 
 | 기능 | 상태 |
 |------|------|
-| 티타임 대화 페이지 (MD 감성 디자인) | ✅ 정상 |
-| 끼어들기 기능 (Gemini 2.5-flash API) | ✅ 정상 |
+| 티타임 대화 페이지 (MD 감성 디자인) | ��� 정상 |
+| 끼어들기 기능 (Gemini 2.5-flash) | ��� 정상 |
 | 캐릭터 인터랙션 (FloatingCharacters.tsx) | ✅ 정상 |
-| Pretext displacement 효과 | ✅ 정상 (디버깅 완료) |
-| 빌드 (`npm run build`) | ✅ PASS |
+| Supabase Auth (Google OAuth + Anonymous) | ✅ 구현 완료 |
+| PayPal 결제 (구독 + 크레딧) | ✅ 샌드박스 |
+| **포트원 V2 결제 (간편결제/카드/이체/휴대폰)** | ✅ 테스트 모드 (NEW) |
+| 소셜 피드 (공개/팔로우) | ✅ 구현 완료 |
+| 마이페이지 (끼어들기 히스토리) | ✅ 구현 완료 |
+| 소식지 컴포넌트 (EditableTopic, GossipSection) | ✅ 구현 완료 |
+| **Cloudflare Pages 배포 설정** | ✅ wrangler.toml + @opennextjs/cloudflare (NEW) |
+| 빌드 (`npm run build`) | ✅ PASS (27 라우트) |
+
+### 인프라 / 외부 서비스
+
+| 서비스 | 상태 | 비고 |
+|--------|------|------|
+| Supabase (us-east-1) | 프로젝트 생성됨 | DB 마이그레이션 아직 미적용 |
+| PayPal Sandbox | 앱 생성됨 | Billing Plan ID 미생성 |
+| 포트원 V2 | 테스트 채널 연결 | 토스페이먼츠 테스트 PG |
+| Cloudflare Pages | wrangler.toml 준비 | 프로젝트 연결 + 도메인 설정 필요 |
+| interceptnews.app | 도메인 구매 완료 | Cloudflare Registrar |
 
 ### 캐릭터 시스템
 
-| 캐릭터 | 파일 | 색상 | 특징 |
+| 캐릭터 | 파일 | 색상 | 역할 |
 |--------|------|------|------|
-| 코부장 | `Ko-bujang.svg` | 오렌지 곰고양이 | 빨간 넥타이, 듬직한 맏형 |
-| 오과장 | `Oh-gwajang.svg` | 초록 개구리 | 안경, 현실주의 기획자 |
-| 젬대리 | `Jem-daeri.svg` | 인디고 고양이 | 호기심 막내, 별 반짝 |
+| 코부장 | `Ko-bujang.svg` | 오렌지 곰고양이 | 테크 분석, 팀 리드 |
+| 오과장 | `Oh-gwajang.svg` | 초록 개구리 | 팩트/숫자, 기획 |
+| 젬대리 | `Jem-daeri.svg` | 인디고 고양이 | 커뮤니티, 뒷담화 |
 
 픽셀아트 스타일 — `imageRendering: 'pixelated'` 적용
 
-### 캐릭터 인터랙션 (2026-04-07 완성)
-- 마우스 커서 추적 — 120~180px 옆 위치 유지
-- 클릭 액션 순환: 속닥속닥 → 커피 → 신남
-- 끼어들기 입력 포커스 시 왼쪽에 집결 (listening 자세)
-- 가까이 있으면 자동 whispering (120~180px 거리)
-- 모바일: 터치 기반 포지션 추적
+---
 
-### Pretext 라이브러리 (`@chenglou/pretext@0.0.4`)
-- `CharacterPositionContext` — 캐릭터 위치 전역 공유
-- `PretextMessage` — 캐릭터 근처 텍스트 자동 displacement
-- `teatime/page.tsx`에 적용 완료
-- 디버깅 완료, displacement 효과 동작 확인
+## 울트라플랜 Phase 진행 상황
 
-### 티타임 발행 현황
+| Phase | 내용 | 상태 |
+|-------|------|------|
+| Phase 0.0 | Supabase SSR + proxy.ts PoC | ✅ 코드 완료 |
+| Phase 0 | 인프라 (DB + Auth + Rate Limit) | ✅ 코드 완료 |
+| Phase 1 | 로그인 시스템 | �� 코드 완료 |
+| Phase 2 | PayPal 결제 | ✅ 코드 완료 |
+| Phase 3 | 소셜 기능 (Feed + Follow) | ✅ ���드 완료 |
+| Phase 4 | 소식지 구조 개편 | ✅ 컴포넌트 완료 |
+| Phase 5 | 포트원 V2 간편결제 | ✅ 코드 완료 + 보안 리뷰 통과 |
 
-| 날짜 | 파일 | 상태 |
-|------|------|------|
-| 2026-04-02 | `output/teatime/2026-04-02_AI동향_티타임.md` | 발행 완료 |
-| 2026-04-03 | `output/teatime/2026-04-03_AI동향_티타임.md` | 발행 완료 |
-| 2026-04-05 | `output/teatime/야식타임_2026-04-05.md` | 발행 완료 |
-| 2026-04-06 | `output/teatime/티타임_2026-04-06.md` | 발행 완료 |
-| 2026-04-07 | `output/teatime/티타임_2026-04-07.md` | 발행 완료 (Vol.5) |
+**전 Phase 코드 구현 완료. Supabase DB 마이그레이션 + 외부 서비스 설정 후 실사용 가능.**
 
 ---
 
-## 다음 해야 할 것들 (우선순위 순)
+## 대표님 해야 할 것 (외부 대시보드 작업)
+
+| # | 할 일 | 어디서 |
+|---|-------|--------|
+| 1 | 포트원 웹훅 URL 등록 | admin.portone.io → 웹훅 설정 |
+| 2 | 포트원 웹훅 시크릿 복사 → .env.local | 위 화면에서 발급 |
+| 3 | Cloudflare Pages 프로젝트 연결 | dash.cloudflare.com → Pages |
+| 4 | Supabase Google OAuth 설정 | supabase.com → Auth → Providers |
+| 5 | Supabase DB 마이그레이션 실행 | supabase CLI or Dashboard |
+| 6 | PayPal Billing Plan ID 생성 | developer.paypal.com |
+
+---
+
+## 다음 해야 할 것들 (코부장 담당)
 
 ### 1순위 — 바로 시작 가능
-- [ ] **4/8 티타임 콘텐츠 생성** — `python scripts/teatime-skeleton.py 2026-04-08` 먼저 실행
-- [ ] **모바일 반응형 최종 점검** — FloatingCharacters 터치 동작, 캐릭터 위치
+- [ ] Workers AI (Gemma 4) 라우팅 구현 (진행 중)
+- [ ] DB 마이그레이션 후 실제 Auth 플로우 E2E 테스트
+- [ ] 끼어들기 → 공개피드 전체 플로우 테스트
 
-### 2순위 — 개발 작업
-- [ ] **Pretext markdown-chat** — 끼어들기를 마크다운 챗 형식으로 표현
-  - 현재 끼어들기는 팝업 응답 형식
-  - 목표: pretext 마크다운 챗으로 대화 흐름 자연스럽게
-- [ ] **Spline 3D 캐릭터 탐색** — 현재 픽셀아트 SVG 유지 vs 3D 전환 검토
-  - 대표님 결정 필요
-- [ ] **실 사용자 테스트** — 끼어들기 10회 내부 테스트 → 지인 5명 테스트
+### 2순위 — 대표님 외부 설정 완료 후
+- [ ] Cloudflare Pages 첫 배포 (`npm run deploy`)
+- [ ] interceptnews.app 커스텀 도메인 연결 확인
+- [ ] 포트원 실결제 테스트 (샌드박스)
+- [ ] PayPal 구독 Billing Plan 연결
 
-### 3순위 — 검토/결정 필요
-- [ ] **끼어들기 소셜 기능** — 공개/비공개, 베스트 끼어들기, 중첩 응답
-- [ ] **주제 확장** — 스포츠, 연예, K-pop 등
-- [ ] **결제 시스템** — PayPal 연동 (마무리 필요)
+### 3순위 — 폴리싱
+- [ ] 모바일 반응형 최종 점검
+- [ ] 소식지 생성 API (`/api/newsletter/generate`) 구현
+- [ ] 뒷담화 섹션 데이터 파이프라인 (Reddit/X/YouTube)
+- [ ] 일별 사용량 리셋 크론잡
 
 ---
 
@@ -82,45 +104,57 @@ GitHub: https://github.com/imejaim/OffSpace-Self-Growth-Agent
 
 | 이슈 | 상태 | 비고 |
 |------|------|------|
-| 티타임 자동화 (PM2 트리거) | 수동 운영 중 | git push 인증 문제 미해결 |
+| in-memory rate limiter | 서버리스에서 무효 | Cloudflare KV 또는 Upstash Redis 전환 필요 |
 | 모바일 FloatingCharacters | 미검증 | 터치 코드는 있음, 실기기 확인 필요 |
-| Spline 3D 호환성 | 미검토 | React 19 + Next.js 16 환경 확인 필요 |
+| 티타임 자동화 | 수동 운영 중 | git push 인증 미해결 |
 
 ---
 
-## 세션별 완료 내역 (요약)
+## 환경변수 요약
+
+### intercept/.env.local (현재)
+- `GEMINI_API_KEY` ✅
+- `NEXT_PUBLIC_PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` ✅
+- `NEXT_PUBLIC_SUPABASE_URL` / `PUBLISHABLE_KEY` ✅
+- `NEXT_PUBLIC_PORTONE_STORE_ID` / `CHANNEL_KEY` ✅ (NEW)
+- `PORTONE_TEST_SECRET_KEY` / `TEST_CLIENT_KEY` ✅ (NEW)
+- `PORTONE_WEBHOOK_SECRET` ⚠️ PLACEHOLDER (포트원 콘솔에서 발급 필요)
+
+### wrangler.toml secrets (배포 시 설정)
+- `PORTONE_TEST_SECRET_KEY`
+- `PORTONE_WEBHOOK_SECRET`
+- `PAYPAL_CLIENT_SECRET`
+- `GEMINI_API_KEY`
+
+---
+
+## 세션별 완료 내역
 
 | 세션 | 날짜 | 주요 완료 |
 |------|------|----------|
 | 세션 1 | 2026-04-02~03 | CLAUDE.md, 티타임 Vol.1~2, 사업분석 Go판정 |
-| 세션 2 | 2026-04-03 | INTERCEPT MVP, MD감성 디자인, 끼어들기 API, 캐릭터 SVG |
-| 세션 3 | 2026-04-04 | 캐릭터 픽셀아트 전 페이지 반영 |
-| 세션 4 | 2026-04-05 | 파일명 변경, 젬대리 SVG 수정, CHARACTER_PROFILES.md, 야식타임 |
+| 세션 2 | 2026-04-03 | INTERCEPT MVP, MD감성 디자인, 끼어들기 API |
+| ��션 3 | 2026-04-04 | 캐릭터 픽셀아트 전 페이지 반영 |
+| 세션 4 | 2026-04-05 | 파일명 변경, 젬대리 SVG 수정, 야식타임 |
 | 세션 5 | 2026-04-06 | 티타임 Vol.4 발행 |
-| 세션 6 | 2026-04-07 | FloatingCharacters 인터랙션, Pretext 통합+디버깅 완료, Vol.5 발행, 캐릭터 위치 피드백 반영 |
+| 세션 6 | 2026-04-07 | FloatingCharacters 인터랙션, Pretext 통합 |
+| 세션 7 | 2026-04-10 | 로그인/결제 시스템 전체 구현 (Supabase Auth + PayPal + 크레딧) |
+| **세션 8** | **2026-04-11** | **포트원 V2 결제, 소셜피드, Cloudflare 배포 설정, 보안 리뷰 6건 수정, 도메인 구매** |
 
 ---
 
 ## 대표님 확정 결정사항
 
-- 티타임 자동화: **당분간 수동**
-- 콘텐츠 발행: **1일 1회**
-- 끼어들기 응답: **캐릭터 2명** 답변
-- **글로벌 서비스** 지향
-- **아마추어 감성**, MD 느낌 유지
-- 캐릭터명: 오과장, 젬대리, 코부장 (확정)
-- 사업분석: **Go 판정** (7.5/10)
-- 서비스명: **Intercept (인터셉트)** (코드에 반영됨)
+- 서비스명: **Intercept (인터셉트)**
+- 도메인: **interceptnews.app** (Cloudflare)
+- 사업용 이메일: **offspace.intercept@gmail.com**
+- 배포: **Cloudflare Pages** (무료 플랜)
+- DB/Auth: **Supabase** (us-east-1)
+- 결제: **PayPal** (해외) + **포트원 V2** (국내)
+- 가격: Free 2/day, Basic $2.99/150mo, Pro $8/500mo, PPU $1/10
+- 글로벌 서비스 지향, 영어 기본 + 한국어 i18n
+- 아마추어 감성, MD 느낌 유지
 
 ---
 
-## 인프라 참고
-
-- Blackwell Pro6000 VRAM 96GB × 2장
-- vLLM + Qwen-3.5-35b 서빙 중
-- 원격 트리거 ID: `trig_01CYszYhgMvXg6jvixkoG7Px` (수동 운영 중)
-- PM2 배포: `intercept/ecosystem.config.cjs` (포트 4000)
-
----
-
-*최종 업데이트: 코부장 (2026-04-07 심야)*
+*최종 업데이트: 코부장 (2026-04-11)*
