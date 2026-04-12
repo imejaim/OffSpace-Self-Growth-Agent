@@ -827,19 +827,33 @@ export const TEATIME_VOL5: RawTeaTime = {
 };
 
 /**
- * 대표님 요청: 티타임은 3토픽 체제 (AI 핫뉴스 / AI 에이전트 / AI 로봇).
- * 원본 데이터는 그대로 유지하고, 노출 단계에서 3개만 필터링한다.
- * (models, bonus 토픽은 데이터로만 보관 — 미노출)
+ * 대표님 요청 (2026-04-12): 디폴트 토픽 재설계.
+ *   1. 핫뉴스 (Hot News)        — 글로벌 트렌드, 분야 무관
+ *   2. 랜덤뉴스 (Random News)   — 10개 일반 주제 중 일일 랜덤 선택
+ *   3. 소곤소곤뉴스 (Whisper)   — 커뮤니티 리얼 반응 (Reddit/YouTube/X/Discord)
+ *
+ * 날짜 기반 결정적 순환이라 SSR/CSR이 같은 토픽을 보게 된다.
+ * 과거 Vol.4/Vol.5 데이터는 보관용으로 남겨두지만 노출되지 않는다.
  */
-const VISIBLE_TOPIC_KEYWORDS = ['hotnews', 'agents', 'robots'] as const;
+import { getTodaysDefaultTopics } from './default-topics';
 
-function filterTopics(teatime: RawTeaTime): RawTeaTime {
+function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
+  const iso = now.toISOString().slice(0, 10); // YYYY-MM-DD
   return {
-    ...teatime,
-    topics: teatime.topics.filter((t) =>
-      VISIBLE_TOPIC_KEYWORDS.some((k) => t.id.includes(k))
-    ),
+    id: `teatime-default-${iso}`,
+    date: iso,
+    title: {
+      ko: '당신의 오늘',
+      en: 'Your Today',
+    },
+    intro: {
+      ko: '핫뉴스, 오늘의 랜덤 주제, 그리고 커뮤니티가 소곤거리는 뒷이야기까지 — 코부장·오과장·젬대리가 하루 한 번 정리해드립니다.',
+      en: "Hot news, today's random topic, and the whispers from the community — Ko, Oh, and Jem pull it all together once a day.",
+    },
+    topics: getTodaysDefaultTopics(now),
   };
 }
 
-export const ALL_TEATIMES: RawTeaTime[] = [TEATIME_VOL5, TEATIME_VOL4].map(filterTopics);
+export const DEFAULT_TEATIME: RawTeaTime = buildDefaultTeatime();
+
+export const ALL_TEATIMES: RawTeaTime[] = [DEFAULT_TEATIME];
