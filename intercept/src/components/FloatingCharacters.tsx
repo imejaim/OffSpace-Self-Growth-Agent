@@ -640,6 +640,8 @@ export default function FloatingCharacters() {
                   height={size}
                   className="floating-avatar"
                   style={{
+                    width: size,
+                    height: size,
                     outline: `2px solid ${char.color}`,
                     filter: c.action === 'coffee' ? 'sepia(0.3) saturate(1.4)' : undefined,
                     transform: c.flipX ? 'scaleX(-1)' : undefined,

@@ -812,14 +812,21 @@ a {
 }
 
 .floating-avatar {
-  /* width/height come from inline HTML attributes so JS can scale per viewport */
-  width: auto;
-  height: auto;
+  /* width/height enforced via inline style in FloatingCharacters.tsx */
   border-radius: 6px;
   image-rendering: pixelated;
   display: block;
   box-shadow: 0 2px 8px rgba(0,0,0,0.18);
   background: rgba(255,255,255,0.85);
+}
+
+@media (max-width: 768px) {
+  .floating-overlay,
+  .floating-char,
+  .floating-avatar,
+  .floating-toggle {
+    display: none !important;
+  }
 }
 
 .floating-bubble {
