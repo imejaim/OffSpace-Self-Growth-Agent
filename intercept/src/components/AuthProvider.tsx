@@ -34,7 +34,7 @@ async function fetchOrCreateProfile(
 ): Promise<{ tier: Tier; credits: number }> {
   const { data, error } = await supabase
     .from('profiles')
-    .select('tier, credits')
+    .select('tier, credits, display_name, nickname')
     .eq('id', user.id)
     .single()
 
@@ -42,7 +42,10 @@ async function fetchOrCreateProfile(
     return { tier: (data.tier as Tier) ?? 'free', credits: (data.credits as number) ?? 0 }
   }
 
-  // No profile yet — upsert default row on first sign-in
+  // No profile yet — upsert default row on first sign-in.
+  // Write BOTH display_name and nickname so server-side getSessionInfo
+  // (which reads `nickname`) and client-side updateNickname
+  // (which reads `display_name`) both see the same value.
   const displayName =
     (user.user_metadata?.full_name as string | undefined) ?? user.email?.split('@')[0] ?? 'user'
 
@@ -53,6 +56,7 @@ async function fetchOrCreateProfile(
     daily_limit: 2,
     monthly_limit: 60,
     display_name: displayName,
+    nickname: displayName,
   })
 
   return { tier: 'free', credits: 0 }
@@ -106,9 +110,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const updateNickname = async (newNickname: string) => {
     if (!user) return { success: false, error: 'Not authenticated' }
+    // Write to BOTH columns: server-side getSessionInfo reads `nickname`,
+    // existing client code reads `display_name`. Keep them in sync until
+    // the schema is consolidated.
     const { error } = await supabase
       .from('profiles')
-      .update({ display_name: newNickname })
+      .update({ display_name: newNickname, nickname: newNickname })
       .eq('id', user.id)
     
     if (error) return { success: false, error: error.message }
