@@ -25,22 +25,23 @@ export const ko: Translations = {
     guestOnly: '끼어들기만 할래요',
     defaultUser: '사용자',
     signInRequired: '로그인이 필요합니다.',
+    changeNickname: '닉네임 변경',
   },
   characters: {
     ko: {
-      name: '코부장 (Ko Bujang)',
+      name: '코부장',
       role: '개발부장',
       description:
         '기술 트렌드의 큰 그림을 그리는 베테랑. 복잡한 기술 이슈를 꿰뚫는 날카로운 시각으로 팀을 이끈다.',
     },
     oh: {
-      name: '오과장 (Oh gwajang)',
+      name: '오과장',
       role: '기획과장',
       description:
         '비즈니스 임팩트와 시장 동향에 밝은 전략가. AI 기술이 실제 사업에 미치는 영향을 가장 먼저 파악한다.',
     },
     jem: {
-      name: '젬대리 (Jem daeri)',
+      name: '젬대리',
       role: '개발대리',
       description:
         '최신 기술에 열정적인 주니어 개발자. 새로운 것이라면 무조건 써봐야 직성이 풀리는 탐구형 인재.',
@@ -167,6 +168,7 @@ export const ko: Translations = {
   },
   common: {
     loading: '로딩 중…',
+    you: '나',
   },
   carousel: {
     myKeep: '내보관',
@@ -254,5 +256,10 @@ export const ko: Translations = {
     publishButton: '공개하기',
     saveSuccess: '보관함에 저장되었습니다.',
     publishSuccess: '피드에 공개되었습니다.',
+    interceptPanelTitle: '끼어들기',
+    interceptPlaceholder: '여기에 끼어들어 보세요...',
+    interceptSend: '전송',
+    interceptClose: '닫기',
+    interceptInputAria: '메시지 입력',
   },
 }

@@ -27,6 +27,7 @@ export interface Translations {
     guestOnly: string
     defaultUser: string
     signInRequired: string
+    changeNickname: string
   }
   // Characters
   characters: {
@@ -117,6 +118,7 @@ export interface Translations {
   // Common
   common: {
     loading: string
+    you: string
   }
   // 3-tier carousel navigation
   carousel: {
@@ -187,6 +189,9 @@ export interface Translations {
     noPublic: string
     loadMore: string
     authRequired: string
+    followSuccess: string
+    unfollowSuccess: string
+    followFailed: string
   }
   // Teatime page
   teatime: {
@@ -206,5 +211,10 @@ export interface Translations {
     publishButton: string
     saveSuccess: string
     publishSuccess: string
+    interceptPanelTitle: string
+    interceptPlaceholder: string
+    interceptSend: string
+    interceptClose: string
+    interceptInputAria: string
   }
 }

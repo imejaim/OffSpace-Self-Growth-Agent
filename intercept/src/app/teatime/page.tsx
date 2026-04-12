@@ -53,7 +53,6 @@ function ConversationMessage({ message }: { message: Message }) {
       : null
   const i18nChar = i18nKey ? t.characters[i18nKey] : null
   const displayName = i18nChar?.name ?? character.name
-  const displayRole = i18nChar?.role
 
   const context = `${displayName}: ${message.content}`
 
@@ -76,23 +75,7 @@ function ConversationMessage({ message }: { message: Message }) {
               />
             )}
             <span className="char-name" style={{ color: character.color, fontSize: '0.85rem', textAlign: 'center', display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
-              {displayName.includes('(') ? (
-                <>
-                  <span>{displayName.split(' (')[0]}</span>
-                  <span style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 400 }}>
-                    {displayName.split(' (')[1].replace(')', '')}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span>{displayName}</span>
-                  {displayRole && (
-                    <span style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 400 }}>
-                      {displayRole}
-                    </span>
-                  )}
-                </>
-              )}
+              <span>{displayName}</span>
             </span>
           </div>
           <span className="msg-text" style={{ alignSelf: 'center' }}>

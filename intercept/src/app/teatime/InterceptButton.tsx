@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
+import { useI18n } from '@/lib/i18n/context'
+import { useAuth } from '@/components/AuthProvider'
 
 const CHARACTER_AVATARS: Record<string, string> = {
   kobu: '/characters/Ko-bujang.svg',
@@ -60,9 +62,32 @@ export default function InterceptButton({
   characterId,
   onClose,
 }: InterceptButtonProps) {
+  const { t } = useI18n()
+  const { user } = useAuth()
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [userLabel, setUserLabel] = useState<string>(t.common.you)
+
+  useEffect(() => {
+    const authName =
+      (user?.user_metadata?.full_name as string | undefined) ??
+      user?.email?.split('@')[0]
+    if (authName) {
+      setUserLabel(authName)
+      return
+    }
+    try {
+      const stored = localStorage.getItem('intercept-nickname')
+      if (stored && stored.trim()) {
+        setUserLabel(stored)
+        return
+      }
+    } catch {
+      // ignore
+    }
+    setUserLabel(t.common.you)
+  }, [user, t.common.you])
 
   const inputRef = useRef<HTMLInputElement>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
@@ -153,11 +178,11 @@ export default function InterceptButton({
     <div className="intercept-inline">
       {/* Header */}
       <div className="intercept-inline-header">
-        <span className="intercept-inline-label">💬 끼어들기</span>
+        <span className="intercept-inline-label">💬 {t.teatime.interceptPanelTitle}</span>
         <button
           className="intercept-inline-close"
           onClick={onClose}
-          aria-label="닫기"
+          aria-label={t.teatime.interceptClose}
         >
           ×
         </button>
@@ -169,14 +194,22 @@ export default function InterceptButton({
           {messages.map((msg, i) =>
             msg.type === 'user' ? (
               <div key={i} className="chat-bubble-row chat-bubble-row--user">
-                <div className="chat-bubble chat-bubble--user">
-                  {msg.content}
+                <div className="chat-bubble-body chat-bubble-body--user" style={{ alignItems: 'flex-end' }}>
+                  <span
+                    className="chat-bubble-name"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    {userLabel}
+                  </span>
+                  <div className="chat-bubble chat-bubble--user">
+                    {msg.content}
+                  </div>
                 </div>
                 <div
                   className="chat-bubble-avatar chat-bubble-avatar--user"
-                  aria-label="나"
+                  aria-label={userLabel}
                 >
-                  나
+                  {userLabel.slice(0, 2)}
                 </div>
               </div>
             ) : (
@@ -237,19 +270,19 @@ export default function InterceptButton({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="여기에 끼어들어 보세요..."
+          placeholder={t.teatime.interceptPlaceholder}
           maxLength={300}
           className="intercept-input chat-panel-input"
-          aria-label="메시지 입력"
+          aria-label={t.teatime.interceptInputAria}
           disabled={isLoading}
         />
         <button
           onClick={handleSubmit}
           disabled={!inputValue.trim() || isLoading}
           className="chat-panel-send"
-          aria-label="전송"
+          aria-label={t.teatime.interceptSend}
         >
-          전송
+          {t.teatime.interceptSend}
         </button>
       </div>
     </div>

@@ -25,22 +25,23 @@ export const en: Translations = {
     guestOnly: 'Just intercept',
     defaultUser: 'User',
     signInRequired: 'Sign in required',
+    changeNickname: 'Change nickname',
   },
   characters: {
     ko: {
-      name: 'Ko',
+      name: 'Ko Bujang',
       role: 'Dev Lead',
       description:
         'A veteran who paints the big picture of tech trends. Cuts through complex issues with sharp insight and leads the team.',
     },
     oh: {
-      name: 'Oh',
+      name: 'Oh Gwajang',
       role: 'Product Manager',
       description:
         'A strategist tuned to business impact and market shifts. First to spot how AI tech actually changes real businesses.',
     },
     jem: {
-      name: 'Jem',
+      name: 'Jem Daeri',
       role: 'Dev Assistant',
       description:
         'A junior developer with passion for the latest tech. If it is new, Jem has to try it — relentlessly curious.',
@@ -167,6 +168,7 @@ export const en: Translations = {
   },
   common: {
     loading: 'Loading…',
+    you: 'You',
   },
   carousel: {
     myKeep: 'My Keep',
@@ -254,5 +256,10 @@ export const en: Translations = {
     publishButton: 'Public Post',
     saveSuccess: 'Saved to your keep.',
     publishSuccess: 'Published to the feed.',
+    interceptPanelTitle: 'Intercept',
+    interceptPlaceholder: 'Jump in here...',
+    interceptSend: 'Send',
+    interceptClose: 'Close',
+    interceptInputAria: 'Message input',
   },
 }
