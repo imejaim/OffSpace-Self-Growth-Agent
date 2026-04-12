@@ -260,10 +260,11 @@ function EditableTopicHeading({
       onClick={() => setEditing(true)}
       title={t.teatime.editTopicHint}
     >
-      <span>
-        {index + 1}. {title}
+      <span style={{ fontSize: '0.8rem', opacity: 0.6, marginRight: '0.5rem', fontFamily: 'var(--font-geist-mono)' }}>
+        ISSUE #{index + 1}
       </span>
-      <span className="topic-heading-edit-icon" aria-hidden="true">✎</span>
+      <span style={{ flex: 1 }}>{title}</span>
+      <span className="topic-heading-edit-icon" aria-hidden="true" style={{ fontSize: '0.9rem', opacity: 0.4 }}>✎</span>
     </button>
   )
 }
@@ -285,6 +286,11 @@ function TopicSection({
   const [chatterMessages, setChatterMessages] = useState<Message[] | null>(null)
   const [chatterLoading, setChatterLoading] = useState(false)
   const [chatterError, setChatterError] = useState<string | null>(null)
+  
+  const [publishLoading, setPublishLoading] = useState(false)
+  const [publishStatus, setPublishStatus] = useState<'idle' | 'saved' | 'published'>('idle')
+  const [flyDirection, setFlyDirection] = useState<'left' | 'right' | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
 
   const getCurrentTitle = (): string => {
     try {
@@ -360,50 +366,161 @@ function TopicSection({
   const revertChatter = () => {
     setChatterMessages(null)
     setChatterError(null)
+    setPublishStatus('idle')
+  }
+
+  const handlePublish = async (visibility: 'private' | 'public') => {
+    setPublishLoading(true)
+    setPublishStatus('idle')
+    const currentTitle = getCurrentTitle()
+    const messages = chatterMessages ?? topic.messages
+
+    // 1) Always save to localStorage first (MVP — works without login)
+    const storeKey = visibility === 'private' ? 'intercept-my-keep' : 'intercept-public-feed'
+    try {
+      const raw = localStorage.getItem(storeKey)
+      const arr = raw ? (JSON.parse(raw) as unknown[]) : []
+      const entry = {
+        id: `${teatimeId}-${topic.id}-${Date.now()}`,
+        teatimeId,
+        topicId: topic.id,
+        title: currentTitle,
+        messages,
+        images: topic.images ?? [],
+        references: topic.references ?? [],
+        savedAt: new Date().toISOString(),
+        visibility,
+      }
+      arr.push(entry)
+      localStorage.setItem(storeKey, JSON.stringify(arr))
+    } catch (storageErr) {
+      console.warn('[publish] localStorage save failed', storageErr)
+    }
+
+    // 2) Trigger Pretext-style fly-out animation (private = left to Keep, public = right to Feed)
+    setFlyDirection(visibility === 'private' ? 'left' : 'right')
+    window.setTimeout(() => setFlyDirection(null), 800)
+
+    // 3) Toast feedback
+    const toastMsg = visibility === 'private' ? t.teatime.saveSuccess : t.teatime.publishSuccess
+    setToast(toastMsg)
+    window.setTimeout(() => setToast(null), 2500)
+
+    // 4) Try API in background — non-fatal if it fails (localStorage already succeeded)
+    try {
+      await fetch('/api/teatime/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages,
+          title: currentTitle,
+          visibility,
+          teatimeId,
+          topicId: topic.id,
+        }),
+      })
+    } catch (err) {
+      console.warn('[publish] API call failed (localStorage save still succeeded):', err)
+    } finally {
+      setPublishStatus(visibility === 'private' ? 'saved' : 'published')
+      window.setTimeout(() => setPublishStatus('idle'), 3000)
+      setPublishLoading(false)
+    }
   }
 
   const inChatterMode = chatterMessages !== null
   const messagesToRender = chatterMessages ?? topic.messages
 
   return (
-    <section className="topic-section">
+    <section
+      className={`topic-section${
+        flyDirection === 'left'
+          ? ' topic-fly-out-left'
+          : flyDirection === 'right'
+          ? ' topic-fly-out-right'
+          : ''
+      }`}
+    >
+      {toast && (
+        <div className={`topic-toast topic-toast-${flyDirection ?? 'idle'}`} role="status">
+          {toast}
+        </div>
+      )}
       <div className="topic-heading-row">
         <EditableTopicHeading
           storageKey={storageKey}
           originalTitle={topic.title}
           index={index}
         />
-        {inChatterMode ? (
-          <div className="chatter-button-group">
+        <div className="topic-actions-right" style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {inChatterMode ? (
+            <>
+              <button
+                type="button"
+                className="chatter-button"
+                onClick={runChatter}
+                disabled={chatterLoading}
+                title={t.teatime.chatterRegenerate}
+              >
+                {chatterLoading ? '...' : '↻'}
+              </button>
+              <button
+                type="button"
+                className="chatter-button chatter-button-secondary"
+                onClick={revertChatter}
+                disabled={chatterLoading}
+                title={t.teatime.chatterRevert}
+              >
+                ↶
+              </button>
+            </>
+          ) : (
             <button
               type="button"
               className="chatter-button"
               onClick={runChatter}
               disabled={chatterLoading}
-              title={t.teatime.chatterRegenerate}
+              title={t.teatime.chatterButton}
             >
-              {chatterLoading ? t.teatime.chatterGenerating : t.teatime.chatterRegenerate}
+              {chatterLoading ? '...' : t.teatime.chatterButton}
             </button>
-            <button
-              type="button"
-              className="chatter-button chatter-button-secondary"
-              onClick={revertChatter}
-              disabled={chatterLoading}
-              title={t.teatime.chatterRevert}
-            >
-              {t.teatime.chatterRevert}
-            </button>
-          </div>
-        ) : (
+          )}
+          
+          <div className="publish-divider" style={{ width: 1, height: 16, background: 'var(--color-border)', margin: '0 0.25rem' }} />
+
           <button
             type="button"
-            className="chatter-button"
-            onClick={runChatter}
-            disabled={chatterLoading}
+            className={`chatter-button chatter-button-keep ${publishStatus === 'saved' ? 'success' : ''}`}
+            onClick={() => handlePublish('private')}
+            disabled={publishLoading}
+            title={t.teatime.keepButton}
+            style={{ 
+              background: publishStatus === 'saved' ? 'var(--color-green)' : 'var(--color-green-light)',
+              color: publishStatus === 'saved' ? 'white' : 'var(--color-green)',
+              border: 'none',
+              padding: '0.4rem 0.8rem',
+              fontSize: '0.75rem'
+            }}
           >
-            {chatterLoading ? t.teatime.chatterGenerating : t.teatime.chatterButton}
+            {publishStatus === 'saved' ? '✓' : t.teatime.keepButton}
           </button>
-        )}
+          <button
+            type="button"
+            className={`chatter-button chatter-button-publish ${publishStatus === 'published' ? 'success' : ''}`}
+            onClick={() => handlePublish('public')}
+            disabled={publishLoading}
+            title={t.teatime.publishButton}
+            style={{ 
+              background: publishStatus === 'published' ? 'var(--color-coral)' : 'rgba(231, 76, 60, 0.1)',
+              color: publishStatus === 'published' ? 'white' : 'var(--color-coral)',
+              border: 'none',
+              padding: '0.4rem 0.8rem',
+              fontSize: '0.75rem'
+            }}
+          >
+            {publishStatus === 'published' ? '✓' : t.teatime.publishButton}
+          </button>
+        </div>
       </div>
 
       {inChatterMode && (
@@ -448,58 +565,97 @@ export default function TeaTimePage() {
 
   return (
     <CharPositionProvider>
-    <div className="teatime-root" style={{ background: 'var(--color-bg)' }}>
-      <header className="teatime-header">
-        <div className="teatime-header-inner">
-          <span className="teatime-pub">{t.teatime.offspaceTeatime}</span>
-          <span className="teatime-date">{dateLabel}</span>
-        </div>
-      </header>
+      <div className="teatime-perspective">
+        <div className="magazine-container">
+          {/* Left Peek: My Keep */}
+          <aside
+            className="magazine-peek magazine-peek-left"
+            onClick={() => window.location.href = '/my'}
+            title={t.carousel.myKeepPeek}
+          >
+            <div className="peek-label">{t.carousel.myKeep}</div>
+            <div className="peek-preview">
+              <p>{t.carousel.myKeepPeek}</p>
+            </div>
+          </aside>
 
-      <main className="teatime-main">
-        <div className="teatime-masthead">
-          <h1 className="teatime-title">{teatime.title}</h1>
-          <p className="teatime-intro">{teatime.intro}</p>
-          <div className="teatime-byline">
-            {(['kobu', 'oh', 'jem'] as const).map((id) => {
-              const c = CHARACTERS[id]
-              if (!c) return null
-              const i18nKey = id === 'kobu' ? 'ko' : id
-              const name = t.characters[i18nKey].name
-              return (
-                <span key={id} className="byline-char" style={{ color: c.color, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
-                  {c.avatar && (
-                    <Image
-                      src={c.avatar}
-                      alt={name}
-                      width={20}
-                      height={20}
-                      style={{ borderRadius: '3px', imageRendering: 'pixelated' }}
-                    />
-                  )}
-                  {name}
+          {/* Main Magazine: Teatime Content */}
+          <div className="magazine-content">
+            <header className="teatime-header">
+              <div className="teatime-header-inner">
+                <span className="teatime-pub">{t.teatime.offspaceTeatime}</span>
+                <span className="teatime-indicator" style={{ 
+                  margin: '0 auto', 
+                  fontSize: '0.65rem', 
+                  fontWeight: 800, 
+                  color: 'var(--color-coral)',
+                  letterSpacing: '0.15em',
+                  textTransform: 'uppercase'
+                }}>
+                  {t.carousel.instantPage}
                 </span>
-              )
-            })}
+                <span className="teatime-date">{dateLabel}</span>
+              </div>
+            </header>
+
+            <main className="teatime-main">
+              <div className="teatime-masthead">
+                <h1 className="teatime-title">{teatime.title}</h1>
+                <p className="teatime-intro">{teatime.intro}</p>
+                <div className="teatime-byline">
+                  {(['kobu', 'oh', 'jem'] as const).map((id) => {
+                    const c = CHARACTERS[id]
+                    if (!c) return null
+                    const i18nKey = id === 'kobu' ? 'ko' : id
+                    const name = t.characters[i18nKey].name
+                    return (
+                      <span key={id} className="byline-char" style={{ color: c.color, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
+                        {c.avatar && (
+                          <Image
+                            src={c.avatar}
+                            alt={name}
+                            width={20}
+                            height={20}
+                            style={{ borderRadius: '3px', imageRendering: 'pixelated' }}
+                          />
+                        )}
+                        {name}
+                      </span>
+                    )
+                  })}
+                </div>
+                <p className="teatime-intercept-hint">
+                  {t.teatime.interceptHint}
+                </p>
+              </div>
+
+              <hr className="teatime-rule" />
+
+              {teatime.topics.map((topic, i) => (
+                <TopicSection key={topic.id} topic={topic} index={i} teatimeId={teatime.id} />
+              ))}
+
+              <footer className="teatime-footer">
+                <p>{t.teatime.footerDesc}</p>
+              </footer>
+            </main>
           </div>
-          <p className="teatime-intercept-hint">
-            {t.teatime.interceptHint}
-          </p>
+
+          {/* Right Peek: Feed */}
+          <aside
+            className="magazine-peek magazine-peek-right"
+            onClick={() => window.location.href = '/feed'}
+            title={t.carousel.snsPeek}
+          >
+            <div className="peek-label">{t.carousel.sns}</div>
+            <div className="peek-preview">
+              <p>{t.carousel.snsPeek}</p>
+            </div>
+          </aside>
         </div>
 
-        <hr className="teatime-rule" />
-
-        {teatime.topics.map((topic, i) => (
-          <TopicSection key={topic.id} topic={topic} index={i} teatimeId={teatime.id} />
-        ))}
-
-        <footer className="teatime-footer">
-          <p>{t.teatime.footerDesc}</p>
-        </footer>
-      </main>
-
-      <FloatingCharacters />
-    </div>
+        <FloatingCharacters />
+      </div>
     </CharPositionProvider>
   )
 }
