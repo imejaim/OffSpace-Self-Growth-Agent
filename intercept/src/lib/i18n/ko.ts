@@ -53,7 +53,7 @@ export const ko: Translations = {
     heroTitleB: '매일 아침 발행해드려요.',
     heroSubtitleLine1: '원하는 토픽을 정하세요. 코부장, 오과장, 젬대리가 그 주제로 신선한 뉴스를 만들어드려요.',
     heroSubtitleStrong: '대화에 끼어들어 이야기를 함께 만들어 보세요.',
-    ctaViewToday: '오늘의 뉴스 만들기 →',
+    ctaViewToday: '나만의 뉴스, 끼어들기 →',
     ctaHowItWorks: '',
     todayTeatime: '오늘의 브리핑',
     topicsCount: (n: number) => `${n}개 주제`,
@@ -242,5 +242,9 @@ export const ko: Translations = {
     chatterRevert: '↶ 원래대로',
     chatterReplaceFailed: '이거 발행에 실패했어요. 다시 시도해주세요.',
     chatterAiGenerated: 'AI 생성',
+    keepButton: '보관하기',
+    publishButton: '공개하기',
+    saveSuccess: '보관함에 저장되었습니다.',
+    publishSuccess: '피드에 공개되었습니다.',
   },
 }

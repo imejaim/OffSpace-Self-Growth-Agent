@@ -53,7 +53,7 @@ export const en: Translations = {
     heroTitleB: 'brings it every morning.',
     heroSubtitleLine1: 'Pick any topic. Ko, Oh, and Jem turn it into a fresh news brief, in their own voice.',
     heroSubtitleStrong: 'Jump in and shape the story with them.',
-    ctaViewToday: "Make today's news →",
+    ctaViewToday: 'Intercept your news →',
     ctaHowItWorks: 'How does it work?',
     todayTeatime: "TODAY'S BRIEF",
     topicsCount: (n: number) => `${n} topics`,
@@ -242,5 +242,9 @@ export const en: Translations = {
     chatterRevert: '↶ Revert',
     chatterReplaceFailed: 'Failed to chatter about this topic. Try again.',
     chatterAiGenerated: 'AI generated',
+    keepButton: 'Keep',
+    publishButton: 'Public Post',
+    saveSuccess: 'Saved to your keep.',
+    publishSuccess: 'Published to the feed.',
   },
 }
