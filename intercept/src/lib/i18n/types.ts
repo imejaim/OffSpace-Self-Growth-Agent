@@ -117,6 +117,31 @@ export interface Translations {
   common: {
     loading: string
   }
+  // 3-tier carousel navigation
+  carousel: {
+    myKeep: string
+    instantPage: string
+    sns: string
+    prevPage: string
+    nextPage: string
+  }
+  // My Keep page
+  my: {
+    title: string
+    subtitle: string
+    searchPlaceholder: string
+    signInPrompt: string
+    goHome: string
+    emptyTitle: string
+    emptyHint: string
+    emptyForSearch: (q: string) => string
+    loadFailed: string
+    loadMore: string
+    loading: string
+    tabIntercepts: string
+    tabNewsletters: string
+    newsletterEmpty: string
+  }
   // Newsletter page
   newsletter: {
     title: string

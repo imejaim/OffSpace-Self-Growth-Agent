@@ -5,6 +5,8 @@ import { AuthProvider } from '@/components/AuthProvider'
 import { LoginButton } from '@/components/LoginButton'
 import { NavMenu } from '@/components/NavMenu'
 import { LanguageToggle } from '@/components/LanguageToggle'
+import { CarouselNav } from '@/components/CarouselNav'
+import { SwipeNavigator } from '@/components/SwipeNavigator'
 
 function HeaderBar() {
   const { t } = useI18n()
@@ -106,7 +108,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <I18nProvider>
       <AuthProvider>
         <HeaderBar />
-        <main className="flex-1">{children}</main>
+        <CarouselNav />
+        <main className="flex-1">
+          <SwipeNavigator>{children}</SwipeNavigator>
+        </main>
         <FooterBar />
       </AuthProvider>
     </I18nProvider>

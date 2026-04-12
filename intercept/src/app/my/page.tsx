@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { InterceptCard } from '@/components/InterceptCard'
 import { useAuth } from '@/components/AuthProvider'
+import { useI18n } from '@/lib/i18n/context'
 
 interface InterceptItem {
   id: string
@@ -23,6 +24,7 @@ interface MyInterceptsResponse {
 
 export default function MyPage() {
   const { user, loading: authLoading } = useAuth()
+  const { t } = useI18n()
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -92,7 +94,7 @@ export default function MyPage() {
         }}
       >
         <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-          내 끼어들기 기록을 보려면 로그인해주세요.
+          {t.my.signInPrompt}
         </p>
         <a
           href="/"
@@ -107,7 +109,7 @@ export default function MyPage() {
             textDecoration: 'none',
           }}
         >
-          홈으로 돌아가기
+          {t.my.goHome}
         </a>
       </div>
     )
@@ -126,10 +128,10 @@ export default function MyPage() {
             margin: '0 0 0.25rem',
           }}
         >
-          내 끼어들기 기록
+          📚 {t.my.title}
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-          내가 남긴 대화들을 확인하고 공개 여부를 설정하세요
+          {t.my.subtitle}
         </p>
       </div>
 
@@ -139,7 +141,7 @@ export default function MyPage() {
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="내 끼어들기 검색..."
+          placeholder={t.my.searchPlaceholder}
           style={{
             width: '100%',
             padding: '0.55rem 0.8rem',
@@ -167,7 +169,7 @@ export default function MyPage() {
             marginBottom: '1rem',
           }}
         >
-          불러오기 실패: {error}
+          {t.my.loadFailed}: {error}
         </div>
       )}
 
@@ -199,9 +201,7 @@ export default function MyPage() {
             fontSize: '0.9rem',
           }}
         >
-          {debouncedSearch
-            ? `"${debouncedSearch}"에 해당하는 기록이 없어요.`
-            : '아직 끼어든 적이 없어요. 티타임에서 끼어들어 보세요!'}
+          {debouncedSearch ? t.my.emptyForSearch(debouncedSearch) : t.my.emptyHint}
         </div>
       )}
 
@@ -243,14 +243,14 @@ export default function MyPage() {
               cursor: 'pointer',
             }}
           >
-            더 보기
+            {t.my.loadMore}
           </button>
         </div>
       )}
 
       {loading && items.length > 0 && (
         <div style={{ textAlign: 'center', padding: '1rem', color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
-          불러오는 중...
+          {t.my.loading}
         </div>
       )}
     </div>

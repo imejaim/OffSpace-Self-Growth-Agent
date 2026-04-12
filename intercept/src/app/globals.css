@@ -1379,3 +1379,63 @@ a {
   }
 }
 
+/* ----- 3-tier carousel navigation ----- */
+.carousel-nav {
+  user-select: none;
+}
+
+.carousel-tab:hover:not(.carousel-tab-active) {
+  color: var(--color-text) !important;
+}
+
+.carousel-arrow:hover:not(:disabled) {
+  color: var(--color-coral) !important;
+}
+
+@media (max-width: 640px) {
+  .carousel-tab {
+    font-size: 0.75rem !important;
+    padding: 0.55rem 0.2rem !important;
+  }
+  .carousel-tab-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70px;
+  }
+}
+
+/* Page slide transitions */
+@keyframes carousel-slide-in-right {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes carousel-slide-in-left {
+  from {
+    transform: translateX(-24px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.carousel-page-enter-from-right {
+  animation: carousel-slide-in-right 0.3s ease-out;
+}
+.carousel-page-enter-from-left {
+  animation: carousel-slide-in-left 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel-page-enter-from-right,
+  .carousel-page-enter-from-left {
+    animation: none;
+  }
+}
+
