@@ -4,6 +4,7 @@ import { deductCredit, refundCredit } from '@/lib/credits'
 import { rateLimit } from '@/lib/rate-limit'
 import { getSessionInfo, checkInterceptAllowance } from '@/lib/auth-helpers'
 import { generateInterceptResponse } from '@/lib/ai-router'
+import { generateNickname } from '@/lib/nicknames'
 
 export const dynamic = 'force-dynamic'
 
@@ -194,6 +195,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Resolve nickname — intercepts.nickname is NOT NULL so we must always provide a value
+    let resolvedNickname: string
+    if (nickname && nickname.trim()) {
+      resolvedNickname = nickname.trim()
+    } else if (userId) {
+      // Try to fetch display_name or nickname from profiles
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('display_name, nickname')
+        .eq('id', userId)
+        .single()
+      resolvedNickname = profile?.display_name || profile?.nickname || 'User'
+    } else {
+      // Anonymous guest — use session-based or random nickname
+      resolvedNickname = resolvedSessionId
+        ? `guest-${resolvedSessionId.slice(0, 6)}`
+        : generateNickname()
+    }
+
     // Save intercept to DB
     const interceptData: Record<string, unknown> = {
       id: interceptId,
@@ -201,7 +221,7 @@ export async function POST(request: NextRequest) {
       ai_responses: responses,
       conversation_context: conversationContext,
       visibility: 'private' as const,
-      nickname: nickname || null, // ADDED: Store nickname in database
+      nickname: resolvedNickname,
     }
 
     if (userId) {
