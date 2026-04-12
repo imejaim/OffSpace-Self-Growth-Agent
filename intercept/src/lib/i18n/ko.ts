@@ -163,7 +163,7 @@ export const ko: Translations = {
       { label: '광고', free: '있음', basic: '있음', pro: '없음' },
     ],
     sandboxNote:
-      '현재 샌드박스(테스트) 모드로 운영 중입니다. 베타 기간 중 실제 결제는 없습니다. 문의: offspace@example.com',
+      '현재 샌드박스(테스트) 모드로 운영 중입니다. 베타 기간 중 실제 결제는 없습니다. 문의: offspace.intercept@gmail.com',
   },
   common: {
     loading: '로딩 중…',
@@ -233,6 +233,9 @@ export const ko: Translations = {
     noPublic: '아직 공개된 끼어들기가 없어요. 첫 번째가 되어보세요!',
     loadMore: '더 보기',
     authRequired: '로그인 후 이용 가능',
+    followSuccess: '팔로우했습니다.',
+    unfollowSuccess: '팔로우를 취소했습니다.',
+    followFailed: '반영에 실패했습니다.',
   },
   teatime: {
     offspaceTeatime: 'Offspace 티타임',

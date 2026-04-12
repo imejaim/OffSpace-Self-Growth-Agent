@@ -163,7 +163,7 @@ export const en: Translations = {
       { label: 'Ads', free: 'Yes', basic: 'Yes', pro: 'No' },
     ],
     sandboxNote:
-      'Currently running in sandbox (test) mode. No real charges during beta. Questions: offspace@example.com',
+      'Currently running in sandbox (test) mode. No real charges during beta. Questions: offspace.intercept@gmail.com',
   },
   common: {
     loading: 'Loading…',
@@ -233,6 +233,9 @@ export const en: Translations = {
     noPublic: "No public intercepts yet. Be the first!",
     loadMore: 'Load More',
     authRequired: 'Sign in required',
+    followSuccess: 'Followed!',
+    unfollowSuccess: 'Unfollowed.',
+    followFailed: 'Action failed.',
   },
   teatime: {
     offspaceTeatime: 'Offspace Teatime',
