@@ -150,8 +150,8 @@ export default function FeedPage() {
         <div
           style={{
             padding: '0.75rem 1rem',
-            background: '#fff5f5',
-            border: '1px solid #ffcccc',
+            background: 'var(--color-bg-muted)',
+            border: '1px solid var(--color-border)',
             borderRadius: 'var(--radius-sm)',
             fontSize: '0.85rem',
             color: 'var(--color-coral-dark)',

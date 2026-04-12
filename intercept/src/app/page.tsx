@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useI18n } from "@/lib/i18n/context";
 
-const TODAY = "2026년 4월 7일";
+const TODAY = "2026-04-12";
 const TODAY_TOPIC_COUNT = 5;
 
 /* ── Step card ── */
@@ -58,6 +59,8 @@ function StepCard({
 }
 
 export default function HomePage() {
+  const { t } = useI18n();
+
   return (
     <div>
       {/* ═══ HERO ═══════════════════════════════════════════════════════ */}
@@ -86,7 +89,7 @@ export default function HomePage() {
               letterSpacing: "0.02em",
             }}
           >
-            <span>오늘의 AI 티타임 — {TODAY}</span>
+            <span>{t.home.todayBadge} — {TODAY}</span>
           </div>
 
           <h1
@@ -99,9 +102,10 @@ export default function HomePage() {
               marginBottom: "1.25rem",
             }}
           >
-            매일 아침,{" "}
-            <span style={{ color: "var(--color-coral)" }}>AI 팀원들</span>이<br />
-            나누는 뉴스 수다.
+            {t.home.heroTitleA}{" "}
+            <span style={{ color: "var(--color-coral)" }}>{t.home.heroTitleHighlight}</span>
+            <br />
+            {t.home.heroTitleB}
           </h1>
 
           <p
@@ -112,17 +116,17 @@ export default function HomePage() {
               marginBottom: "2.5rem",
             }}
           >
-            코부장, 오과장, 젬대리가 오늘의 AI 뉴스를 읽고 얘기합니다.
+            {t.home.heroSubtitleLine1}
             <br />
-            그 대화에 <strong style={{ color: "var(--color-navy)" }}>당신도 끼어들어 보세요.</strong>
+            <strong style={{ color: "var(--color-navy)" }}>{t.home.heroSubtitleStrong}</strong>
           </p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
             <Link href="/teatime" className="btn-primary" style={{ fontSize: "1rem" }}>
-              오늘의 대화 보기 →
+              {t.home.ctaViewToday}
             </Link>
             <a href="#how-it-works" className="btn-outline" style={{ fontSize: "1rem" }}>
-              어떻게 작동하나요?
+              {t.home.ctaHowItWorks}
             </a>
           </div>
 
@@ -137,9 +141,9 @@ export default function HomePage() {
             }}
           >
             {[
-              { name: "ko" as const, label: "코부장", avatar: "/characters/Ko-bujang.svg" },
-              { name: "oh" as const, label: "오과장", avatar: "/characters/Oh-gwajang.svg" },
-              { name: "jem" as const, label: "젬대리", avatar: "/characters/Jem-daeri.svg" },
+              { name: "ko" as const, label: t.characters.ko.name, avatar: "/characters/Ko-bujang.svg" },
+              { name: "oh" as const, label: t.characters.oh.name, avatar: "/characters/Oh-gwajang.svg" },
+              { name: "jem" as const, label: t.characters.jem.name, avatar: "/characters/Jem-daeri.svg" },
             ].map(({ name, label, avatar }) => (
               <div
                 key={name}
@@ -211,7 +215,7 @@ export default function HomePage() {
                     marginBottom: "0.35rem",
                   }}
                 >
-                  오늘의 티타임
+                  {t.home.todayTeatime}
                 </p>
                 <h2
                   style={{
@@ -236,28 +240,28 @@ export default function HomePage() {
                   whiteSpace: "nowrap",
                 }}
               >
-                {TODAY_TOPIC_COUNT}개 주제
+                {t.home.topicsCount(TODAY_TOPIC_COUNT)}
               </span>
             </div>
 
-            {/* Sample conversation preview */}
+            {/* Sample conversation preview — left in original Korean (AI-generated content) */}
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {[
                 {
                   name: "ko" as const,
-                  label: "코부장",
+                  label: t.characters.ko.name,
                   avatar: "/characters/Ko-bujang.svg",
                   text: "OpenAI $122B 펀딩 마감이 역대급인데, IPO도 올해 안에 간다더라.",
                 },
                 {
                   name: "oh" as const,
-                  label: "오과장",
+                  label: t.characters.oh.name,
                   avatar: "/characters/Oh-gwajang.svg",
                   text: "반도체 매출 49% 급증 전망까지. 근데 Anthropic Conway 소식 봤어요?",
                 },
                 {
                   name: "jem" as const,
-                  label: "젬대리",
+                  label: t.characters.jem.name,
                   avatar: "/characters/Jem-daeri.svg",
                   text: "Gemma 4가 Apache 2.0으로 바뀌었어요! 드디어 진짜 오픈소스!",
                 },
@@ -318,7 +322,7 @@ export default function HomePage() {
                   fontWeight: 500,
                 }}
               >
-                <span>어디든 끼어들어 궁금한 것을 더 물어보고 의견 남길 수 있어요</span>
+                <span>{t.home.interceptPrompt}</span>
               </div>
             </div>
 
@@ -328,7 +332,7 @@ export default function HomePage() {
                 className="btn-primary"
                 style={{ fontSize: "0.9rem", padding: "0.625rem 1.5rem" }}
               >
-                전체 대화 보기 →
+                {t.home.viewFullConversation}
               </Link>
             </div>
           </div>
@@ -356,7 +360,7 @@ export default function HomePage() {
                 letterSpacing: "-0.02em",
               }}
             >
-              어떻게 작동하나요?
+              {t.home.howItWorksTitle}
             </h2>
           </div>
 
@@ -370,20 +374,20 @@ export default function HomePage() {
           >
             <StepCard
               step="①"
-              title="AI가 뉴스를 분석합니다"
-              desc="매일 아침, 코부장이 AI·테크 분야 최신 뉴스를 수집하고 분석합니다."
+              title={t.home.step1Title}
+              desc={t.home.step1Desc}
               accent="var(--color-ko)"
             />
             <StepCard
               step="②"
-              title="캐릭터들이 대화합니다"
-              desc="코부장·오과장·젬대리가 각자의 시각으로 뉴스를 얘기하며 티타임을 가집니다."
+              title={t.home.step2Title}
+              desc={t.home.step2Desc}
               accent="var(--color-oh)"
             />
             <StepCard
               step="③"
-              title="당신이 끼어듭니다!"
-              desc="대화 중간에 끼어들어 의견을 더하고, AI 팀원들의 반응을 받아보세요."
+              title={t.home.step3Title}
+              desc={t.home.step3Desc}
               accent="var(--color-coral)"
             />
           </div>
@@ -408,7 +412,7 @@ export default function HomePage() {
               marginBottom: "0.75rem",
             }}
           >
-            오늘 대화에 끼어들 준비 됐나요?
+            {t.home.ctaStripTitle}
           </h2>
           <p
             style={{
@@ -417,10 +421,10 @@ export default function HomePage() {
               fontSize: "1rem",
             }}
           >
-            AI 팀원들이 기다리고 있습니다.
+            {t.home.ctaStripSubtitle}
           </p>
           <Link href="/teatime" className="btn-primary" style={{ fontSize: "1rem" }}>
-            지금 끼어들기 →
+            {t.home.ctaStripButton}
           </Link>
         </div>
       </section>

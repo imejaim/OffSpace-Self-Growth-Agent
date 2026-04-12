@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAuth } from './AuthProvider'
 import { NicknameModal } from './NicknameModal'
+import { useI18n } from '@/lib/i18n/context'
 
 function GoogleIcon() {
   return (
@@ -18,6 +19,7 @@ function GoogleIcon() {
 
 export function LoginButton() {
   const { user, loading, signOut } = useAuth()
+  const { t } = useI18n()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [nicknameModalOpen, setNicknameModalOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -48,7 +50,7 @@ export function LoginButton() {
 
   const displayName = user?.user_metadata?.full_name
     ?? user?.email?.split('@')[0]
-    ?? '사용자'
+    ?? t.auth.defaultUser
 
   const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
 
@@ -73,7 +75,7 @@ export function LoginButton() {
               color: 'var(--color-text-muted)',
             }}
           >
-            끼어들기만 할래요
+            {t.auth.guestOnly}
           </button>
           <button
             onClick={handleGoogleSignIn}
@@ -86,7 +88,7 @@ export function LoginButton() {
             }}
           >
             <GoogleIcon />
-            Sign in
+            {t.auth.signIn}
           </button>
         </div>
 
@@ -151,7 +153,7 @@ export function LoginButton() {
             className="w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[var(--color-bg-muted)]"
             style={{ color: 'var(--color-text)' }}
           >
-            Sign out
+            {t.auth.signOut}
           </button>
         </div>
       )}

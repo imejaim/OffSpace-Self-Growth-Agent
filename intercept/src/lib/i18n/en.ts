@@ -1,0 +1,170 @@
+import type { Translations } from './types'
+
+export const en: Translations = {
+  nav: {
+    teatime: 'Teatime',
+    feed: 'Feed',
+    my: 'My',
+    pricing: 'Pricing',
+    about: 'About',
+    feedback: 'Feedback',
+    menuOpen: 'Open menu',
+  },
+  header: {
+    subtitle: 'Intercept the AI conversation',
+  },
+  footer: {
+    copyright: '© 2026 Offspace',
+    teatime: 'Teatime',
+    about: 'About',
+    feedback: 'Feedback',
+  },
+  auth: {
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+    guestOnly: 'Just intercept',
+    defaultUser: 'User',
+  },
+  characters: {
+    ko: {
+      name: 'Ko',
+      role: 'Dev Lead',
+      description:
+        'A veteran who paints the big picture of tech trends. Cuts through complex issues with sharp insight and leads the team.',
+    },
+    oh: {
+      name: 'Oh',
+      role: 'Product Manager',
+      description:
+        'A strategist tuned to business impact and market shifts. First to spot how AI tech actually changes real businesses.',
+    },
+    jem: {
+      name: 'Jem',
+      role: 'Dev Assistant',
+      description:
+        'A junior developer with passion for the latest tech. If it is new, Jem has to try it — relentlessly curious.',
+    },
+  },
+  home: {
+    todayBadge: "Today's AI Teatime",
+    heroTitleA: 'Every morning,',
+    heroTitleHighlight: 'AI teammates',
+    heroTitleB: 'chat about the news.',
+    heroSubtitleLine1: 'Ko, Oh, and Jem read the latest AI news and talk it over.',
+    heroSubtitleStrong: 'Jump in and intercept their conversation.',
+    ctaViewToday: "See today's chat →",
+    ctaHowItWorks: 'How does it work?',
+    todayTeatime: "TODAY'S TEATIME",
+    topicsCount: (n: number) => `${n} topics`,
+    interceptPrompt: 'Intercept anywhere — ask follow-ups, drop your take.',
+    viewFullConversation: 'View full conversation →',
+    howItWorksTitle: 'How does it work?',
+    step1Title: 'AI analyzes the news',
+    step1Desc: 'Every morning, Ko gathers and analyzes the latest AI and tech news.',
+    step2Title: 'The characters chat',
+    step2Desc: 'Ko, Oh, and Jem each weigh in on the news during their teatime.',
+    step3Title: 'You intercept!',
+    step3Desc: 'Jump into the middle of the conversation, add your take, and get reactions from the AI team.',
+    ctaStripTitle: 'Ready to intercept today?',
+    ctaStripSubtitle: 'Your AI teammates are waiting.',
+    ctaStripButton: 'Intercept now →',
+  },
+  about: {
+    badge: 'About the service',
+    title: 'INTERCEPT',
+    tagline: 'Intercept the AI conversation',
+    intro:
+      'Every morning, AI characters break down the latest AI news in casual chat form. Curious about something? Intercept anytime and ask.',
+    whatIsItTitle: 'What is this service?',
+    steps: [
+      {
+        title: 'Daily morning teatime',
+        desc: 'Ko, Oh, and Jem unpack the day’s AI news in a light, honest, conversational style.',
+      },
+      {
+        title: 'Intercept mid-conversation',
+        desc: 'See an interesting topic? Don’t hold back — jump in. Type a question and the AI answers right away.',
+      },
+      {
+        title: 'Share and level up',
+        desc: 'Turn your intercept into a card, share it on social media, and level up your rank with each intercept.',
+      },
+    ],
+    teamTitle: 'Meet the Offspace crew',
+    showcaseTitle: 'Meet the team',
+    madeBy: 'MADE BY',
+    offspaceName: 'Offspace',
+    offspaceDesc: 'Offspace is a team building a future where AI and humans work together.',
+    ctaTitle: "Today's teatime is waiting",
+    ctaDesc: "Jump into Ko, Oh, and Jem's AI news conversation.",
+    ctaButton: 'Go to teatime →',
+  },
+  pricing: {
+    sandboxBeta: 'sandbox beta',
+    pickPlan: 'Pick your plan',
+    pickPlanSubtitle:
+      'Jump into AI news conversations and make your voice heard. Start free, upgrade when you need more.',
+    plans: {
+      free: {
+        name: 'Free',
+        period: 'forever',
+        features: [
+          '2 intercepts per day',
+          '1 topic feed',
+          'Daily teatime summary',
+          'Ad-supported',
+        ],
+      },
+      basic: {
+        name: 'Basic',
+        period: '/mo',
+        badge: 'Recommended',
+        features: [
+          '150 intercepts per month',
+          '3 topic feeds',
+          '5 newsletters/month',
+          'Saved conversations',
+          'Ad-supported',
+        ],
+      },
+      pro: {
+        name: 'Pro',
+        period: '/mo',
+        badge: 'Best Value',
+        features: [
+          '500 intercepts per month',
+          '10 topic feeds',
+          'Unlimited newsletters',
+          'Saved + Export',
+          'No ads',
+        ],
+      },
+    },
+    startFree: 'Start free',
+    payPerUseLabel: 'Pay-per-use',
+    payPerUsePrice: '$1 for 10 intercepts',
+    payPerUseDesc: 'No subscription. Credits never expire. Discount applies when logged in.',
+    buyCredits: 'Buy credits →',
+    koreaOnly: 'KOREA ONLY',
+    koreaTitle: 'Korean payments',
+    koreaDesc: 'Top up credits with KakaoPay, NaverPay, card, or bank transfer.',
+    compareTitle: 'Compare plans',
+    feature: 'Feature',
+    free: 'Free',
+    basic: 'Basic',
+    pro: 'Pro',
+    comparisonRows: [
+      { label: 'Intercepts', free: '2/day', basic: '150/mo', pro: '500/mo' },
+      { label: 'Topic feeds', free: '1', basic: '3', pro: '10' },
+      { label: 'Newsletter', free: '—', basic: '5/mo', pro: 'Unlimited' },
+      { label: 'Save conversations', free: '—', basic: '✓', pro: '✓' },
+      { label: 'Export', free: '—', basic: '—', pro: '✓' },
+      { label: 'Ads', free: 'Yes', basic: 'Yes', pro: 'No' },
+    ],
+    sandboxNote:
+      'Currently running in sandbox (test) mode. No real charges during beta. Questions: offspace@example.com',
+  },
+  common: {
+    loading: 'Loading…',
+  },
+}

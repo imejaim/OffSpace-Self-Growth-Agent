@@ -2,15 +2,16 @@
 
 import { useState, useRef, useEffect } from 'react'
 import { LoginButton } from './LoginButton'
-
-const NAV_LINKS = [
-  { href: '/teatime', label: '티타임' },
-  { href: '/feed', label: '피드' },
-  { href: '/my', label: '내 기록' },
-  { href: '/pricing', label: '가격' },
-]
+import { useI18n } from '@/lib/i18n/context'
 
 export function NavMenu() {
+  const { t } = useI18n()
+  const NAV_LINKS = [
+    { href: '/teatime', label: t.nav.teatime },
+    { href: '/feed', label: t.nav.feed },
+    { href: '/my', label: t.nav.my },
+    { href: '/pricing', label: t.nav.pricing },
+  ]
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -45,7 +46,7 @@ export function NavMenu() {
       <div ref={menuRef} className="hamburger-wrapper" style={{ position: 'relative' }}>
         <button
           onClick={() => setOpen((v) => !v)}
-          aria-label="메뉴 열기"
+          aria-label={t.nav.menuOpen}
           aria-expanded={open}
           style={{
             display: 'none',

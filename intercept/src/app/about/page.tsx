@@ -1,47 +1,41 @@
-import type { Metadata } from 'next'
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
+import { useI18n } from '@/lib/i18n/context'
 // SplineCharacter temporarily disabled — scene geo-restricted, causes runtime crash
 // import SplineCharacter from '@/components/SplineCharacter'
 
-export const metadata: Metadata = {
-  title: '서비스 소개 — INTERCEPT',
-  description: 'AI 대화에 끼어들다. INTERCEPT는 AI 캐릭터들의 티타임 대화에 사용자가 직접 참여하는 인터랙티브 뉴스 플랫폼입니다.',
-}
-
-interface Character {
-  name: string
-  role: string
-  color: string
-  description: string
-  avatar: string
-}
-
-const CHARACTERS: Character[] = [
-  {
-    name: '코부장',
-    role: '개발부장',
-    color: 'var(--color-ko)',
-    description: '기술 트렌드의 큰 그림을 그리는 베테랑. 복잡한 기술 이슈를 꿰뚫는 날카로운 시각으로 팀을 이끈다.',
-    avatar: '/characters/Ko-bujang.svg',
-  },
-  {
-    name: '오과장',
-    role: '기획과장',
-    color: 'var(--color-oh)',
-    description: '비즈니스 임팩트와 시장 동향에 밝은 전략가. AI 기술이 실제 사업에 미치는 영향을 가장 먼저 파악한다.',
-    avatar: '/characters/Oh-gwajang.svg',
-  },
-  {
-    name: '젬대리',
-    role: '개발대리',
-    color: 'var(--color-jem)',
-    description: '최신 기술에 열정적인 주니어 개발자. 새로운 것이라면 무조건 써봐야 직성이 풀리는 탐구형 인재.',
-    avatar: '/characters/Jem-daeri.svg',
-  },
-]
-
 export default function AboutPage() {
+  const { t } = useI18n()
+
+  const characters = [
+    {
+      key: 'ko' as const,
+      name: t.characters.ko.name,
+      role: t.characters.ko.role,
+      description: t.characters.ko.description,
+      color: 'var(--color-ko)',
+      avatar: '/characters/Ko-bujang.svg',
+    },
+    {
+      key: 'oh' as const,
+      name: t.characters.oh.name,
+      role: t.characters.oh.role,
+      description: t.characters.oh.description,
+      color: 'var(--color-oh)',
+      avatar: '/characters/Oh-gwajang.svg',
+    },
+    {
+      key: 'jem' as const,
+      name: t.characters.jem.name,
+      role: t.characters.jem.role,
+      description: t.characters.jem.description,
+      color: 'var(--color-jem)',
+      avatar: '/characters/Jem-daeri.svg',
+    },
+  ]
+
   return (
     <div
       style={{
@@ -75,7 +69,7 @@ export default function AboutPage() {
               marginBottom: 'var(--space-md)',
             }}
           >
-            서비스 소개
+            {t.about.badge}
           </div>
           <h1
             style={{
@@ -87,7 +81,7 @@ export default function AboutPage() {
               lineHeight: 1.1,
             }}
           >
-            INTERCEPT
+            {t.about.title}
           </h1>
           <p
             style={{
@@ -98,7 +92,7 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            AI 대화에 끼어들다
+            {t.about.tagline}
           </p>
           <p
             style={{
@@ -110,12 +104,11 @@ export default function AboutPage() {
               marginInline: 'auto',
             }}
           >
-            매일 아침 AI 캐릭터들이 최신 AI 뉴스를 수다 형식으로 정리합니다.
-            대화를 읽다가 궁금한 게 생기면? 언제든 끼어들어 질문하세요.
+            {t.about.intro}
           </p>
         </div>
 
-        {/* ── 서비스 소개 ──────────────────────────────────────── */}
+        {/* ── What is it ───────────────────────────────────────── */}
         <section style={{ marginBottom: 'var(--space-2xl)' }}>
           <h2
             style={{
@@ -126,83 +119,70 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            어떤 서비스인가요?
+            {t.about.whatIsItTitle}
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-            {[
-              {
-                step: '01',
-                title: '매일 아침 티타임',
-                desc: '코부장, 오과장, 젬대리가 그날의 AI 뉴스를 가볍고 솔직하게 수다 형식으로 풀어냅니다.',
-              },
-              {
-                step: '02',
-                title: '대화 중간에 끼어들기',
-                desc: '흥미로운 주제가 나왔나요? 대화 흐름을 끊지 말고 그냥 끼어드세요. 질문을 입력하면 AI가 바로 답합니다.',
-              },
-              {
-                step: '03',
-                title: '공유하고 레벨업',
-                desc: '내 끼어들기를 카드로 만들어 SNS에 공유하고, 끼어들기 횟수에 따라 직급이 올라갑니다.',
-              },
-            ].map(({ step, title, desc }) => (
-              <div
-                key={step}
-                className="card"
-                style={{
-                  padding: 'var(--space-lg)',
-                  display: 'flex',
-                  gap: 'var(--space-lg)',
-                  alignItems: 'flex-start',
-                }}
-              >
+            {t.about.steps.map((stepItem, i) => {
+              const step = String(i + 1).padStart(2, '0')
+              return (
                 <div
+                  key={step}
+                  className="card"
                   style={{
-                    flexShrink: 0,
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: 'var(--radius-md)',
-                    background: 'var(--color-bg-muted)',
+                    padding: 'var(--space-lg)',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: 900,
-                    color: 'var(--color-coral)',
-                    letterSpacing: '0.02em',
+                    gap: 'var(--space-lg)',
+                    alignItems: 'flex-start',
                   }}
                 >
-                  {step}
-                </div>
-                <div>
                   <div
                     style={{
-                      fontSize: '0.9375rem',
-                      fontWeight: 800,
-                      color: 'var(--color-navy)',
-                      marginBottom: '4px',
+                      flexShrink: 0,
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: 'var(--radius-md)',
+                      background: 'var(--color-bg-muted)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: 900,
+                      color: 'var(--color-coral)',
+                      letterSpacing: '0.02em',
                     }}
                   >
-                    {title}
+                    {step}
                   </div>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontSize: '0.875rem',
-                      color: 'var(--color-text-muted)',
-                      lineHeight: 1.65,
-                    }}
-                  >
-                    {desc}
-                  </p>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: '0.9375rem',
+                        fontWeight: 800,
+                        color: 'var(--color-navy)',
+                        marginBottom: '4px',
+                      }}
+                    >
+                      {stepItem.title}
+                    </div>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontSize: '0.875rem',
+                        color: 'var(--color-text-muted)',
+                        lineHeight: 1.65,
+                      }}
+                    >
+                      {stepItem.desc}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </section>
 
-        {/* ── 캐릭터 소개 ──────────────────────────────────────── */}
+        {/* ── Team ─────────────────────────────────────────────── */}
         <section style={{ marginBottom: 'var(--space-2xl)' }}>
           <h2
             style={{
@@ -213,13 +193,13 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            Offspace 직원들을 소개합니다
+            {t.about.teamTitle}
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
-            {CHARACTERS.map((char) => (
+            {characters.map((char) => (
               <div
-                key={char.name}
+                key={char.key}
                 className="card"
                 style={{
                   padding: 'var(--space-lg)',
@@ -282,7 +262,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── 캐릭터 쇼케이스 ──────────────────────────────────── */}
+        {/* ── Showcase ─────────────────────────────────────────── */}
         <section style={{ marginBottom: 'var(--space-2xl)' }}>
           <h2
             style={{
@@ -293,7 +273,7 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            팀원들을 만나보세요
+            {t.about.showcaseTitle}
           </h2>
           <div
             className="card"
@@ -305,8 +285,8 @@ export default function AboutPage() {
               gap: 'var(--space-xl)',
             }}
           >
-            {CHARACTERS.map((char) => (
-              <div key={char.name} style={{ textAlign: 'center' }}>
+            {characters.map((char) => (
+              <div key={char.key} style={{ textAlign: 'center' }}>
                 <Image
                   src={char.avatar}
                   alt={char.name}
@@ -322,7 +302,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── Offspace 소개 ─────────────────────────────────────── */}
+        {/* ── Offspace ─────────────────────────────────────────── */}
         <section style={{ marginBottom: 'var(--space-2xl)' }}>
           <div
             className="card"
@@ -342,7 +322,7 @@ export default function AboutPage() {
                 marginBottom: 'var(--space-md)',
               }}
             >
-              만든 곳
+              {t.about.madeBy}
             </div>
             <h3
               style={{
@@ -353,7 +333,7 @@ export default function AboutPage() {
                 letterSpacing: '-0.02em',
               }}
             >
-              Offspace
+              {t.about.offspaceName}
             </h3>
             <p
               style={{
@@ -363,7 +343,7 @@ export default function AboutPage() {
                 lineHeight: 1.7,
               }}
             >
-              Offspace는 AI와 사람이 함께 일하는 미래를 만드는 팀입니다.
+              {t.about.offspaceDesc}
             </p>
           </div>
         </section>
@@ -387,7 +367,7 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            오늘의 티타임이 기다리고 있어요
+            {t.about.ctaTitle}
           </p>
           <p
             style={{
@@ -397,10 +377,10 @@ export default function AboutPage() {
               lineHeight: 1.6,
             }}
           >
-            코부장, 오과장, 젬대리의 AI 뉴스 대화에 끼어들어 보세요.
+            {t.about.ctaDesc}
           </p>
           <Link href="/teatime" className="btn-primary">
-            티타임 바로가기 →
+            {t.about.ctaButton}
           </Link>
         </div>
 

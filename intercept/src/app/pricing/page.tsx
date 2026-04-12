@@ -1,93 +1,51 @@
+'use client'
+
 import SubscribeButton from './SubscribeButton'
 import PaymentSelector from '@/components/PaymentSelector'
-
-export const metadata = {
-  title: 'Pricing — Intercept',
-  description: 'Choose the plan that fits your curiosity',
-}
-
-const PLANS = [
-  {
-    id: 'free',
-    name: 'Free',
-    price: '$0',
-    period: 'forever',
-    intercepts: '2/day (~60/mo)',
-    topics: '1 topic',
-    newsletter: false,
-    noAds: false,
-    save: false,
-    badge: null,
-    features: [
-      '2 intercepts per day',
-      '1 topic feed',
-      'Daily teatime summary',
-      'Ad-supported',
-    ],
-  },
-  {
-    id: 'basic',
-    name: 'Basic',
-    price: '$2.99',
-    period: '/mo',
-    intercepts: '150/mo',
-    topics: '3 topics',
-    newsletter: '5/mo',
-    noAds: false,
-    save: true,
-    badge: 'Recommended',
-    features: [
-      '150 intercepts per month',
-      '3 topic feeds',
-      '5 newsletters/month',
-      'Saved conversations',
-      'Ad-supported',
-    ],
-  },
-  {
-    id: 'pro',
-    name: 'Pro',
-    price: '$8',
-    period: '/mo',
-    intercepts: '500/mo',
-    topics: '10 topics',
-    newsletter: 'Unlimited',
-    noAds: true,
-    save: true,
-    badge: 'Best Value',
-    features: [
-      '500 intercepts per month',
-      '10 topic feeds',
-      'Unlimited newsletters',
-      'Saved + Export',
-      'No ads',
-    ],
-  },
-]
-
-const COMPARISON_ROWS = [
-  { label: 'Intercepts', free: '2/day', basic: '150/mo', pro: '500/mo' },
-  { label: 'Topic feeds', free: '1', basic: '3', pro: '10' },
-  { label: 'Newsletter', free: '—', basic: '5/mo', pro: 'Unlimited' },
-  { label: 'Save conversations', free: '—', basic: '✓', pro: '✓' },
-  { label: 'Export', free: '—', basic: '—', pro: '✓' },
-  { label: 'Ads', free: 'Yes', basic: 'Yes', pro: 'No' },
-]
+import { useI18n } from '@/lib/i18n/context'
 
 export default function PricingPage() {
+  const { t } = useI18n()
+
+  const PLANS = [
+    {
+      id: 'free' as const,
+      name: t.pricing.plans.free.name,
+      price: '$0',
+      period: t.pricing.plans.free.period,
+      badge: null as string | null,
+      features: t.pricing.plans.free.features,
+    },
+    {
+      id: 'basic' as const,
+      name: t.pricing.plans.basic.name,
+      price: '$2.99',
+      period: t.pricing.plans.basic.period,
+      badge: t.pricing.plans.basic.badge,
+      features: t.pricing.plans.basic.features,
+    },
+    {
+      id: 'pro' as const,
+      name: t.pricing.plans.pro.name,
+      price: '$8',
+      period: t.pricing.plans.pro.period,
+      badge: t.pricing.plans.pro.badge,
+      features: t.pricing.plans.pro.features,
+    },
+  ]
+
   return (
     <main className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-16">
       {/* Header */}
       <div className="mx-auto max-w-4xl text-center mb-14">
         <span className="inline-block rounded-sm bg-zinc-800 border border-zinc-700 px-3 py-1 text-xs font-mono uppercase tracking-widest text-zinc-400 mb-5">
-          sandbox beta
+          {t.pricing.sandboxBeta}
         </span>
         <h1 className="text-4xl font-bold text-white leading-tight">
-          Pick your plan
+          {t.pricing.pickPlan}
         </h1>
         <p className="mt-3 text-base text-zinc-400 max-w-xl mx-auto">
-          Jump into AI news conversations and make your voice heard.
-          Start free, upgrade when you need more.
+          {t.pricing.pickPlanSubtitle}
         </p>
       </div>
 
@@ -146,7 +104,7 @@ export default function PricingPage() {
                   href="/"
                   className="block w-full rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm font-medium text-zinc-300 hover:border-zinc-500 hover:text-white transition"
                 >
-                  Start free
+                  {t.pricing.startFree}
                 </a>
               )}
               {plan.id === 'basic' && <SubscribeButton planType="basic" />}
@@ -161,18 +119,18 @@ export default function PricingPage() {
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1">
-              Pay-per-use
+              {t.pricing.payPerUseLabel}
             </p>
-            <p className="text-lg font-semibold text-white">$1 for 10 intercepts</p>
+            <p className="text-lg font-semibold text-white">{t.pricing.payPerUsePrice}</p>
             <p className="text-sm text-zinc-400 mt-1">
-              No subscription. Credits never expire. Discount applies when logged in.
+              {t.pricing.payPerUseDesc}
             </p>
           </div>
           <a
             href="/pricing/credits"
             className="shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-5 py-2.5 text-sm font-medium text-zinc-200 hover:bg-zinc-700 hover:text-white transition"
           >
-            Buy credits →
+            {t.pricing.buyCredits}
           </a>
         </div>
       </div>
@@ -182,11 +140,11 @@ export default function PricingPage() {
         <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
           <div className="mb-5">
             <span className="inline-block rounded-sm bg-zinc-800 border border-zinc-700 px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-zinc-500 mb-3">
-              한국 전용
+              {t.pricing.koreaOnly}
             </span>
-            <h2 className="text-lg font-semibold text-white">한국 간편결제</h2>
+            <h2 className="text-lg font-semibold text-white">{t.pricing.koreaTitle}</h2>
             <p className="text-sm text-zinc-400 mt-1">
-              카카오페이 · 네이버페이 · 카드 · 계좌이체로 크레딧을 충전하세요.
+              {t.pricing.koreaDesc}
             </p>
           </div>
           <PaymentSelector />
@@ -196,20 +154,20 @@ export default function PricingPage() {
       {/* Feature comparison */}
       <div className="mx-auto max-w-4xl mb-14">
         <h2 className="text-sm font-mono uppercase tracking-widest text-zinc-500 mb-4">
-          Compare plans
+          {t.pricing.compareTitle}
         </h2>
         <div className="overflow-x-auto rounded-xl border border-zinc-800">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-zinc-800">
-                <th className="text-left px-2 sm:px-4 py-3 text-zinc-500 font-normal w-1/4">Feature</th>
-                <th className="px-2 sm:px-4 py-3 text-zinc-400 font-medium text-center">Free</th>
-                <th className="px-2 sm:px-4 py-3 text-amber-400 font-medium text-center">Basic</th>
-                <th className="px-2 sm:px-4 py-3 text-zinc-300 font-medium text-center">Pro</th>
+                <th className="text-left px-2 sm:px-4 py-3 text-zinc-500 font-normal w-1/4">{t.pricing.feature}</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-400 font-medium text-center">{t.pricing.free}</th>
+                <th className="px-2 sm:px-4 py-3 text-amber-400 font-medium text-center">{t.pricing.basic}</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-300 font-medium text-center">{t.pricing.pro}</th>
               </tr>
             </thead>
             <tbody>
-              {COMPARISON_ROWS.map((row, i) => (
+              {t.pricing.comparisonRows.map((row, i) => (
                 <tr
                   key={row.label}
                   className={i % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-950/30'}
@@ -227,8 +185,7 @@ export default function PricingPage() {
 
       {/* Footer */}
       <p className="mx-auto max-w-md text-center text-xs text-zinc-600">
-        Currently running in sandbox (test) mode. No real charges during beta.
-        Questions: offspace@example.com
+        {t.pricing.sandboxNote}
       </p>
     </main>
   )

@@ -6,3 +6,14 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+
+# 디버깅/감사용 스크린샷 아카이브 (로컬 보관)
+design/audit-screenshots/
+intercept/logs/
+intercept/.open-next/
+intercept/.wrangler/
+
+# MCP/도구 임시 파일
+.mcp.json
+.playwright-mcp/
+.claude/scheduled_tasks.lock
