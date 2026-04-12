@@ -132,6 +132,98 @@
 
 ---
 
+## 🎯 회의록 #14 — 대규모 버그 수정 ULTRAWORK (2026-04-13 코벤저스 4명 출동)
+
+**트리거**: 대표님이 스크린샷 10+개로 이슈 보고 → 울트라플랜 수립 후 코벤저스 4명 병렬 출동.
+
+### 14-A. Agent 1 (Opus) — 핵심 기능 복구 ✅ `aab1ab0`
+
+**수다수다 502 에러 근본 원인**:
+- `process.env.GEMINI_API_KEY`가 Cloudflare Workers 런타임에서 `undefined` 반환
+- Workers AI 3모델 전부 실패 → Gemini 폴백도 throw → 3회 재시도 후 502
+
+**수정**:
+- `src/lib/ai-router.ts`에 `resolveEnv()` 추가 — `getCloudflareContext().env[key]`를 우선 읽고 `process.env`로 폴백
+- Gemini fetch에 AbortController 30초 타임아웃 + 상세 에러 로그
+- 친절한 에러 메시지 ("AI 팀이 잠시 쉬는 중이에요. 30초 후 다시 시도해주세요.")
+
+**보관/공개 실제 저장 + 자동 페이지 전환**:
+- `teatime/page.tsx`: localStorage teatimeId+topicId dedupe, fire-and-forget API publish, 800ms fly-out 후 `router.push('/my')` / `router.push('/feed')`
+- `my/page.tsx`: `loadLocalKeepAsInterceptItems()` 추가 → DB + localStorage 머지
+
+### 14-B. Agent 2 (Opus) — i18n 전면 정리 ✅ `db5c732`
+
+- **드롭다운 "닉네임 변경"** → `t.auth.changeNickname` (en/ko)
+- **끼어들기 패널 전체 i18n**: `interceptPanelTitle`, `interceptPlaceholder`, `interceptSend`, `interceptClose`
+- **'나' → 실제 닉네임**: auth → localStorage → fallback 체인
+- **캐릭터 이름 통일**: 
+  - EN: `Ko Bujang`, `Oh Gwajang`, `Jem Daeri`
+  - KO: `코부장`, `오과장`, `젬대리` (괄호 병기 제거)
+- **Role 표시 제거**: ConversationMessage에서 "Dev Assistant" 등 제거
+- **default-topics.ts**: 3개 풀 전체 bilingual 확인됨 (이미 완료된 상태)
+
+### 14-C. Agent 3 (Sonnet) — 로그인/네비/빈상태 ✅ `7557665`
+
+**로그인 pill 빈 버그 원인**: `displayName` 폴백 체인이 `full_name` 하나만 체크, Google OAuth 일부 경우 `name`으로 옴. 빈 문자열 시 `[0].toUpperCase()` crash 가능성.
+
+**수정**:
+- `LoginButton`: 폴백 체인 → `full_name → name → email prefix → defaultUser`
+- avatarUrl 폴백: `avatar_url → picture`
+- `[0] ?? '?'` crash 방지
+- loading 플레이스홀더 `minWidth: 32` (레이아웃 collapse 방지)
+
+**Pricing 네비 복원**: `AppShell.tsx`에 헤더 우상단 Pricing 링크 추가 (언어 토글 왼쪽)
+
+**/my 빈 화면 버그**: localStorage 읽기 + DB 머지 + 빈 상태 조건 정확히 처리
+
+### 14-D. Agent 4 (Sonnet) — UI 재배치 ✅ `26ca815`
+
+- **"Public Post" → "Post"** (en.ts)
+- **토픽 하단 좌우 버튼 배치**: `.topic-action-row` CSS, `ReferenceList` 아래로 이동
+- **캐릭터 토글 viewport 고정**: 이미 `position: fixed; bottom: 18px; right: 18px; z-index: 10000`으로 설정되어 있음 (수정 불필요)
+
+### 14-E. 추가 긴급 수정 — 수다수다 rate limit ✅ `9d799d5`
+
+**증상**: 대표님 테스트 중 API 호출이 "Too many requests"로 차단. 60/h 기본 상한이 개발/탐색에 부족.
+
+**수정**:
+- chatter 엔드포인트 전용 rate limit 60/h → **200/h**로 상향
+- 대표님 IP의 KV 카운터 즉시 삭제 (`wrangler kv key delete`)
+- 라이브 API 테스트로 검증: Robot 주제로 3캐릭터 응답 정상 생성 확인
+
+### 14-F. 라이브 API 검증
+
+`curl -X POST https://interceptnews.app/api/teatime/chatter -d '{"topic":"Robot","language":"ko"}'`
+
+**결과**: ✅ 3개 메시지 정상 반환 (코부장/오과장/젬대리 각자 로봇 주제 discussion)
+
+### 14-G. 안팀장에게 전달할 사항
+
+1. **`/feed/page.tsx` localStorage 읽기 추가 필요**: Agent 1이 `intercept-public-feed` localStorage에 저장했지만, 안팀장 작업 영역이라 /feed 페이지는 수정 못 함. 안팀장이 아래 로직 추가해주세요:
+   ```ts
+   const localPublished = typeof window !== 'undefined' 
+     ? JSON.parse(localStorage.getItem('intercept-public-feed') || '[]')
+     : []
+   // DB items + localPublished 머지해서 표시
+   ```
+
+2. **InterceptButton.tsx의 `MOCK_RESPONSES`**: 네트워크 실패 시 폴백용이지만 한국어 하드코딩. 다음 패스에서 i18n 필요.
+
+3. **결제 시스템 버그 6개** (회의록 #12 참고): 안팀장 작업 마무리 시 같이 해결 권장.
+
+### 14-H. 9개 수정 커밋 통합
+
+| # | 커밋 | 담당 | 내용 |
+|---|------|------|------|
+| 1 | `c35eab2` | 코부장 | 울트라플랜 수립 |
+| 2 | `7557665` | Agent 3 | 로그인 pill + Pricing 네비 + /my 빈 상태 |
+| 3 | `db5c732` | Agent 2 | i18n 전면 정리 |
+| 4 | `aab1ab0` | Agent 1 | 수다수다 502 + 보관/공개 저장 + 페이지 전환 |
+| 5 | `26ca815` | Agent 4 | Public Post→Post + 토픽 버튼 배치 |
+| 6 | `9d799d5` | 코부장 | chatter rate limit 200/h |
+
+---
+
 ## 🌙 회의록 #13 — 야간 종합 점검 (2026-04-12 코벤저스 4명 출동)
 
 대표님 ULTRAWORK 요청으로 코벤저스 4명 병렬 출동 → 결제/인증/E2E/회의록 종합 점검.
