@@ -24,7 +24,31 @@ const WORKERS_AI_MODELS = [
 ]
 
 interface WorkersAiTextResult {
-  response: string
+  response?: string
+}
+
+/**
+ * Resolve a secret / env var from the Cloudflare runtime context if available,
+ * falling back to `process.env` (nodejs runtime / local dev).
+ *
+ * Important: on Cloudflare Workers with nodejs_compat, secrets declared via
+ * `wrangler secret put` are surfaced through `getCloudflareContext().env`, NOT
+ * through `process.env`. Using `process.env` alone silently returns undefined
+ * in production, which is exactly how the Gemini fallback has been failing.
+ */
+async function resolveEnv(key: string): Promise<string | undefined> {
+  try {
+    const { getCloudflareContext } = await import('@opennextjs/cloudflare')
+    const { env } = await getCloudflareContext({ async: true })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = (env as any)?.[key]
+    if (typeof val === 'string' && val.length > 0) return val
+  } catch {
+    // Not in Cloudflare runtime
+  }
+  const fromProcess = process.env?.[key]
+  if (typeof fromProcess === 'string' && fromProcess.length > 0) return fromProcess
+  return undefined
 }
 
 async function generateViaWorkersAI(
@@ -39,8 +63,8 @@ async function generateViaWorkersAI(
     const { getCloudflareContext } = await import('@opennextjs/cloudflare')
     const { env } = await getCloudflareContext({ async: true })
     ai = env.AI
-  } catch {
-    // Not in Cloudflare runtime (local dev)
+  } catch (ctxErr) {
+    console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'no-cf-context', error: String(ctxErr) }))
     return null
   }
 
@@ -51,20 +75,21 @@ async function generateViaWorkersAI(
 
   for (const modelId of WORKERS_AI_MODELS) {
     try {
-      const result: WorkersAiTextResult = await ai.run(modelId, {
+      const result = (await ai.run(modelId, {
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt },
         ],
         max_tokens: 1024,
         temperature: 0.8,
-      })
+      })) as WorkersAiTextResult
 
-      const text = result.response ?? null
+      const text = (result?.response ?? '').trim()
       if (text) {
-        console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'ok', model_id: modelId }))
+        console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'ok', model_id: modelId, len: text.length }))
         return text
       }
+      console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'empty-response', model_id: modelId }))
     } catch (err) {
       console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'error', model_id: modelId, error: String(err) }))
       // Try next model in list
@@ -78,42 +103,57 @@ async function generateViaGemini(
   systemPrompt: string,
   userPrompt: string
 ): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY
+  const apiKey = await resolveEnv('GEMINI_API_KEY')
   if (!apiKey) {
     throw new Error('GEMINI_API_KEY is not set')
   }
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: userPrompt }],
+  // AbortController-based timeout — Cloudflare's global fetch can hang without one.
+  const controller = new AbortController()
+  const timeoutMs = 30_000
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+
+  let res: Response
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [
+            {
+              role: 'user',
+              parts: [{ text: userPrompt }],
+            },
+          ],
+          systemInstruction: {
+            parts: [{ text: systemPrompt }],
           },
-        ],
-        systemInstruction: {
-          parts: [{ text: systemPrompt }],
-        },
-        generationConfig: {
-          temperature: 0.8,
-          maxOutputTokens: 1024,
-        },
-      }),
-    }
-  )
+          generationConfig: {
+            temperature: 0.8,
+            maxOutputTokens: 1024,
+          },
+        }),
+        signal: controller.signal,
+      }
+    )
+  } catch (fetchErr) {
+    clearTimeout(timeoutId)
+    console.log(JSON.stringify({ type: 'ai-router', model: 'gemini-2.5-flash', status: 'fetch-error', error: String(fetchErr) }))
+    throw fetchErr
+  }
+  clearTimeout(timeoutId)
 
   if (!res.ok) {
     const errText = await res.text()
+    console.log(JSON.stringify({ type: 'ai-router', model: 'gemini-2.5-flash', status: 'http-error', http: res.status, body: errText.slice(0, 300) }))
     throw new Error(`Gemini API error ${res.status}: ${errText}`)
   }
 
   const data = await res.json()
   const text: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
-  console.log(JSON.stringify({ type: 'ai-router', model: 'gemini-2.5-flash', status: 'ok' }))
+  console.log(JSON.stringify({ type: 'ai-router', model: 'gemini-2.5-flash', status: 'ok', len: text.length }))
   return text
 }
 

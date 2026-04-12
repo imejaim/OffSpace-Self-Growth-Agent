@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
 import { ALL_TEATIMES, CHARACTERS, localizeTeatime } from '@/lib/teatime-data'
@@ -262,6 +263,7 @@ function TopicSection({
   teatimeId: string
 }) {
   const { t, locale } = useI18n()
+  const router = useRouter()
   const storageKey = topicEditKey(teatimeId, topic.id)
 
   // When null, we render topic.messages (the original AI news conversation).
@@ -358,11 +360,13 @@ function TopicSection({
     const currentTitle = getCurrentTitle()
     const messages = chatterMessages ?? topic.messages
 
-    // 1) Always save to localStorage first (MVP — works without login)
+    // 1) Always save to localStorage first (MVP — works without login).
+    //    Dedupe by teatimeId + topicId so the same item can't pile up.
     const storeKey = visibility === 'private' ? 'intercept-my-keep' : 'intercept-public-feed'
     try {
       const raw = localStorage.getItem(storeKey)
-      const arr = raw ? (JSON.parse(raw) as unknown[]) : []
+      const parsed = raw ? JSON.parse(raw) : []
+      const arr: Array<Record<string, unknown>> = Array.isArray(parsed) ? parsed : []
       const entry = {
         id: `${teatimeId}-${topic.id}-${Date.now()}`,
         teatimeId,
@@ -374,41 +378,54 @@ function TopicSection({
         savedAt: new Date().toISOString(),
         visibility,
       }
-      arr.push(entry)
-      localStorage.setItem(storeKey, JSON.stringify(arr))
+      // Remove any previous entry for the same teatime+topic so the newest wins.
+      const deduped = arr.filter(
+        (it) => !(it && it.teatimeId === teatimeId && it.topicId === topic.id)
+      )
+      deduped.unshift(entry)
+      localStorage.setItem(storeKey, JSON.stringify(deduped))
     } catch (storageErr) {
       console.warn('[publish] localStorage save failed', storageErr)
     }
 
     // 2) Trigger Pretext-style fly-out animation (private = left to Keep, public = right to Feed)
     setFlyDirection(visibility === 'private' ? 'left' : 'right')
-    window.setTimeout(() => setFlyDirection(null), 800)
 
     // 3) Toast feedback
     const toastMsg = visibility === 'private' ? t.teatime.saveSuccess : t.teatime.publishSuccess
     setToast(toastMsg)
-    window.setTimeout(() => setToast(null), 2500)
 
-    // 4) Try API in background — non-fatal if it fails (localStorage already succeeded)
-    try {
-      await fetch('/api/teatime/publish', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages,
-          title: currentTitle,
-          visibility,
-          teatimeId,
-          topicId: topic.id,
-        }),
-      })
-    } catch (err) {
-      console.warn('[publish] API call failed (localStorage save still succeeded):', err)
-    } finally {
-      setPublishStatus(visibility === 'private' ? 'saved' : 'published')
-      window.setTimeout(() => setPublishStatus('idle'), 3000)
+    // 4) Try API in background — non-fatal if it fails (localStorage already succeeded).
+    //    Fire-and-forget so page navigation isn't blocked.
+    void (async () => {
+      try {
+        await fetch('/api/teatime/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messages,
+            title: currentTitle,
+            visibility,
+            teatimeId,
+            topicId: topic.id,
+          }),
+        })
+      } catch (err) {
+        console.warn('[publish] API call failed (localStorage save still succeeded):', err)
+      }
+    })()
+
+    setPublishStatus(visibility === 'private' ? 'saved' : 'published')
+
+    // 5) After the fly-out animation finishes (~800ms), navigate to the
+    //    destination page so the saved item is actually visible.
+    window.setTimeout(() => {
+      setFlyDirection(null)
+      setToast(null)
+      setPublishStatus('idle')
       setPublishLoading(false)
-    }
+      router.push(visibility === 'private' ? '/my' : '/feed')
+    }, 850)
   }
 
   const inChatterMode = chatterMessages !== null
@@ -469,40 +486,6 @@ function TopicSection({
             </button>
           )}
           
-          <div className="publish-divider" style={{ width: 1, height: 16, background: 'var(--color-border)', margin: '0 0.25rem' }} />
-
-          <button
-            type="button"
-            className={`chatter-button chatter-button-keep ${publishStatus === 'saved' ? 'success' : ''}`}
-            onClick={() => handlePublish('private')}
-            disabled={publishLoading}
-            title={t.teatime.keepButton}
-            style={{ 
-              background: publishStatus === 'saved' ? 'var(--color-green)' : 'var(--color-green-light)',
-              color: publishStatus === 'saved' ? 'white' : 'var(--color-green)',
-              border: 'none',
-              padding: '0.4rem 0.8rem',
-              fontSize: '0.75rem'
-            }}
-          >
-            {publishStatus === 'saved' ? '✓' : t.teatime.keepButton}
-          </button>
-          <button
-            type="button"
-            className={`chatter-button chatter-button-publish ${publishStatus === 'published' ? 'success' : ''}`}
-            onClick={() => handlePublish('public')}
-            disabled={publishLoading}
-            title={t.teatime.publishButton}
-            style={{ 
-              background: publishStatus === 'published' ? 'var(--color-coral)' : 'rgba(231, 76, 60, 0.1)',
-              color: publishStatus === 'published' ? 'white' : 'var(--color-coral)',
-              border: 'none',
-              padding: '0.4rem 0.8rem',
-              fontSize: '0.75rem'
-            }}
-          >
-            {publishStatus === 'published' ? '✓' : t.teatime.publishButton}
-          </button>
         </div>
       </div>
 
@@ -530,6 +513,41 @@ function TopicSection({
       </div>
 
       <ReferenceList references={topic.references} />
+
+      <div className="topic-action-row">
+        <button
+          type="button"
+          className={`chatter-button chatter-button-keep keep-btn ${publishStatus === 'saved' ? 'success' : ''}`}
+          onClick={() => handlePublish('private')}
+          disabled={publishLoading}
+          title={t.teatime.keepButton}
+          style={{
+            background: publishStatus === 'saved' ? 'var(--color-green)' : 'var(--color-green-light)',
+            color: publishStatus === 'saved' ? 'white' : 'var(--color-green)',
+            border: 'none',
+            padding: '0.5rem 1.2rem',
+            fontSize: '0.85rem'
+          }}
+        >
+          {publishStatus === 'saved' ? '✓' : t.teatime.keepButton}
+        </button>
+        <button
+          type="button"
+          className={`chatter-button chatter-button-publish post-btn ${publishStatus === 'published' ? 'success' : ''}`}
+          onClick={() => handlePublish('public')}
+          disabled={publishLoading}
+          title={t.teatime.publishButton}
+          style={{
+            background: publishStatus === 'published' ? 'var(--color-coral)' : 'rgba(231, 76, 60, 0.1)',
+            color: publishStatus === 'published' ? 'white' : 'var(--color-coral)',
+            border: 'none',
+            padding: '0.5rem 1.2rem',
+            fontSize: '0.85rem'
+          }}
+        >
+          {publishStatus === 'published' ? '✓' : t.teatime.publishButton}
+        </button>
+      </div>
     </section>
   )
 }

@@ -22,6 +22,51 @@ interface MyInterceptsResponse {
   total: number
 }
 
+// Shape of items written by /teatime via the "보관하기" button.
+// Mirrors the `entry` object in teatime/page.tsx handlePublish().
+interface LocalKeepEntry {
+  id: string
+  teatimeId: string
+  topicId: string
+  title: string
+  messages: Array<{
+    id: string
+    characterId: 'kobu' | 'oh' | 'jem'
+    content: string
+    type?: string
+  }>
+  images?: Array<{ src: string; alt: string; source: string }>
+  references?: Array<{ title: string; url: string; source: string; date: string; rating: number }>
+  savedAt: string
+  visibility: 'private' | 'public'
+}
+
+function loadLocalKeepAsInterceptItems(): InterceptItem[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = window.localStorage.getItem('intercept-my-keep')
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return (parsed as LocalKeepEntry[])
+      .filter((it) => it && Array.isArray(it.messages) && typeof it.id === 'string')
+      .map((it) => ({
+        id: it.id,
+        nickname: 'Me',
+        avatar_url: null,
+        user_message: it.title ?? '',
+        ai_responses: (it.messages ?? [])
+          .filter((m) => m && (m.characterId === 'kobu' || m.characterId === 'oh' || m.characterId === 'jem'))
+          .map((m) => ({ characterId: m.characterId, content: m.content })),
+        created_at: it.savedAt ?? new Date().toISOString(),
+        visibility: it.visibility === 'public' ? 'public' : 'private',
+        user_id: undefined,
+      }))
+  } catch {
+    return []
+  }
+}
+
 export default function MyPage() {
   const { user, loading: authLoading } = useAuth()
   const { t } = useI18n()
@@ -34,16 +79,10 @@ export default function MyPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Load localStorage items on mount (client-only)
+  // Load localStorage items on mount (client-only). These are entries saved
+  // via the "보관하기" button on /teatime and are shown even without login.
   useEffect(() => {
-    if (typeof window === 'undefined') return
-    try {
-      const raw = localStorage.getItem('intercept-my-keep')
-      const parsed: InterceptItem[] = raw ? JSON.parse(raw) : []
-      setLocalItems(Array.isArray(parsed) ? parsed : [])
-    } catch {
-      setLocalItems([])
-    }
+    setLocalItems(loadLocalKeepAsInterceptItems())
   }, [])
 
   // Debounce search input
@@ -96,7 +135,8 @@ export default function MyPage() {
     )
   }
 
-  if (!user) {
+  // Not logged in — still show localStorage-saved items (works offline / pre-login)
+  if (!user && localItems.length === 0) {
     return (
       <div
         style={{
@@ -395,7 +435,7 @@ export default function MyPage() {
             {merged.map((item) => (
               <InterceptCard
                 key={item.id}
-                intercept={{ ...item, user_id: user.id }}
+                intercept={{ ...item, user_id: item.user_id ?? user?.id }}
                 onVisibilityToggle={() => {
                   setItems((prev) =>
                     prev.map((i) =>

@@ -261,8 +261,12 @@ export async function POST(request: NextRequest) {
       rawSample: lastRaw.slice(0, 300),
       error: lastErr ? String(lastErr) : 'no-parse',
     }))
+    const friendlyMessage =
+      language === 'ko'
+        ? 'AI 팀이 잠시 쉬는 중이에요. 30초 후 다시 시도해주세요.'
+        : 'The AI team is taking a quick break. Please try again in about 30 seconds.'
     return NextResponse.json(
-      { error: 'AI service temporarily unavailable. Please try again later.' },
+      { error: friendlyMessage },
       { status: 502 }
     )
   }
