@@ -1,7 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 
 const WINDOW_SECONDS = 60 * 60 // 1 hour
-const MAX_REQUESTS = 10
+const DEFAULT_MAX_REQUESTS = 60 // 베타 단계: 시간당 60회 (테스트/탐색 친화적)
 
 // In-memory fallback for local dev (single-process only)
 const localStore = new Map<string, { count: number; resetAt: number }>()
@@ -15,7 +15,10 @@ function localCleanup() {
   }
 }
 
-function localRateLimit(ip: string): {
+function localRateLimit(
+  ip: string,
+  maxRequests: number
+): {
   success: boolean
   remaining: number
   resetAt: number
@@ -27,24 +30,25 @@ function localRateLimit(ip: string): {
 
   if (!entry || now >= entry.resetAt) {
     localStore.set(ip, { count: 1, resetAt })
-    return { success: true, remaining: MAX_REQUESTS - 1, resetAt }
+    return { success: true, remaining: maxRequests - 1, resetAt }
   }
 
-  if (entry.count >= MAX_REQUESTS) {
+  if (entry.count >= maxRequests) {
     return { success: false, remaining: 0, resetAt: entry.resetAt }
   }
 
   entry.count += 1
   return {
     success: true,
-    remaining: MAX_REQUESTS - entry.count,
+    remaining: maxRequests - entry.count,
     resetAt: entry.resetAt,
   }
 }
 
 async function kvRateLimit(
   kv: KVNamespace,
-  ip: string
+  ip: string,
+  maxRequests: number
 ): Promise<{ success: boolean; remaining: number; resetAt: number }> {
   // Window key: current hour bucket (UTC)
   const nowSec = Math.floor(Date.now() / 1000)
@@ -55,7 +59,7 @@ async function kvRateLimit(
   const raw = await kv.get(key)
   const count = raw ? parseInt(raw, 10) : 0
 
-  if (count >= MAX_REQUESTS) {
+  if (count >= maxRequests) {
     return { success: false, remaining: 0, resetAt }
   }
 
@@ -66,12 +70,15 @@ async function kvRateLimit(
 
   return {
     success: true,
-    remaining: MAX_REQUESTS - newCount,
+    remaining: maxRequests - newCount,
     resetAt,
   }
 }
 
-export async function rateLimit(ip: string): Promise<{
+export async function rateLimit(
+  ip: string,
+  maxRequests: number = DEFAULT_MAX_REQUESTS
+): Promise<{
   success: boolean
   remaining: number
   resetAt: number
@@ -80,12 +87,12 @@ export async function rateLimit(ip: string): Promise<{
     const ctx = await getCloudflareContext({ async: true })
     const kv = (ctx.env as CloudflareEnv).RATE_LIMIT
     if (kv) {
-      return await kvRateLimit(kv, ip)
+      return await kvRateLimit(kv, ip, maxRequests)
     }
   } catch {
     // getCloudflareContext throws outside Cloudflare runtime (local dev)
   }
 
   // Local dev fallback
-  return localRateLimit(ip)
+  return localRateLimit(ip, maxRequests)
 }
