@@ -22,21 +22,21 @@ const CHARACTERS: Character[] = [
     role: '개발부장',
     color: 'var(--color-ko)',
     description: '기술 트렌드의 큰 그림을 그리는 베테랑. 복잡한 기술 이슈를 꿰뚫는 날카로운 시각으로 팀을 이끈다.',
-    avatar: '/characters/kobujang.svg',
+    avatar: '/characters/Ko-bujang.svg',
   },
   {
     name: '오과장',
     role: '기획과장',
     color: 'var(--color-oh)',
     description: '비즈니스 임팩트와 시장 동향에 밝은 전략가. AI 기술이 실제 사업에 미치는 영향을 가장 먼저 파악한다.',
-    avatar: '/characters/ogwajang.svg',
+    avatar: '/characters/Oh-gwajang.svg',
   },
   {
     name: '젬대리',
     role: '개발대리',
     color: 'var(--color-jem)',
     description: '최신 기술에 열정적인 주니어 개발자. 새로운 것이라면 무조건 써봐야 직성이 풀리는 탐구형 인재.',
-    avatar: '/characters/jemdaeri.svg',
+    avatar: '/characters/Jem-daeri.svg',
   },
 ]
 

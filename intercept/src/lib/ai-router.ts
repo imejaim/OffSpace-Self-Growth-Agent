@@ -5,7 +5,10 @@
  * On local dev / fallback: uses Gemini 2.5-flash REST API
  */
 
-interface WorkersAiResult {
+/** Workers AI text-generation model used for intercept responses */
+const WORKERS_AI_MODEL = '@cf/google/gemma-4-12b-it'
+
+interface WorkersAiTextResult {
   response: string
 }
 
@@ -15,17 +18,15 @@ async function generateViaWorkersAI(
 ): Promise<string | null> {
   try {
     const { getCloudflareContext } = await import('@opennextjs/cloudflare')
-    // async: true required when called inside a request handler
     const { env } = await getCloudflareContext({ async: true })
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ai = (env as any).AI
+    const ai = env.AI
     if (!ai) {
       console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'binding-not-found' }))
       return null
     }
 
-    const result: WorkersAiResult = await ai.run('@cf/google/gemma-4-12b-it', {
+    const result = await ai.run<WorkersAiTextResult>(WORKERS_AI_MODEL, {
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
@@ -34,7 +35,7 @@ async function generateViaWorkersAI(
       temperature: 0.8,
     })
 
-    console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'ok' }))
+    console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'ok', model_id: WORKERS_AI_MODEL }))
     return result.response ?? null
   } catch (err) {
     console.log(JSON.stringify({ type: 'ai-router', model: 'workers-ai', status: 'error', error: String(err) }))
