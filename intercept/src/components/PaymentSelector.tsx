@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/components/AuthProvider'
+import { createClient } from '@/lib/supabase/client'
+import { useI18n } from '@/lib/i18n/context'
 
 // PortOne V2 PaymentPayMethod values
 type PayMethod = 'EASY_PAY' | 'CARD' | 'TRANSFER' | 'MOBILE'
@@ -27,7 +29,9 @@ const CREDIT_PACKAGES = [
 ]
 
 export default function PaymentSelector() {
+  const { t } = useI18n()
   const { user } = useAuth()
+  const supabase = createClient()
   const userId = user?.id ?? null
   const [selectedMethod, setSelectedMethod] = useState<PayMethod>('EASY_PAY')
   const [selectedPackage, setSelectedPackage] = useState(0)
@@ -37,7 +41,7 @@ export default function PaymentSelector() {
   async function handlePay() {
     if (!userId) {
       setStatus('error')
-      setMessage('로그인이 필요합니다.')
+      setMessage(t.auth.signInRequired || '로그인이 필요합니다.')
       return
     }
 
@@ -173,8 +177,16 @@ export default function PaymentSelector() {
 
       {/* Error message */}
       {status === 'error' && (
-        <div className="rounded-lg border border-red-700/50 bg-red-900/20 px-4 py-2.5">
-          <p className="text-xs text-red-400">{message}</p>
+        <div className="rounded-lg border border-red-700/50 bg-red-900/20 px-4 py-3 flex items-center justify-between gap-4">
+          <p className="text-xs text-red-400 font-medium">{message}</p>
+          {!userId && (
+            <button
+              onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/auth/callback' } })}
+              className="shrink-0 rounded-md bg-red-500/20 border border-red-500/40 px-2.5 py-1 text-[10px] font-bold text-red-100 hover:bg-red-500/40 transition"
+            >
+              {t.auth.signIn}
+            </button>
+          )}
         </div>
       )}
 

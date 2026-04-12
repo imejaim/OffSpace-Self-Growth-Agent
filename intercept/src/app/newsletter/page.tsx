@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/AuthProvider'
+import { createClient } from '@/lib/supabase/client'
 import { EditableTopic } from '@/components/EditableTopic'
 
 /* ── Types ───────────────────────────────────────────────────────────── */
@@ -310,6 +311,7 @@ function NewsletterResult({ newsletter }: { newsletter: Newsletter }) {
 export default function NewsletterPage() {
   const { t } = useI18n()
   const { user, tier: rawTier, loading: authLoading } = useAuth()
+  const supabase = createClient()
   // 'guest' is not a valid API tier — map it to 'free'
   const tier = rawTier === 'guest' ? 'free' : rawTier
 
@@ -405,21 +407,40 @@ export default function NewsletterPage() {
         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
           {t.newsletter.signInDesc}
         </p>
-        <a
-          href="/"
-          style={{
-            display: 'inline-block',
-            background: 'var(--color-coral)',
-            color: '#fff',
-            padding: '0.65rem 1.5rem',
-            borderRadius: 'var(--radius-pill)',
-            fontWeight: 700,
-            fontSize: '0.9rem',
-            textDecoration: 'none',
-          }}
-        >
-          {t.newsletter.goHome}
-        </a>
+        <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+          <a
+            href="/"
+            style={{
+              display: 'inline-block',
+              background: 'var(--color-bg-muted)',
+              border: '1px solid var(--color-border)',
+              color: 'var(--color-text)',
+              padding: '0.65rem 1.25rem',
+              borderRadius: 'var(--radius-pill)',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              textDecoration: 'none',
+            }}
+          >
+            {t.newsletter.goHome}
+          </a>
+          <button
+            onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/auth/callback' } })}
+            style={{
+              display: 'inline-block',
+              background: 'var(--color-coral)',
+              color: '#fff',
+              padding: '0.65rem 1.5rem',
+              borderRadius: 'var(--radius-pill)',
+              fontWeight: 700,
+              fontSize: '0.9rem',
+              border: 'none',
+              cursor: 'pointer',
+            }}
+          >
+            {t.auth.signIn}
+          </button>
+        </div>
       </div>
     )
   }

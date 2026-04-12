@@ -26,6 +26,7 @@ export interface Translations {
     signOut: string
     guestOnly: string
     defaultUser: string
+    signInRequired: string
   }
   // Characters
   characters: {
@@ -189,9 +190,9 @@ export interface Translations {
     editTopicHint: string
     chatterButton: string
     chatterGenerating: string
-    chatterTitle: string
     chatterRegenerate: string
-    chatterDismiss: string
-    chatterError: string
+    chatterRevert: string
+    chatterReplaceFailed: string
+    chatterAiGenerated: string
   }
 }

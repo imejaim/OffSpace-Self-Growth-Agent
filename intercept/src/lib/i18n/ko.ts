@@ -24,6 +24,7 @@ export const ko: Translations = {
     signOut: '로그아웃',
     guestOnly: '끼어들기만 할래요',
     defaultUser: '사용자',
+    signInRequired: '로그인이 필요합니다.',
   },
   characters: {
     ko: {
@@ -234,9 +235,9 @@ export const ko: Translations = {
     editTopicHint: '클릭해서 주제 수정',
     chatterButton: '수다수다',
     chatterGenerating: '수다 중…',
-    chatterTitle: '수다뉴스',
-    chatterRegenerate: '다시 수다',
-    chatterDismiss: '닫기',
-    chatterError: '수다 생성에 실패했어요. 다시 시도해주세요.',
+    chatterRegenerate: '↻ 다시 발행',
+    chatterRevert: '↶ 원래대로',
+    chatterReplaceFailed: '이거 발행에 실패했어요. 다시 시도해주세요.',
+    chatterAiGenerated: 'AI 생성',
   },
 }

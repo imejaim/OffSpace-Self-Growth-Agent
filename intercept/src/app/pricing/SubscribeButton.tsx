@@ -11,9 +11,9 @@ interface Props {
 
 function getPlanId(planType: PlanType): string {
   if (planType === 'basic') {
-    return process.env.NEXT_PUBLIC_PAYPAL_BASIC_PLAN_ID ?? 'P-BASIC_PLACEHOLDER'
+    return process.env.NEXT_PUBLIC_PAYPAL_BASIC_PLAN_ID || 'P-37V36463L1017411HMCK6N4I' // Sandbox default
   }
-  return process.env.NEXT_PUBLIC_PAYPAL_PRO_PLAN_ID ?? 'P-PRO_PLACEHOLDER'
+  return process.env.NEXT_PUBLIC_PAYPAL_PRO_PLAN_ID || 'P-PRO_PLACEHOLDER'
 }
 
 function PayPalSubscribeInner({ planType }: Props) {
@@ -85,7 +85,7 @@ function PayPalSubscribeInner({ planType }: Props) {
 }
 
 export default function SubscribeButton({ planType }: Props) {
-  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? ''
+  const clientId = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || 'test' // Fallback to 'test' for sandbox initialization
 
   return (
     <PayPalScriptProvider
@@ -96,7 +96,9 @@ export default function SubscribeButton({ planType }: Props) {
         vault: true,
       }}
     >
-      <PayPalSubscribeInner planType={planType} />
+      <div className="min-h-[150px] flex flex-col items-center">
+        <PayPalSubscribeInner planType={planType} />
+      </div>
     </PayPalScriptProvider>
   )
 }

@@ -24,6 +24,7 @@ export const en: Translations = {
     signOut: 'Sign out',
     guestOnly: 'Just intercept',
     defaultUser: 'User',
+    signInRequired: 'Sign in required',
   },
   characters: {
     ko: {
@@ -234,9 +235,9 @@ export const en: Translations = {
     editTopicHint: 'Click to edit topic',
     chatterButton: 'Chatter',
     chatterGenerating: 'Chattering…',
-    chatterTitle: 'Chatter News',
-    chatterRegenerate: 'Regenerate',
-    chatterDismiss: 'Dismiss',
-    chatterError: 'Chatter failed. Please try again.',
+    chatterRegenerate: '↻ Regenerate',
+    chatterRevert: '↶ Revert',
+    chatterReplaceFailed: 'Failed to chatter about this topic. Try again.',
+    chatterAiGenerated: 'AI generated',
   },
 }

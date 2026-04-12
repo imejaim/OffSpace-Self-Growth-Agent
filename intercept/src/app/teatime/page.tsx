@@ -10,13 +10,6 @@ import FloatingCharacters from '@/components/FloatingCharacters'
 import { CharPositionProvider } from '@/components/CharacterPositionContext'
 import PretextMessage from '@/components/PretextMessage'
 
-interface ChatterData {
-  topic: string
-  kobu_take: string
-  oh_take: string
-  jem_take: string
-}
-
 function topicEditKey(teatimeId: string, topicId: string) {
   return `intercept-teatime-topic-edits-${teatimeId}-${topicId}`
 }
@@ -231,100 +224,6 @@ function EditableTopicHeading({
   )
 }
 
-function ChatterPanel({
-  data,
-  loading,
-  error,
-  onRegenerate,
-  onDismiss,
-}: {
-  data: ChatterData | null
-  loading: boolean
-  error: string | null
-  onRegenerate: () => void
-  onDismiss: () => void
-}) {
-  const { t } = useI18n()
-
-  if (!loading && !data && !error) return null
-
-  return (
-    <div className="chatter-panel">
-      <div className="chatter-panel-header">
-        <span className="chatter-panel-title">{t.teatime.chatterTitle}</span>
-        <div className="chatter-panel-actions">
-          {data && !loading && (
-            <button
-              type="button"
-              className="chatter-action-btn"
-              onClick={onRegenerate}
-            >
-              {t.teatime.chatterRegenerate}
-            </button>
-          )}
-          <button
-            type="button"
-            className="chatter-action-btn chatter-action-dismiss"
-            onClick={onDismiss}
-          >
-            {t.teatime.chatterDismiss}
-          </button>
-        </div>
-      </div>
-
-      {loading && (
-        <div className="chatter-panel-loading">
-          <span className="chatter-spinner" />
-          {t.teatime.chatterGenerating}
-        </div>
-      )}
-
-      {error && !loading && (
-        <div className="chatter-panel-error">{error}</div>
-      )}
-
-      {data && !loading && (
-        <div className="chatter-panel-body">
-          {(['kobu', 'oh', 'jem'] as const).map((id) => {
-            const character = CHARACTERS[id]
-            if (!character) return null
-            const take =
-              id === 'kobu' ? data.kobu_take : id === 'oh' ? data.oh_take : data.jem_take
-            if (!take) return null
-            return (
-              <div key={id} className="chatter-line">
-                {character.avatar && (
-                  <Image
-                    src={character.avatar}
-                    alt={character.name}
-                    width={22}
-                    height={22}
-                    className="char-avatar"
-                    style={{
-                      borderRadius: '3px',
-                      imageRendering: 'pixelated',
-                      flexShrink: 0,
-                      alignSelf: 'flex-start',
-                      marginTop: 2,
-                    }}
-                  />
-                )}
-                <div className="chatter-line-body">
-                  <span className="char-name" style={{ color: character.color }}>
-                    {character.name}
-                  </span>
-                  <span className="char-role">{character.role}</span>
-                  <p className="chatter-take">{take}</p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
 function TopicSection({
   topic,
   index,
@@ -337,7 +236,9 @@ function TopicSection({
   const { t, locale } = useI18n()
   const storageKey = topicEditKey(teatimeId, topic.id)
 
-  const [chatter, setChatter] = useState<ChatterData | null>(null)
+  // When null, we render topic.messages (the original AI news conversation).
+  // When set, we render these AI-generated messages instead (chatter mode).
+  const [chatterMessages, setChatterMessages] = useState<Message[] | null>(null)
   const [chatterLoading, setChatterLoading] = useState(false)
   const [chatterError, setChatterError] = useState<string | null>(null)
 
@@ -354,7 +255,6 @@ function TopicSection({
   const runChatter = async () => {
     setChatterLoading(true)
     setChatterError(null)
-    setChatter(null)
     try {
       const res = await fetch('/api/teatime/chatter', {
         method: 'POST',
@@ -365,22 +265,25 @@ function TopicSection({
         }),
       })
       const data = await res.json()
-      if (!res.ok) {
-        setChatterError(data.error ?? t.teatime.chatterError)
+      if (!res.ok || !Array.isArray(data.messages)) {
+        setChatterError(data.error ?? t.teatime.chatterReplaceFailed)
         return
       }
-      setChatter(data.chatter as ChatterData)
+      setChatterMessages(data.messages as Message[])
     } catch {
-      setChatterError(t.teatime.chatterError)
+      setChatterError(t.teatime.chatterReplaceFailed)
     } finally {
       setChatterLoading(false)
     }
   }
 
-  const dismissChatter = () => {
-    setChatter(null)
+  const revertChatter = () => {
+    setChatterMessages(null)
     setChatterError(null)
   }
+
+  const inChatterMode = chatterMessages !== null
+  const messagesToRender = chatterMessages ?? topic.messages
 
   return (
     <section className="topic-section">
@@ -390,33 +293,61 @@ function TopicSection({
           originalTitle={topic.title}
           index={index}
         />
-        <button
-          type="button"
-          className="chatter-button"
-          onClick={runChatter}
-          disabled={chatterLoading}
-        >
-          {chatterLoading ? t.teatime.chatterGenerating : t.teatime.chatterButton}
-        </button>
+        {inChatterMode ? (
+          <div className="chatter-button-group">
+            <button
+              type="button"
+              className="chatter-button"
+              onClick={runChatter}
+              disabled={chatterLoading}
+              title={t.teatime.chatterRegenerate}
+            >
+              {chatterLoading ? t.teatime.chatterGenerating : t.teatime.chatterRegenerate}
+            </button>
+            <button
+              type="button"
+              className="chatter-button chatter-button-secondary"
+              onClick={revertChatter}
+              disabled={chatterLoading}
+              title={t.teatime.chatterRevert}
+            >
+              {t.teatime.chatterRevert}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            className="chatter-button"
+            onClick={runChatter}
+            disabled={chatterLoading}
+          >
+            {chatterLoading ? t.teatime.chatterGenerating : t.teatime.chatterButton}
+          </button>
+        )}
       </div>
 
-      {topic.images && <TopicImages images={topic.images} />}
+      {inChatterMode && (
+        <div className="chatter-ai-indicator">
+          <span className="chatter-ai-pill">{t.teatime.chatterAiGenerated}</span>
+        </div>
+      )}
 
-      <div className="topic-messages">
-        {topic.messages.map((msg) => (
+      {!inChatterMode && topic.images && <TopicImages images={topic.images} />}
+
+      <div
+        className={`topic-messages${chatterLoading ? ' topic-messages-loading' : ''}`}
+        aria-busy={chatterLoading}
+      >
+        {messagesToRender.map((msg) => (
           <ConversationMessage key={msg.id} message={msg} />
         ))}
       </div>
 
-      <ChatterPanel
-        data={chatter}
-        loading={chatterLoading}
-        error={chatterError}
-        onRegenerate={runChatter}
-        onDismiss={dismissChatter}
-      />
+      {chatterError && !chatterLoading && (
+        <div className="chatter-inline-error">{chatterError}</div>
+      )}
 
-      <ReferenceList references={topic.references} />
+      {!inChatterMode && <ReferenceList references={topic.references} />}
     </section>
   )
 }
