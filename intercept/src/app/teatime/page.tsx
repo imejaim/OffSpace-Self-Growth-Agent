@@ -284,23 +284,59 @@ function TopicSection({
   const runChatter = async () => {
     setChatterLoading(true)
     setChatterError(null)
+    const currentTitle = getCurrentTitle()
+    const language = locale === 'ko' ? 'ko' : 'en'
+    // Debug: log the exact topic being sent so we can verify the edited title
+    // (not the original heading) is what reaches the API.
+    console.log('[chatter] POST /api/teatime/chatter', {
+      topicId: topic.id,
+      originalTitle: topic.title,
+      editedTitle: currentTitle,
+      language,
+    })
     try {
       const res = await fetch('/api/teatime/chatter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          topic: getCurrentTitle(),
-          language: locale === 'ko' ? 'ko' : 'en',
+          topic: currentTitle,
+          language,
         }),
       })
-      const data = await res.json()
-      if (!res.ok || !Array.isArray(data.messages)) {
-        setChatterError(data.error ?? t.teatime.chatterReplaceFailed)
+      let data: { messages?: Message[]; error?: string; topic?: string } = {}
+      try {
+        data = await res.json()
+      } catch (parseErr) {
+        console.error('[chatter] response JSON parse failed', parseErr)
+        setChatterError(`${t.teatime.chatterReplaceFailed} (bad JSON)`)
         return
       }
+      console.log('[chatter] response', {
+        status: res.status,
+        ok: res.ok,
+        echoTopic: data.topic,
+        messageCount: Array.isArray(data.messages) ? data.messages.length : 0,
+        error: data.error,
+      })
+      if (!res.ok) {
+        setChatterError(
+          `[${res.status}] ${data.error ?? t.teatime.chatterReplaceFailed}`
+        )
+        return
+      }
+      if (!Array.isArray(data.messages) || data.messages.length === 0) {
+        setChatterError(
+          `${t.teatime.chatterReplaceFailed} (empty messages)`
+        )
+        return
+      }
+      console.log('[chatter] replacing chatterMessages with', data.messages.length, 'messages')
       setChatterMessages(data.messages as Message[])
-    } catch {
-      setChatterError(t.teatime.chatterReplaceFailed)
+    } catch (err) {
+      console.error('[chatter] fetch failed', err)
+      setChatterError(
+        `${t.teatime.chatterReplaceFailed} (${err instanceof Error ? err.message : 'network'})`
+      )
     } finally {
       setChatterLoading(false)
     }
@@ -361,6 +397,12 @@ function TopicSection({
         </div>
       )}
 
+      {chatterError && !chatterLoading && (
+        <div className="chatter-inline-error" role="alert">
+          <strong>수다수다 실패:</strong> {chatterError}
+        </div>
+      )}
+
       {topic.images && topic.images.length > 0 && <TopicImages images={topic.images} />}
 
       <div
@@ -371,10 +413,6 @@ function TopicSection({
           <ConversationMessage key={msg.id} message={msg} />
         ))}
       </div>
-
-      {chatterError && !chatterLoading && (
-        <div className="chatter-inline-error">{chatterError}</div>
-      )}
 
       <ReferenceList references={topic.references} />
     </section>

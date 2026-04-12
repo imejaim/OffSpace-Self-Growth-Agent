@@ -11,10 +11,15 @@
  * repetition loops (slashes, garbled hangul, mid-sentence cuts).
  */
 
-/** Workers AI models tried in order */
+/** Workers AI models tried in order.
+ * Note: qwen2.5-coder is tuned for code — it handles news chatter but can drift
+ * into code-ish framing. Llama 3.3 70B instruct is the better general-news model
+ * and is tried first; coder is kept as a fallback since Workers AI availability
+ * varies by region.
+ */
 const WORKERS_AI_MODELS = [
-  '@cf/qwen/qwen2.5-coder-32b-instruct',
   '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  '@cf/qwen/qwen2.5-coder-32b-instruct',
   '@cf/google/gemma-3-12b-it',
 ]
 
