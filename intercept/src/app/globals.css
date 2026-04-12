@@ -1087,8 +1087,8 @@ a {
   transition: left 0.12s ease-out, top 0.06s ease-out;
 }
 
-/* ─── Dark Mode Support ────────────────────────────────────────────── */
-@media (prefers-color-scheme: dark) {
+/* ─── Dark Mode Support (opt-in via html.dark — light is default) ─── */
+html.dark {
   :root {
     --color-bg:       #0A0B10;
     --color-bg-card:  #14161F;

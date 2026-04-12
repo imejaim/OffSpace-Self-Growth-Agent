@@ -193,6 +193,21 @@ function EditableTopicHeading({
   const [draft, setDraft] = useState<string>(title)
   const inputRef = useRef<HTMLInputElement>(null)
 
+  // Sync title when locale changes (originalTitle updates) — only if user hasn't saved a custom title
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const saved = window.localStorage.getItem(storageKey)
+      if (!saved || !saved.trim()) {
+        setTitle(originalTitle)
+        setDraft(originalTitle)
+      }
+    } catch {
+      setTitle(originalTitle)
+      setDraft(originalTitle)
+    }
+  }, [originalTitle, storageKey])
+
   useEffect(() => {
     if (editing && inputRef.current) {
       inputRef.current.focus()
