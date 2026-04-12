@@ -216,5 +216,6 @@ export interface Translations {
     interceptSend: string
     interceptClose: string
     interceptInputAria: string
+    interceptNetworkError: string
   }
 }

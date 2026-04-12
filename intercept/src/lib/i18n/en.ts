@@ -261,5 +261,6 @@ export const en: Translations = {
     interceptSend: 'Send',
     interceptClose: 'Close',
     interceptInputAria: 'Message input',
+    interceptNetworkError: 'AI team is busy. Try again in a moment.',
   },
 }

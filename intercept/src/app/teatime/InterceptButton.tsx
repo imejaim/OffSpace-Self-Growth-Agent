@@ -17,13 +17,6 @@ const CHARACTER_COLORS: Record<string, string> = {
   jem: '#27AE60',
 }
 
-interface InterceptResponse {
-  characterId: string
-  name: string
-  color: string
-  content: string
-}
-
 interface ChatMessage {
   type: 'user' | 'character'
   content: string
@@ -31,23 +24,6 @@ interface ChatMessage {
   name?: string
   color?: string
 }
-
-const MOCK_RESPONSES: InterceptResponse[] = [
-  {
-    characterId: 'kobu',
-    name: '코부장',
-    color: '#4A90D9',
-    content:
-      '오 좋은 포인트에서 끼어드셨네요! 저도 처음엔 그 부분이 궁금했어요. 핵심은 결국 "실용화"예요 — 기술이 있어도 실제로 쓸 수 있어야 의미가 있으니까요.',
-  },
-  {
-    characterId: 'jem',
-    name: '젬대리',
-    color: '#27AE60',
-    content:
-      '맞아요! 그리고 요즘 트렌드가 딱 그 방향으로 가고 있거든요. 더 궁금한 거 있으면 언제든 끼어드세요 ㅋㅋ',
-  },
-]
 
 interface InterceptButtonProps {
   messageId: string
@@ -67,6 +43,7 @@ export default function InterceptButton({
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [interceptError, setInterceptError] = useState<string | null>(null)
   const [userLabel, setUserLabel] = useState<string>(t.common.you)
 
   useEffect(() => {
@@ -107,6 +84,7 @@ export default function InterceptButton({
     const userMsg: ChatMessage = { type: 'user', content: msg }
     setMessages((prev) => [...prev, userMsg])
     setInputValue('')
+    setInterceptError(null)
     setIsLoading(true)
     document.body.classList.add('intercept-loading')
 
@@ -144,24 +122,10 @@ export default function InterceptButton({
         )
         setMessages((prev) => [...prev, ...charMsgs])
       } else {
-        const fallback: ChatMessage[] = MOCK_RESPONSES.map((r) => ({
-          type: 'character' as const,
-          content: r.content,
-          characterId: r.characterId,
-          name: r.name,
-          color: r.color,
-        }))
-        setMessages((prev) => [...prev, ...fallback])
+        setInterceptError(t.teatime.interceptNetworkError)
       }
     } catch {
-      const fallback: ChatMessage[] = MOCK_RESPONSES.map((r) => ({
-        type: 'character' as const,
-        content: r.content,
-        characterId: r.characterId,
-        name: r.name,
-        color: r.color,
-      }))
-      setMessages((prev) => [...prev, ...fallback])
+      setInterceptError(t.teatime.interceptNetworkError)
     }
     setIsLoading(false)
     document.body.classList.remove('intercept-loading')
@@ -259,6 +223,13 @@ export default function InterceptButton({
           )}
 
           <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      {/* Error */}
+      {interceptError && (
+        <div className="intercept-inline-error" role="alert">
+          {interceptError}
         </div>
       )}
 
