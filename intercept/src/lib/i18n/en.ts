@@ -253,7 +253,7 @@ export const en: Translations = {
     chatterReplaceFailed: 'Failed to chatter about this topic. Try again.',
     chatterAiGenerated: 'AI generated',
     keepButton: 'Keep',
-    publishButton: 'Public Post',
+    publishButton: 'Post',
     saveSuccess: 'Saved to your keep.',
     publishSuccess: 'Published to the feed.',
     interceptPanelTitle: 'Intercept',

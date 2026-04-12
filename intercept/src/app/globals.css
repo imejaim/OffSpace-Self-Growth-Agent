@@ -405,6 +405,23 @@ a {
   min-width: 0;
 }
 
+.topic-action-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  margin-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.topic-action-row .keep-btn {
+  /* left side — keep/save action */
+}
+
+.topic-action-row .post-btn {
+  /* right side — publish/post action */
+}
+
 .topic-heading-button {
   display: inline-flex;
   align-items: center;
