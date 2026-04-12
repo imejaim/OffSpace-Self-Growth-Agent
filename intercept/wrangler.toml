@@ -15,5 +15,20 @@ compatibility_flags = ["nodejs_compat"]
 [ai]
 binding = "AI"
 
+# Custom domain — routes traffic from interceptnews.app to this Worker
+routes = [
+  { pattern = "interceptnews.app", custom_domain = true },
+  { pattern = "www.interceptnews.app", custom_domain = true }
+]
+
+# workers.dev 서브도메인도 유지 (디버깅용)
+workers_dev = true
+
 [vars]
 NEXT_PUBLIC_SITE_URL = "https://interceptnews.app"
+NEXT_PUBLIC_BASE_URL = "https://interceptnews.app"
+NEXT_PUBLIC_SUPABASE_URL = "https://ptbumikpnehlbxsbhmsx.supabase.co"
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P0-gx7EwZI5klunBPzg6EQ_kNVRWocI"
+NEXT_PUBLIC_PAYPAL_CLIENT_ID = "AQ5k7141GHxhOLZ_tV3V2RjcMMZ9-4NyaZI8AaC5nWNR_i-lfHNtXCWOhrKJ_BGO9xA1pFlMFsoEFTx-"
+NEXT_PUBLIC_PORTONE_STORE_ID = "store-0a5b3230-285a-4342-9c3b-83effcfda5af"
+NEXT_PUBLIC_PORTONE_CHANNEL_KEY = "channel-key-71713fd7-5dc6-4571-b049-be13de0516e1"
