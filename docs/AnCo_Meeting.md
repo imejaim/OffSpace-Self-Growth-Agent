@@ -178,6 +178,40 @@ PayPal 구독 결제 플로우가 실제로 작동하게 됨. 현재는 Plan ID 
 
 ---
 
+### 9. 🐞 [코부장 → 안팀장] 닉네임/로그인 기능 점검 결과 (2026-04-12)
+
+**대표님 지시**: "안팀장이 닉네임 입력 가능하게 하라고 했는데, 기능 점검 좀 해봐."
+
+**점검 결과 — 정상 작동**:
+- ✅ LoginButton 구조: 아바타 + 닉네임 + 드롭다운 정상 표시
+- ✅ `updateNickname`: Supabase update + loadProfile 재호출 정상
+- ✅ `refreshProfile`: 정상
+- ✅ 유효성 검증: maxLength=20, 빈 닉네임 방어 정상
+
+**🐞 발견된 버그 3개 (안팀장 디자인 작업 시 함께 수정 부탁드립니다)**:
+
+#### 버그 1: 닉네임 변경 후 헤더 새로고침 전까지 반영 안 됨
+- **위치**: `src/components/AuthProvider.tsx` — `fetchOrCreateProfile` 함수
+- **문제**: `display_name`을 select하지 않아서 state로 expose 안 됨
+- **수정**: `fetchOrCreateProfile`이 `display_name`도 SELECT해서 state에 반영하도록 변경
+
+#### 버그 2: 닉네임 표시 우선순위 잘못됨
+- **위치**: `src/components/LoginButton.tsx` — `displayName` 변수
+- **문제**: `user.user_metadata.full_name` (구글 계정명)만 읽고 `profiles.display_name` (사용자 변경한 닉네임) 무시
+- **수정**: `profiles.display_name`을 우선 사용 → 없으면 `user_metadata.full_name` 폴백
+
+#### 버그 3: 닉네임 변경 모드인데 랜덤 닉네임 pre-fill됨
+- **위치**: `src/components/NicknameModal.tsx` — `useEffect`
+- **문제**: `isOpen` 변경마다 `generateNickname()`을 호출 → 변경 모드에서 현재 닉네임이 아닌 랜덤 닉네임이 미리 채워짐
+- **수정**:
+  1. `NicknameModal`에 `initialNickname?: string` prop 추가
+  2. `useEffect`에서 `initialNickname ?? generateNickname()`로 분기
+  3. 닉네임 변경 버튼 클릭 시 현재 `displayName`을 `initialNickname`으로 전달
+
+**완료 후 체크**: [ ] (안팀장 수정 대기)
+
+---
+
 ### 8. ✅ [완료] 수다수다 버그 수정 + 디폴트 토픽 재설계 (2026-04-12)
 
 **대표님 지시**:
@@ -258,9 +292,9 @@ PayPal 구독 결제 플로우가 실제로 작동하게 됨. 현재는 Plan ID 
   - [ ] `/newsletter` — 폼 + 생성 결과
 
 **이슈 발견시 여기에 기록**:
-- 페이지:
-- 요소:
-- 문제:
+- 페이지: `/pricing`, `/pricing/credits`
+- 요소: 전체 배경 및 카드
+- 문제: 사이트 정체성과 맞지 않는 강제 다크모드 적용 (해결 완료 ✅)
 
 ---
 
@@ -335,11 +369,15 @@ PayPal 구독 결제 플로우가 실제로 작동하게 됨. 현재는 Plan ID 
 - 현재 모든 수정사항은 로컬 검증 완료되었으며, GitHub Push 시 Vercel을 통해 자동 배포될 예정입니다.
 - 캐릭터 SVG 경로 및 픽셀아트 감성이 확대된 아이콘 크기에서도 잘 유지되는지 추가 모니터링 예정.
 
----
-
-**Q2 (코부장 → 대표님)** `/pricing` 페이지는 원래 다크 테마(검은 배경)로 디자인되어 있어서 라이트/다크 모드 상관없이 항상 검게 보입니다. 이대로 두는 게 맞는지, 아니면 라이트 모드에서는 밝게 보이도록 수정할지요?
-
-**A2**:
+### 4. 테마 일관성 및 UX 최적화 (2026-04-12)
+- **전면 Light Theme 전환**: 쌩뚱맞게 Dark였던 `Pricing` 및 `Credits` 페이지를 White/Zinc-50 계열의 고급스러운 라이트 스타일로 개편.
+- **레이어 및 상호작용 해결**:
+    - `FloatingCharacters`가 버튼을 가려 클릭이 안 되던 문제 수정 (`pointer-events` 최적화).
+    - 헤더 `z-index`를 1000으로 올려서 캐릭터보다 항상 위에 표시.
+- **결제 프로세스 안정화**:
+    - PortOne V2 `EASY_PAY` 파라미터 보완 (일부 환경 누락 대응).
+    - PayPal 연동 실패 시 개발자 도구(Console)에 상세 에러 정보를 출력하도록 로깅 개선.
+- **로그인 상태 표시 보강**: OAuth 공급자에 따라 닉네임이 `name` 필드로 들어오는 경우까지 완벽 대응.
 
 ---
 
@@ -352,4 +390,4 @@ PayPal 구독 결제 플로우가 실제로 작동하게 됨. 현재는 Plan ID 
 
 ---
 
-*최종 업데이트: 코부장 (2026-04-12)*
+*최종 업데이트: 안팀장 (2026-04-12)*
