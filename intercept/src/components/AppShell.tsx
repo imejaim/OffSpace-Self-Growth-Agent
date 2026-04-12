@@ -3,7 +3,6 @@
 import { I18nProvider, useI18n } from '@/lib/i18n/context'
 import { AuthProvider } from '@/components/AuthProvider'
 import { LoginButton } from '@/components/LoginButton'
-import { NavMenu } from '@/components/NavMenu'
 import { LanguageToggle } from '@/components/LanguageToggle'
 import { CarouselNav } from '@/components/CarouselNav'
 import { SwipeNavigator } from '@/components/SwipeNavigator'
@@ -15,6 +14,9 @@ function HeaderBar() {
       style={{
         background: 'var(--color-bg-card)',
         borderBottom: '1px solid var(--color-border)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1000, // MODIFIED: Ensure header is above floating characters
       }}
     >
       <div
@@ -56,7 +58,7 @@ function HeaderBar() {
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <LanguageToggle />
-          <NavMenu />
+          <LoginButton />
         </div>
       </div>
     </header>

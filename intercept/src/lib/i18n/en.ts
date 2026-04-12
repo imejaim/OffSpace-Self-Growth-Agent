@@ -170,8 +170,8 @@ export const en: Translations = {
   },
   carousel: {
     myKeep: 'My Keep',
-    instantPage: 'Instant Page',
-    sns: 'SNS',
+    instantPage: 'Teatime',
+    sns: 'Feed',
     prevPage: 'Previous',
     nextPage: 'Next',
     myKeepPeek: 'Your saved intercepts & newsletters live here.',

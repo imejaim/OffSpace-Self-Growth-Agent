@@ -169,9 +169,9 @@ export const ko: Translations = {
     loading: '로딩 중…',
   },
   carousel: {
-    myKeep: '내 보관',
-    instantPage: '즉시 발행',
-    sns: '소셜',
+    myKeep: '내보관',
+    instantPage: '티타임',
+    sns: '피드',
     prevPage: '이전',
     nextPage: '다음',
     myKeepPeek: '내가 만든 뉴스·소식지가 여기에 보관돼요.',
