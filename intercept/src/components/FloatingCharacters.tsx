@@ -24,11 +24,38 @@ interface CharacterState {
 }
 
 const CHARACTER_IDS = ['kobu', 'oh', 'jem'] as const
-const SIZE = 48
+const SIZE_DESKTOP = 48
+const SIZE_MOBILE = 32
+const NARROW_BREAKPOINT = 900   // below this, content fills most of viewport → shrink chars and corner them
+const MARGIN_MIN = 90           // min side-margin width required to let a char roam there
 const FOLLOW_SPEED = 0.02       // lerp factor toward mouse
 const WANDER_SPEED = 0.005      // slow drift when idle
 const GATHER_SPEED = 0.04       // faster gather when user is typing
 const GATHER_RADIUS = 80        // how close they cluster when gathering
+
+/* ── Content column detection ────────────────────────────────────────
+ * The main reading column (teatime article, home hero) is centered
+ * with a max-width. Characters must stay OUT of that column so they
+ * don't cover text. We probe the DOM for known centered containers
+ * and return the viewport-relative [left, right] of the content area.
+ */
+function getContentBounds(): { left: number; right: number } {
+  if (typeof document === 'undefined') return { left: 0, right: 0 }
+  // Priority order: teatime article > home hero section > fallback to 720px centered
+  const selectors = ['.teatime-main', 'main section > div', 'main']
+  for (const sel of selectors) {
+    const el = document.querySelector(sel) as HTMLElement | null
+    if (!el) continue
+    const r = el.getBoundingClientRect()
+    if (r.width > 0 && r.width < window.innerWidth) {
+      return { left: r.left, right: r.right }
+    }
+  }
+  // Fallback — assume 720px centered column
+  const w = window.innerWidth
+  const col = Math.min(720, w)
+  return { left: (w - col) / 2, right: (w + col) / 2 }
+}
 const ACTION_EMOJIS: Record<ActionType, string> = {
   idle: '',
   walking: '',
@@ -71,6 +98,63 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v))
 }
 
+/* ── Responsive size ──
+ * Below NARROW_BREAKPOINT the content column fills the viewport,
+ * leaving no margin for characters → shrink them so they corner nicely.
+ */
+function getCharSize(): number {
+  if (typeof window === 'undefined') return SIZE_DESKTOP
+  return window.innerWidth < NARROW_BREAKPOINT ? SIZE_MOBILE : SIZE_DESKTOP
+}
+
+/* ── Clamp a target x to the nearest available margin zone ──
+ * Given a proposed x, if it would place the character inside the
+ * centered content column, push it to whichever side (left-margin
+ * or right-margin) is closest. On narrow viewports with no usable
+ * margins, corner characters at left or right edge.
+ */
+function clampToMargin(
+  targetX: number,
+  size: number,
+  bounds: { left: number; right: number },
+  viewportW: number,
+  preferSide: 'left' | 'right' | 'auto' = 'auto',
+): number {
+  const leftMarginWidth = bounds.left
+  const rightMarginWidth = viewportW - bounds.right
+  const leftUsable = leftMarginWidth >= MARGIN_MIN
+  const rightUsable = rightMarginWidth >= MARGIN_MIN
+
+  // Narrow viewport — corner mode
+  if (!leftUsable && !rightUsable) {
+    if (preferSide === 'right') return viewportW - size - 8
+    return 8
+  }
+
+  const charCenter = targetX + size / 2
+  const outsideLeft = targetX + size <= bounds.left
+  const outsideRight = targetX >= bounds.right
+  if (outsideLeft || outsideRight) {
+    // Already in a margin → just clamp to viewport
+    return clamp(targetX, 4, viewportW - size - 4)
+  }
+
+  // Inside the content column — push to nearest usable margin
+  let pushLeft: number
+  let pushRight: number
+  if (leftUsable) pushLeft = Math.max(4, bounds.left - size - 8)
+  else pushLeft = Number.POSITIVE_INFINITY
+  if (rightUsable) pushRight = Math.min(viewportW - size - 4, bounds.right + 8)
+  else pushRight = Number.POSITIVE_INFINITY
+
+  if (preferSide === 'left' && leftUsable) return pushLeft
+  if (preferSide === 'right' && rightUsable) return pushRight
+
+  const distLeft = Math.abs(charCenter - bounds.left)
+  const distRight = Math.abs(bounds.right - charCenter)
+  return distLeft <= distRight ? pushLeft : pushRight
+}
+
 /* ── Component ──────────────────────────────────────────────────────── */
 
 export default function FloatingCharacters() {
@@ -96,24 +180,34 @@ export default function FloatingCharacters() {
   useEffect(() => {
     const w = window.innerWidth
     const h = window.innerHeight
+    const size = getCharSize()
+    const bounds = getContentBounds()
+    const leftMargin = bounds.left
+    const rightMargin = w - bounds.right
+    const narrow = leftMargin < MARGIN_MIN && rightMargin < MARGIN_MIN
+
+    // Place chars in the centers of available margins (or corners on narrow screens)
+    const leftX = narrow ? 8 : Math.max(8, leftMargin / 2 - size / 2)
+    const rightX = narrow ? w - size - 8 : Math.min(w - size - 8, bounds.right + rightMargin / 2 - size / 2)
+
     const initial: CharacterState[] = [
       {
-        id: 'kobu', x: w * 0.15, y: h * 0.3,
-        targetX: w * 0.15, targetY: h * 0.3,
+        id: 'kobu', x: leftX, y: h * 0.25,
+        targetX: leftX, targetY: h * 0.25,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
         flipX: false, bobPhase: 0, pinned: false,
       },
       {
-        id: 'oh', x: w * 0.5, y: h * 0.15,
-        targetX: w * 0.5, targetY: h * 0.15,
+        id: 'oh', x: rightX, y: h * 0.15,
+        targetX: rightX, targetY: h * 0.15,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
-        flipX: false, bobPhase: Math.PI * 0.66, pinned: false,
+        flipX: true, bobPhase: Math.PI * 0.66, pinned: false,
       },
       {
-        id: 'jem', x: w * 0.8, y: h * 0.6,
-        targetX: w * 0.8, targetY: h * 0.6,
+        id: 'jem', x: rightX, y: h * 0.55,
+        targetX: rightX, targetY: h * 0.55,
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
         flipX: true, bobPhase: Math.PI * 1.33, pinned: false,
@@ -189,8 +283,12 @@ export default function FloatingCharacters() {
 
       const w = window.innerWidth
       const h = window.innerHeight
+      const size = getCharSize()
+      const bounds = getContentBounds()
       const mouse = mouseRef.current
       const isTyping = typingRef.current
+      // idx → preferred margin side (kobu=left, oh=right, jem=right)
+      const preferredSides: Array<'left' | 'right'> = ['left', 'right', 'right']
 
       charsRef.current = charsRef.current.map((c, idx) => {
         if (dragRef.current?.id === c.id) return c
@@ -211,13 +309,13 @@ export default function FloatingCharacters() {
             const triangleOffsets = [
               { ox: -70, oy: -50 },   // 코부장: above-left
               { ox: rect.width + 20, oy: -40 },  // 오과장: above-right
-              { ox: rect.width / 2 - SIZE / 2, oy: rect.height + 10 },  // 젬대리: below-center
+              { ox: rect.width / 2 - size / 2, oy: rect.height + 10 },  // 젬대리: below-center
             ]
             const off = triangleOffsets[idx]!
             // Add gentle sway animation
             const sway = Math.sin(now / 1500 + idx * 2) * 8
-            targetX = clamp(rect.left + off.ox + sway, 10, w - SIZE - 10)
-            targetY = clamp(rect.top + off.oy, 10, h - SIZE - 10)
+            targetX = clamp(rect.left + off.ox + sway, 10, w - size - 10)
+            targetY = clamp(rect.top + off.oy, 10, h - size - 10)
             action = 'walking'
             // Show loading bubbles
             if (!c.bubbleVisible) {
@@ -253,32 +351,37 @@ export default function FloatingCharacters() {
             action = 'listening'
           }
         } else if (mouse.active) {
-          // Triangle formation to the right of cursor
-          const triangleOffsets = [
-            { ox: 90, oy: -50 },     // 코부장: upper-right
-            { ox: 130, oy: 10 },     // 오과장: mid-far-right
-            { ox: 90, oy: 60 },      // 젬대리: lower-right
-          ]
-          const off = triangleOffsets[idx]!
-          // If too close to right edge, mirror to left
-          const rightEdge = mouse.x + off.ox + SIZE > w - 20
-          targetX = rightEdge ? mouse.x - off.ox - SIZE : mouse.x + off.ox
-          targetY = mouse.y + off.oy
+          // Follow cursor, but stay in the nearest side margin so we don't cover text.
+          // Pick preferred side per character (kobu=left, oh/jem=right); if the mouse
+          // is in the opposite margin, swap to that side.
+          const mouseInLeftMargin = mouse.x < bounds.left
+          const mouseInRightMargin = mouse.x > bounds.right
+          const preferred = preferredSides[idx]!
+          const side: 'left' | 'right' =
+            mouseInLeftMargin ? 'left'
+            : mouseInRightMargin ? 'right'
+            : preferred
+          const stagger = [-40, 0, 40][idx] ?? 0
+          // Park inside the chosen margin at mouse Y
+          targetX = clampToMargin(mouse.x - size / 2, size, bounds, w, side)
+          targetY = clamp(mouse.y + stagger - size / 2, 20, h - size - 20)
           if (action === 'listening') action = 'idle'
         } else {
-          // Gentle wander
+          // Gentle wander — constrained to the character's preferred margin zone
           actionTimer += dt
           if (actionTimer > 200) {
-            targetX = clamp(x + (Math.random() - 0.5) * 200, 20, w - SIZE - 20)
-            targetY = clamp(y + (Math.random() - 0.5) * 150, 20, h - SIZE - 20)
+            const side = preferredSides[idx]!
+            const driftX = x + (Math.random() - 0.5) * 120
+            targetX = clampToMargin(driftX, size, bounds, w, side)
+            targetY = clamp(y + (Math.random() - 0.5) * 150, 20, h - size - 20)
             actionTimer = 0
           }
         }
 
         // ── Move toward target ──
         const speed = isTyping ? GATHER_SPEED : mouse.active ? FOLLOW_SPEED : WANDER_SPEED
-        const newX = lerp(x, clamp(targetX, 0, w - SIZE), speed * dt)
-        const newY = lerp(y, clamp(targetY, 0, h - SIZE), speed * dt)
+        const newX = lerp(x, clamp(targetX, 0, w - size), speed * dt)
+        const newY = lerp(y, clamp(targetY, 0, h - size), speed * dt)
 
         // ── Determine action & flip ──
         const moving = dist(newX, newY, x, y) > 0.3
@@ -310,7 +413,7 @@ export default function FloatingCharacters() {
 
       // Report positions to PretextMessage via context
       setPositions(charsRef.current.map(c => ({
-        id: c.id, x: c.x, y: c.y, width: SIZE, height: SIZE,
+        id: c.id, x: c.x, y: c.y, width: size, height: size,
       })))
 
       rafRef.current = requestAnimationFrame(step)
@@ -416,8 +519,9 @@ export default function FloatingCharacters() {
       const { id, offsetX, offsetY } = dragRef.current
       const w = window.innerWidth
       const h = window.innerHeight
-      const nx = clamp(e.clientX - offsetX, 0, w - SIZE)
-      const ny = clamp(e.clientY - offsetY, 0, h - SIZE)
+      const size = getCharSize()
+      const nx = clamp(e.clientX - offsetX, 0, w - size)
+      const ny = clamp(e.clientY - offsetY, 0, h - size)
       charsRef.current = charsRef.current.map((c) =>
         c.id === id ? { ...c, x: nx, y: ny, targetX: nx, targetY: ny } : c
       )
@@ -460,6 +564,8 @@ export default function FloatingCharacters() {
             const char = CHARACTERS[c.id]
             if (!char) return null
 
+            const size = getCharSize()
+
             // Bob animation for walking
             const bobY = c.action === 'walking'
               ? Math.sin(c.bobPhase) * 3
@@ -481,15 +587,15 @@ export default function FloatingCharacters() {
             const bubbleStyle: React.CSSProperties = charOnLeft
               ? { // Character on LEFT → bubble goes LEFT (away from content)
                   borderColor: char.color,
-                  right: SIZE / 2,
+                  right: size / 2,
                   left: 'auto',
-                  bottom: SIZE + 8,
+                  bottom: size + 8,
                 }
               : { // Character on RIGHT → bubble goes RIGHT (away from content)
                   borderColor: char.color,
-                  left: SIZE / 2,
+                  left: size / 2,
                   right: 'auto',
-                  bottom: SIZE + 8,
+                  bottom: size + 8,
                 }
 
             return (
@@ -530,8 +636,8 @@ export default function FloatingCharacters() {
                 <img
                   src={char.avatar}
                   alt={char.name}
-                  width={SIZE}
-                  height={SIZE}
+                  width={size}
+                  height={size}
                   className="floating-avatar"
                   style={{
                     outline: `2px solid ${char.color}`,

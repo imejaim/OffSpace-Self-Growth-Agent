@@ -68,7 +68,7 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+        <div style={{ maxWidth: "55rem", margin: "0 auto" }}>
           {/* eyebrow label */}
           <div
             style={{
@@ -182,7 +182,7 @@ export default function HomePage() {
 
       {/* ═══ TODAY'S PREVIEW CARD ═══════════════════════════════════════ */}
       <section style={{ padding: "0 1.5rem 4rem" }}>
-        <div style={{ maxWidth: "48rem", margin: "0 auto" }}>
+        <div style={{ maxWidth: "55rem", margin: "0 auto" }}>
           <div
             className="card"
             style={{
@@ -345,7 +345,7 @@ export default function HomePage() {
           borderBottom: "1px solid var(--color-border)",
         }}
       >
-        <div style={{ maxWidth: "56rem", margin: "0 auto" }}>
+        <div style={{ maxWidth: "64rem", margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             <div className="section-divider" />
             <h2

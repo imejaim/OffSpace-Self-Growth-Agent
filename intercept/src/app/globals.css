@@ -43,6 +43,11 @@
   /* Shadow */
   --shadow-card: 0 2px 12px rgba(44, 62, 80, 0.06);
   --shadow-hover: 0 6px 24px rgba(44, 62, 80, 0.12);
+
+  /* Content column widths — used by pages AND FloatingCharacters to stay out of text */
+  --content-max-teatime: 720px;
+  --content-max-home:    880px;
+  --content-max-wide:    1120px;
 }
 
 /* ─── Tailwind v4 Theme Registration ──────────────────────────────── */
@@ -211,7 +216,7 @@ a {
 }
 
 .teatime-header-inner {
-  max-width: 680px;
+  max-width: var(--content-max-teatime);
   margin: 0 auto;
   padding: 0 1.5rem;
   display: flex;
@@ -233,7 +238,7 @@ a {
 }
 
 .teatime-main {
-  max-width: 680px;
+  max-width: var(--content-max-teatime);
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
 }
@@ -686,7 +691,7 @@ a {
     max-height: 240px;
   }
 
-  .floating-avatar { width: 36px; height: 36px; }
+  /* .floating-avatar size is controlled by JS via HTML width/height attrs */
   .floating-bubble { min-width: 100px; max-width: 160px; font-size: 0.65rem; }
 
   .intercept-hint {
@@ -807,8 +812,9 @@ a {
 }
 
 .floating-avatar {
-  width: 48px;
-  height: 48px;
+  /* width/height come from inline HTML attributes so JS can scale per viewport */
+  width: auto;
+  height: auto;
   border-radius: 6px;
   image-rendering: pixelated;
   display: block;
