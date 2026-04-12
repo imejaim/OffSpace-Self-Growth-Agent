@@ -211,7 +211,35 @@
 
 3. **결제 시스템 버그 6개** (회의록 #12 참고): 안팀장 작업 마무리 시 같이 해결 권장.
 
-### 14-H. 9개 수정 커밋 통합
+### 14-G-2. 추가 수정 — MOCK_RESPONSES 제거 ✅ `9aa92e7`
+
+- InterceptButton `MOCK_RESPONSES` (한국어 하드코딩 폴백) 완전 제거
+- 네트워크 실패 시 i18n 에러 메시지 (`interceptNetworkError`)로 대체
+- EN 모드에서 한국어 폴백 노출 문제 해결
+
+### 14-I. 라이브 Playwright 검증 결과 (코벤저스 Agent B)
+
+**종합 점수**: 6 / 10 (9 PASS, 2 FAIL)
+
+**PASS (9건)**:
+- 홈/teatime/pricing/my 페이지 로드
+- Pricing 네비 복원
+- i18n EN 토글 작동
+- 끼어들기 패널 열림 + "Jump in here" 표시
+- /my 빈 상태 + 캐릭터 + CTA
+- 수다수다 API 호출 → 새 메시지 생성 확인
+- "Post" 라벨 (구 "Public Post" 제거)
+
+**FAIL 분석**:
+- **TC6 (보관하기 selector)**: 실제 버그 아님. EN 모드에서 "Keep"으로 표시되는 게 정상인데 테스트가 한글 "보관하기" 찾음. False FAIL.
+- **TC8 (캐릭터 토글 position:fixed 0개)**: 안팀장이 `FloatingCharacters.tsx` 작업 중이라 미완성 상태일 가능성. 안팀장 작업 완료 후 재검증 필요.
+
+**라이브 API 검증**:
+- `curl POST /api/teatime/chatter` (KO): ✅ 200 + Robot 3캐릭터 응답
+- `curl POST /api/teatime/chatter` (EN): ✅ 200 + Samsung 3캐릭터 응답
+- `curl POST /api/teatime/chatter` (KO): ✅ 200 + Coffee 주제
+
+### 14-H. 수정 커밋 통합
 
 | # | 커밋 | 담당 | 내용 |
 |---|------|------|------|
