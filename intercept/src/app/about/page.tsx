@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import SplineCharacter from '@/components/SplineCharacter'
+// SplineCharacter temporarily disabled — scene geo-restricted, causes runtime crash
+// import SplineCharacter from '@/components/SplineCharacter'
 
 export const metadata: Metadata = {
   title: '서비스 소개 — INTERCEPT',
@@ -281,7 +282,7 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* ── 3D 캐릭터 쇼케이스 ───────────────────────────────── */}
+        {/* ── 캐릭터 쇼케이스 ──────────────────────────────────── */}
         <section style={{ marginBottom: 'var(--space-2xl)' }}>
           <h2
             style={{
@@ -292,18 +293,8 @@ export default function AboutPage() {
               letterSpacing: '-0.02em',
             }}
           >
-            3D로 만나는 Offspace
+            팀원들을 만나보세요
           </h2>
-          <p
-            style={{
-              fontSize: '0.9375rem',
-              color: 'var(--color-text-muted)',
-              margin: '0 0 var(--space-lg)',
-              lineHeight: 1.6,
-            }}
-          >
-            Spline으로 구현한 입체 캐릭터 — 아직 실험 중입니다. 로딩이 느릴 수 있어요.
-          </p>
           <div
             className="card"
             style={{
@@ -311,15 +302,23 @@ export default function AboutPage() {
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
-              minHeight: 280,
+              gap: 'var(--space-xl)',
             }}
           >
-            <SplineCharacter
-              fallbackSrc="/characters/Ko-bujang.svg"
-              fallbackAlt="코부장 3D"
-              size={240}
-              accentColor="var(--color-ko)"
-            />
+            {CHARACTERS.map((char) => (
+              <div key={char.name} style={{ textAlign: 'center' }}>
+                <Image
+                  src={char.avatar}
+                  alt={char.name}
+                  width={80}
+                  height={80}
+                  style={{ imageRendering: 'pixelated', borderRadius: 8 }}
+                />
+                <div style={{ fontSize: '0.75rem', fontWeight: 700, color: char.color, marginTop: 6 }}>
+                  {char.name}
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 

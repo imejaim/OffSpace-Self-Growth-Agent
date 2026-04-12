@@ -5,7 +5,6 @@ import { rateLimit } from '@/lib/rate-limit'
 import { getSessionInfo, checkInterceptAllowance } from '@/lib/auth-helpers'
 import { generateInterceptResponse } from '@/lib/ai-router'
 
-export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const SYSTEM_PROMPT = `당신은 INTERCEPT라는 AI 뉴스 토론 플랫폼의 세 캐릭터입니다. 사용자가 AI 캐릭터들의 대화에 끼어들었을 때, 해당 캐릭터들이 자연스럽게 반응해야 합니다.
