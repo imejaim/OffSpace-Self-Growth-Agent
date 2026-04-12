@@ -13,6 +13,8 @@ interface AuthContextValue {
   credits: number
   loading: boolean
   signOut: () => Promise<void>
+  updateNickname: (newNickname: string) => Promise<{ success: boolean; error?: string }>
+  refreshProfile: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -22,6 +24,8 @@ const AuthContext = createContext<AuthContextValue>({
   credits: 0,
   loading: true,
   signOut: async () => {},
+  updateNickname: async () => ({ success: false }),
+  refreshProfile: async () => {},
 })
 
 async function fetchOrCreateProfile(
@@ -100,8 +104,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setCredits(0)
   }
 
+  const updateNickname = async (newNickname: string) => {
+    if (!user) return { success: false, error: 'Not authenticated' }
+    const { error } = await supabase
+      .from('profiles')
+      .update({ display_name: newNickname })
+      .eq('id', user.id)
+    
+    if (error) return { success: false, error: error.message }
+    await loadProfile(user)
+    return { success: true }
+  }
+
+  const refreshProfile = async () => {
+    if (user) await loadProfile(user)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, session, tier, credits, loading, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      tier, 
+      credits, 
+      loading, 
+      signOut, 
+      updateNickname, 
+      refreshProfile 
+    }}>
       {children}
     </AuthContext.Provider>
   )

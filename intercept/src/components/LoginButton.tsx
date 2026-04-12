@@ -18,10 +18,11 @@ function GoogleIcon() {
 }
 
 export function LoginButton() {
-  const { user, loading, signOut } = useAuth()
+  const { user, loading, signOut, updateNickname } = useAuth()
   const { t } = useI18n()
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [nicknameModalOpen, setNicknameModalOpen] = useState(false)
+  const [isSettingNickname, setIsSettingNickname] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const supabase = createClient()
 
@@ -40,12 +41,19 @@ export function LoginButton() {
       provider: 'google',
       options: {
         redirectTo: window.location.origin + '/auth/callback',
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     })
   }
 
-  const handleNicknameSubmit = (_nickname: string, _sessionId: string) => {
-    // Guest session stored in localStorage by NicknameModal
+  const handleNicknameSubmit = async (nickname: string) => {
+    if (user && isSettingNickname) {
+      await updateNickname(nickname)
+      setIsSettingNickname(false)
+    }
   }
 
   const displayName = user?.user_metadata?.full_name
@@ -115,7 +123,7 @@ export function LoginButton() {
           <img
             src={avatarUrl}
             alt={displayName}
-            className="w-6 h-6 rounded-full object-cover"
+            className="w-6 h-6 rounded-full object-cover border border-[rgba(0,0,0,0.05)]"
           />
         ) : (
           <div
@@ -149,6 +157,18 @@ export function LoginButton() {
           }}
         >
           <button
+            onClick={() => {
+              setDropdownOpen(false)
+              setIsSettingNickname(true)
+              setNicknameModalOpen(true)
+            }}
+            className="w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[var(--color-bg-muted)]"
+            style={{ color: 'var(--color-text)' }}
+          >
+            닉네임 변경
+          </button>
+          <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0' }} />
+          <button
             onClick={async () => { setDropdownOpen(false); await signOut() }}
             className="w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[var(--color-bg-muted)]"
             style={{ color: 'var(--color-text)' }}
@@ -157,6 +177,15 @@ export function LoginButton() {
           </button>
         </div>
       )}
+
+      <NicknameModal
+        isOpen={nicknameModalOpen}
+        onClose={() => {
+          setNicknameModalOpen(false)
+          setIsSettingNickname(false)
+        }}
+        onSubmit={handleNicknameSubmit}
+      />
     </div>
   )
 }

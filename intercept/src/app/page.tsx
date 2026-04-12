@@ -122,12 +122,9 @@ export default function HomePage() {
           </p>
 
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <Link href="/teatime" className="btn-primary" style={{ fontSize: "1rem" }}>
+            <Link href="/teatime" className="btn-primary" style={{ fontSize: "1rem", padding: "0.875rem 2.5rem" }}>
               {t.home.ctaViewToday}
             </Link>
-            <a href="#how-it-works" className="btn-outline" style={{ fontSize: "1rem" }}>
-              {t.home.ctaHowItWorks}
-            </a>
           </div>
 
           {/* Character avatars row */}
@@ -228,20 +225,7 @@ export default function HomePage() {
                   {TODAY}
                 </h2>
               </div>
-              <span
-                style={{
-                  background: "var(--color-bg-muted)",
-                  color: "var(--color-coral-dark)",
-                  fontSize: "0.8rem",
-                  fontWeight: 700,
-                  padding: "0.3rem 0.75rem",
-                  borderRadius: "var(--radius-pill)",
-                  border: "1px solid var(--color-border)",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {t.home.topicsCount(TODAY_TOPIC_COUNT)}
-              </span>
+              {/* Topic count badge removed for simplicity */}
             </div>
 
             {/* Sample conversation preview — left in original Korean (AI-generated content) */}
@@ -340,59 +324,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══ HOW IT WORKS ════════════════════════════════════════════════ */}
-      <section
-        id="how-it-works"
-        style={{
-          background: "var(--color-bg-muted)",
-          padding: "4rem 1.5rem",
-          borderTop: "1px solid var(--color-border)",
-          borderBottom: "1px solid var(--color-border)",
-        }}
-      >
-        <div style={{ maxWidth: "64rem", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
-            <div className="section-divider" />
-            <h2
-              style={{
-                fontSize: "clamp(1.5rem, 3vw, 2rem)",
-                fontWeight: 800,
-                color: "var(--color-navy)",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              {t.home.howItWorksTitle}
-            </h2>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              gap: "1.5rem",
-              flexWrap: "wrap",
-              justifyContent: "center",
-            }}
-          >
-            <StepCard
-              step="①"
-              title={t.home.step1Title}
-              desc={t.home.step1Desc}
-              accent="var(--color-ko)"
-            />
-            <StepCard
-              step="②"
-              title={t.home.step2Title}
-              desc={t.home.step2Desc}
-              accent="var(--color-oh)"
-            />
-            <StepCard
-              step="③"
-              title={t.home.step3Title}
-              desc={t.home.step3Desc}
-              accent="var(--color-coral)"
-            />
-          </div>
-        </div>
-      </section>
+      {/* HOW IT WORKS hidden for simplicity */}
 
       {/* ═══ CTA STRIP ════════════════════════════════════════════════════ */}
       <section
