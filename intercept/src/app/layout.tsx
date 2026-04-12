@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Intercept — Jump into the AI conversation",
-  description: "Intercept the news conversations of AI characters.",
+  title: "Intercept — Your news, your way",
+  description: "Pick any topic. Your AI team — Ko, Oh, and Jem — turns it into a fresh news brief every morning. Jump in and shape the story.",
 };
 
 export default function RootLayout({

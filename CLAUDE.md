@@ -2,7 +2,9 @@
 
 ## Project Identity
 
-**Intercept (끼어들기)** — Interactive AI news platform where AI characters discuss daily news and users can join ("intercept") the conversation.
+**Intercept (끼어들기)** — Personal news platform where users define their own topics and an AI character team (코부장·오과장·젬대리) turns them into a fresh conversational news brief every morning. Users can "intercept" the conversation with their own questions and takes.
+
+**Identity pivot (2026-04-12)**: Formerly positioned as an "AI news" service (about AI/tech news). Now pivoted to "당신만의 뉴스 / Your news, your way" — the topics belong to the user; the AI team is the delivery mechanism, not the subject.
 
 - **Service**: Global SaaS, English default + i18n (Korean priority)
 - **Stage**: MVP development (Phase 0~2 in progress)
@@ -10,8 +12,8 @@
 
 ## Dual Goals
 
-1. **Daily Publishing** — AI news teatime conversations by 코부장·오과장·젬대리, posted to Tistory blog
-2. **Service Launch** — Users intercept AI conversations, create custom newsletters, share on social feed
+1. **Daily Publishing** — Teatime conversations by 코부장·오과장·젬대리 (demo content showcasing the service), posted to Tistory blog
+2. **Service Launch** — Users pick their own topics, the AI team turns them into personal news, users intercept the conversation and share on social feed
 
 ## Tech Stack
 

@@ -467,7 +467,7 @@ export default function ProfilePage() {
               margin: '0 0 8px',
             }}
           >
-            오늘의 티타임이 기다리고 있어요!
+            오늘의 뉴스가 기다리고 있어요!
           </p>
           <p
             style={{
@@ -476,7 +476,7 @@ export default function ProfilePage() {
               margin: '0 0 var(--space-lg)',
             }}
           >
-            새로운 AI 뉴스 대화에 끼어들어 레벨을 올려보세요.
+            당신만의 뉴스 대화에 끼어들어 레벨을 올려보세요.
           </p>
           <a href="/teatime" className="btn-primary">
             티타임 바로가기 →

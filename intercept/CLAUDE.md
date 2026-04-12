@@ -2,7 +2,7 @@
 
 # Intercept Web App
 
-Next.js 16.2.2 + React 19 + Tailwind 4 interactive AI news platform.
+Next.js 16.2.2 + React 19 + Tailwind 4 personal news platform — users pick topics, an AI character team (Ko, Oh, Jem) turns them into a daily conversational brief. Formerly an "AI news" service; pivoted 2026-04-12 to "당신만의 뉴스 / Your news, your way".
 
 ## Commands
 

@@ -1,12 +1,43 @@
-# 세션 핸드오프 — 2026-04-11
+# 세션 핸드오프 — 2026-04-12
 
 > 다음 세션에서 이 문서를 읽고 이어서 진행하세요.
 
 ## 프로젝트 개요
 
-**Intercept (끼어들기)** — AI 캐릭터들의 뉴스 대화에 사용자가 끼어드는 인터랙티브 뉴스 플랫폼.
+**Intercept (끼어들기)** — 당신만의 뉴스 플랫폼. 사용자가 정한 토픽을 AI 캐릭터 팀(코부장·오과장·젬대리)이 매일 수다 형식의 개인 뉴스로 발행. 사용자는 대화 중간에 끼어들어 이야기를 함께 만든다.
 GitHub: https://github.com/imejaim/OffSpace-Self-Growth-Agent
 도메인: https://interceptnews.app (Cloudflare, 2026-04-11 구매)
+
+---
+
+## Session 10 — 정체성 피벗 (2026-04-12)
+
+**변경 내용**: "AI 뉴스" 서비스 → "당신만의 뉴스 / Your news, your way" 서비스로 정체성 전면 수정.
+
+**왜**: 기존 카피가 "서비스의 주제 = AI/테크 뉴스"처럼 읽혔음. 실제로는 커스텀 소식지·편집 가능 토픽·수다수다 버튼이 이미 도입되어 "사용자의 토픽"을 AI 팀이 발행하는 구조로 피벗되어 있었으나, 홈/About/metadata 카피가 그대로였음.
+
+**수정 파일**:
+- `intercept/src/lib/i18n/en.ts` — home/about/header/pricing 카피 전체 재작성
+- `intercept/src/lib/i18n/ko.ts` — 동일 카피 한국어 재작성
+- `intercept/src/app/layout.tsx` — metadata title/description
+- `intercept/src/app/profile/page.tsx` — 빈 상태 안내 카피 정리
+- `CLAUDE.md` (root + `intercept/CLAUDE.md`) — Project Identity 섹션 업데이트
+- `.omc/plans/intercept-login-payment-social.md` — REBRAND 섹션 추가
+- `output/SESSION_HANDOFF.md` — 본 세션 10 기록
+
+**핵심 카피**:
+- EN hero: "Your news, your way — your AI team brings it every morning."
+- KO hero: "당신만의 뉴스, AI 팀이 매일 아침 발행해드려요."
+- EN CTA: "Make today's news →" / KO CTA: "오늘의 뉴스 만들기 →"
+
+**검증**: `npm run build` PASS (27 routes, 0 errors).
+
+**남은 정리 대상 (후속)**:
+- `src/lib/nicknames.ts` 주석의 "AI news platform" 문구 (내부 주석, 비필수)
+- `src/app/api/intercept/route.ts` / `src/app/api/teatime/chatter/route.ts` / `src/app/api/newsletter/generate/route.ts` 의 LLM SYSTEM_PROMPT 내 "AI 뉴스 플랫폼" 표현 — 서버 전용 프롬프트라 즉시 사용자 노출 없음. 별도 세션에서 프롬프트 튜닝할 때 함께 정리 권장.
+- `src/app/share/[id]/page.tsx` 플레이스홀더 mock 데이터의 "AI 뉴스" 문자열 — 실서비스 진입 후 교체 예정.
+
+---
 
 ---
 
