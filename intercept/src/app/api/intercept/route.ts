@@ -34,6 +34,7 @@ interface InterceptRequest {
   userMessage: string
   characterId?: string
   sessionId?: string
+  nickname?: string // ADDED: Nickname from user
 }
 
 interface CharacterResponse {
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { conversationContext, userMessage, characterId, sessionId } = body
+  const { conversationContext, userMessage, characterId, sessionId, nickname } = body // MODIFIED: Added nickname
 
   if (!conversationContext || !userMessage) {
     return NextResponse.json(
@@ -199,7 +200,8 @@ export async function POST(request: NextRequest) {
       user_message: userMessage,
       ai_responses: responses,
       conversation_context: conversationContext,
-      visibility: 'private',
+      visibility: 'private' as const,
+      nickname: nickname || null, // ADDED: Store nickname in database
     }
 
     if (userId) {

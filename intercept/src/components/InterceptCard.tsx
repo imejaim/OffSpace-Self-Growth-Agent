@@ -26,9 +26,9 @@ interface InterceptCardProps {
 }
 
 const CHARACTER_META: Record<string, { name: string; color: string; avatar: string }> = {
-  kobu: { name: '코부장', color: 'var(--color-ko)', avatar: '/characters/Ko-bujang.svg' },
-  oh:   { name: '오과장', color: 'var(--color-oh)', avatar: '/characters/Oh-gwajang.svg' },
-  jem:  { name: '젬대리', color: 'var(--color-jem)', avatar: '/characters/Jem-daeri.svg' },
+  kobu: { name: '코부장', color: '#4A90D9', avatar: '/characters/Ko-bujang.svg' }, // MODIFIED: Use hex to match InterceptButton
+  oh:   { name: '오과장', color: '#E67E22', avatar: '/characters/Oh-gwajang.svg' },
+  jem:  { name: '젬대리', color: '#27AE60', avatar: '/characters/Jem-daeri.svg' },
 }
 
 function relativeTime(iso: string): string {
@@ -137,13 +137,14 @@ export function InterceptCard({ intercept, onVisibilityToggle }: InterceptCardPr
                   <span
                     style={{
                       fontSize: '0.85rem',
-                      color: '#222',
-                      background: '#f7f7f7',
-                      border: '1px solid var(--color-border)',
-                      borderRadius: '0 10px 10px 10px',
-                      padding: '0.45rem 0.65rem',
-                      lineHeight: 1.6,
+                      color: 'var(--color-navy)', // MODIFIED: Use navy for text
+                      background: 'var(--color-bg-muted)', // MODIFIED: Use muted bg
+                      border: `1px solid ${meta.color}33`, // MODIFIED: Themed border
+                      borderRadius: '0 12px 12px 12px',
+                      padding: '0.6rem 0.8rem', // MODIFIED: Better spacing
+                      lineHeight: 1.55,
                       wordBreak: 'break-word',
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.02)', // ADDED: Subtle shadow
                     }}
                   >
                     {resp.content}

@@ -102,6 +102,8 @@ export default function InterceptButton({
           conversationContext: fullContext,
           userMessage: msg,
           characterId,
+          nickname: localStorage.getItem('intercept-nickname'), // ADDED: Pass nickname from localStorage
+          sessionId: localStorage.getItem('intercept-session-id'), // ADDED: Pass sessionId from localStorage
         }),
       })
       const data = await res.json()
