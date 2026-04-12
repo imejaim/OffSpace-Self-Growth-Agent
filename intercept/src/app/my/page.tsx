@@ -29,9 +29,22 @@ export default function MyPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [page, setPage] = useState(1)
   const [items, setItems] = useState<InterceptItem[]>([])
+  const [localItems, setLocalItems] = useState<InterceptItem[]>([])
   const [hasMore, setHasMore] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Load localStorage items on mount (client-only)
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    try {
+      const raw = localStorage.getItem('intercept-my-keep')
+      const parsed: InterceptItem[] = raw ? JSON.parse(raw) : []
+      setLocalItems(Array.isArray(parsed) ? parsed : [])
+    } catch {
+      setLocalItems([])
+    }
+  }, [])
 
   // Debounce search input
   useEffect(() => {
@@ -237,7 +250,7 @@ export default function MyPage() {
       )}
 
       {/* Empty */}
-      {!loading && items.length === 0 && !error && (
+      {!loading && items.length === 0 && localItems.length === 0 && !error && (
         debouncedSearch ? (
           <div
             style={{
@@ -370,27 +383,33 @@ export default function MyPage() {
         )
       )}
 
-      {/* List */}
-      {items.length > 0 && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {items.map((item) => (
-            <InterceptCard
-              key={item.id}
-              intercept={{ ...item, user_id: user.id }}
-              onVisibilityToggle={() => {
-                // Refresh the item in-place
-                setItems((prev) =>
-                  prev.map((i) =>
-                    i.id === item.id
-                      ? { ...i, visibility: i.visibility === 'public' ? 'private' : 'public' }
-                      : i
+      {/* List — merge DB items + localStorage items (deduplicate by id) */}
+      {(() => {
+        const dbIds = new Set(items.map((i) => i.id))
+        const merged = [
+          ...items,
+          ...localItems.filter((i) => !dbIds.has(i.id)),
+        ]
+        return merged.length > 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+            {merged.map((item) => (
+              <InterceptCard
+                key={item.id}
+                intercept={{ ...item, user_id: user.id }}
+                onVisibilityToggle={() => {
+                  setItems((prev) =>
+                    prev.map((i) =>
+                      i.id === item.id
+                        ? { ...i, visibility: i.visibility === 'public' ? 'private' : 'public' }
+                        : i
+                    )
                   )
-                )
-              }}
-            />
-          ))}
-        </div>
-      )}
+                }}
+              />
+            ))}
+          </div>
+        ) : null
+      })()}
 
       {/* Load more */}
       {hasMore && !loading && (

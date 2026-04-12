@@ -56,17 +56,22 @@ export function LoginButton() {
     }
   }
 
-  const displayName = user?.user_metadata?.full_name
-    ?? user?.email?.split('@')[0]
-    ?? t.auth.defaultUser
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ||
+    (user?.user_metadata?.name as string | undefined) ||
+    user?.email?.split('@')[0] ||
+    t.auth.defaultUser
 
-  const avatarUrl = user?.user_metadata?.avatar_url as string | undefined
+  const avatarUrl =
+    (user?.user_metadata?.avatar_url as string | undefined) ||
+    (user?.user_metadata?.picture as string | undefined)
 
   if (loading) {
     return (
       <div
         className="w-8 h-8 rounded-full animate-pulse"
-        style={{ background: 'var(--color-border)' }}
+        style={{ background: 'var(--color-border)', minWidth: 32 }}
+        aria-label="Loading..."
       />
     )
   }
@@ -130,7 +135,7 @@ export function LoginButton() {
             className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold text-white"
             style={{ background: 'var(--color-coral)' }}
           >
-            {displayName[0].toUpperCase()}
+            {(displayName[0] ?? '?').toUpperCase()}
           </div>
         )}
         <span className="text-sm" style={{ color: 'var(--color-text)' }}>
@@ -165,7 +170,7 @@ export function LoginButton() {
             className="w-full text-left px-3 py-2 text-sm transition-colors hover:bg-[var(--color-bg-muted)]"
             style={{ color: 'var(--color-text)' }}
           >
-            닉네임 변경
+            {t.auth.changeNickname}
           </button>
           <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '4px 0' }} />
           <button

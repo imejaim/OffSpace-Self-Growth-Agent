@@ -57,6 +57,23 @@ function HeaderBar() {
           </span>
         </a>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <a
+            href="/pricing"
+            style={{
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: 'var(--color-coral)',
+              textDecoration: 'none',
+              padding: '0.25rem 0.5rem',
+              borderRadius: 'var(--radius-sm)',
+              transition: 'opacity 0.15s',
+              whiteSpace: 'nowrap',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.7')}
+            onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
+          >
+            {t.nav.pricing}
+          </a>
           <LanguageToggle />
           <LoginButton />
         </div>
