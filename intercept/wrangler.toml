@@ -5,16 +5,26 @@
 # - GEMINI_API_KEY
 # - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (public, can stay in [vars] if needed)
 
+name = "intercept"
+main = ".open-next/worker.js"
+compatibility_date = "2026-04-11"
+compatibility_flags = ["nodejs_compat"]
+
+# workers.dev 서브도메인도 유지 (디버깅용)
+workers_dev = true
+
+# Custom domain — routes traffic from interceptnews.app to this Worker
+routes = [
+  { pattern = "interceptnews.app", custom_domain = true },
+  { pattern = "www.interceptnews.app", custom_domain = true }
+]
+
+# Cron triggers — daily/monthly usage counter resets
 [triggers]
 crons = [
   "0 15 * * *",   # 00:00 KST daily reset   (15:00 UTC)
   "0 15 1 * *"    # 00:00 KST monthly reset  (15:00 UTC on 1st of month)
 ]
-
-name = "intercept"
-main = ".open-next/worker.js"
-compatibility_date = "2026-04-11"
-compatibility_flags = ["nodejs_compat"]
 
 # Static assets (public/ 폴더 — 캐릭터 SVG, favicon 등)
 [assets]
@@ -29,15 +39,6 @@ binding = "AI"
 [[kv_namespaces]]
 binding = "RATE_LIMIT"
 id = "7ee3f4f54f414f3bb2529ade0f207580"
-
-# Custom domain — routes traffic from interceptnews.app to this Worker
-routes = [
-  { pattern = "interceptnews.app", custom_domain = true },
-  { pattern = "www.interceptnews.app", custom_domain = true }
-]
-
-# workers.dev 서브도메인도 유지 (디버깅용)
-workers_dev = true
 
 [vars]
 NEXT_PUBLIC_SITE_URL = "https://interceptnews.app"
