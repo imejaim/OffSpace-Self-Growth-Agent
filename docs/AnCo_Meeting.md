@@ -132,6 +132,59 @@
 
 ---
 
+## 🌙 회의록 #13 — 야간 종합 점검 (2026-04-12 코벤저스 4명 출동)
+
+대표님 ULTRAWORK 요청으로 코벤저스 4명 병렬 출동 → 결제/인증/E2E/회의록 종합 점검.
+
+### 13-A. 결제 시스템 검토 (Opus)
+**종합 점수**: 7.0 / 10 — 핵심 보안 설계는 양호, 버그 6건 + 보안 우려 5건 발견.
+**안팀장 영역이라 진단만 수행** → 상세는 회의록 #12 참고.
+
+### 13-B. 인증/닉네임 시스템 점검 (Opus)
+**발견된 CRITICAL 버그**:
+- **버그 0 (스키마 분열)**: `profiles.nickname` vs `profiles.display_name` 두 컬럼 공존. 서버는 nickname, 클라는 display_name 사용 → 서버에서 닉네임 항상 null.
+  - **수정 완료 (커밋 `95143d8`)**: `AuthProvider`에서 두 컬럼 동기화 (SELECT + INSERT + UPDATE 모두).
+- **버그 4 (nickname NOT NULL 폭사)**: `intercepts.nickname NOT NULL` 스키마인데 `route.ts`가 `nickname || null` 전달 → 익명 사용자 끼어들기 500 에러.
+  - **수정 완료 (커밋 `cea52a1`)**: `/api/intercept/route.ts`에서 3-way fallback (profiles → display_name → nickname → generateNickname()).
+
+**보고만 (안팀장 영역)**:
+- 버그 2: `LoginButton.displayName` profiles 우선순위
+- 버그 3: `NicknameModal` initialNickname prop
+
+### 13-C. E2E 기능 테스트 (Sonnet + Playwright)
+**종합 점수**: 7 / 10 (부분 테스트만 완료)
+
+**라이브 사이트 점검 결과**:
+| 항목 | 상태 |
+|------|------|
+| `/` 홈 + 영웅/CTA/캐릭터 | ✅ PASS |
+| `/teatime` 캐러셀+토픽+캐릭터 | ✅ PASS |
+| `/my` 빈상태+캐릭터+CTA | ✅ PASS |
+| `/feed` 빈상태+캐릭터+탭 | ✅ PASS |
+| `/pricing` 가격표+결제버튼 | ✅ PASS |
+| `/about` 서비스 소개 | ✅ PASS |
+| 캐러셀 탭 클릭 네비 | ✅ PASS |
+
+**발견된 버그**:
+- 🐞 **BUG-1 (MEDIUM)**: `/pricing` 푸터에 placeholder `offspace@example.com` 노출 → 실제 운영 이메일로 교체 필요 (퍼블릭 베타 전 필수)
+- 🐞 **BUG-2 (LOW)**: `/pricing` PRO 플랜에 결제 버튼 미표시 (Basic은 있음) — 의도적 여부 확인 필요
+- 🐞 **BUG-3 (LOW)**: `/feed` 이동 시 콘솔 경고 2건 (에러 아님)
+
+**콘솔 에러**: 0건 (모든 페이지)
+
+### 13-D. 회의록 통합 (Sonnet)
+- `intercept/MEETING_MINUTES.md` + `intercept/MEETING_LOG.md` 내용을 `docs/AnCo_Meeting.md`에 통합 (#10 + #11)
+- 커밋 `b4abf1e`
+
+### 13-E. 코벤저스 총평
+✅ **라이브 핵심 기능 전부 정상**
+⚠️ **즉시 수정 필요 (퍼블릭 베타 전)**:
+1. `/pricing` placeholder 이메일 교체 (**MEDIUM**)
+2. 안팀장 작업 끝나면 결제 버그 6개 정리 (특히 B2 capture idempotency, B3 구독 서버검증)
+3. 닉네임 버그 2, 3 (NicknameModal prop + LoginButton 우선순위)
+
+---
+
 ## 🔧 안팀장 작업 대기 목록
 
 ### 1. ✅ Supabase: 사용량 리셋 SQL 함수 등록
