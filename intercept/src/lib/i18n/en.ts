@@ -20,7 +20,7 @@ export const en: Translations = {
     feedback: 'Feedback',
   },
   auth: {
-    signIn: 'Sign in',
+    signIn: 'Start with Google',
     signOut: 'Sign out',
     guestOnly: 'Just intercept',
     defaultUser: 'User',
@@ -174,6 +174,9 @@ export const en: Translations = {
     sns: 'SNS',
     prevPage: 'Previous',
     nextPage: 'Next',
+    myKeepPeek: 'Your saved intercepts & newsletters live here.',
+    instantPagePeek: "Today's teatime — live AI conversation.",
+    snsPeek: 'See what other people are intercepting.',
   },
   my: {
     title: 'My Keep',

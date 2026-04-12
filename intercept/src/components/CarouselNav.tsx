@@ -8,13 +8,12 @@ type CarouselKey = 'my' | 'teatime' | 'feed'
 interface TabDef {
   key: CarouselKey
   href: string
-  icon: string
 }
 
 const TABS: TabDef[] = [
-  { key: 'my', href: '/my', icon: '📚' },
-  { key: 'teatime', href: '/teatime', icon: '⚡' },
-  { key: 'feed', href: '/feed', icon: '💬' },
+  { key: 'my', href: '/my' },
+  { key: 'teatime', href: '/teatime' },
+  { key: 'feed', href: '/feed' },
 ]
 
 export function getCarouselIndex(pathname: string | null): number {
@@ -124,15 +123,6 @@ export function CarouselNav() {
                   textOverflow: 'ellipsis',
                 }}
               >
-                <span
-                  aria-hidden
-                  style={{
-                    fontSize: '0.95rem',
-                    imageRendering: 'pixelated',
-                  }}
-                >
-                  {tab.icon}
-                </span>
                 <span className="carousel-tab-label">{labelFor(tab.key)}</span>
               </button>
             )

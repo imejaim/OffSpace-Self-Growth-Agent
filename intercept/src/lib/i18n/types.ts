@@ -125,6 +125,9 @@ export interface Translations {
     sns: string
     prevPage: string
     nextPage: string
+    myKeepPeek: string
+    instantPagePeek: string
+    snsPeek: string
   }
   // My Keep page
   my: {

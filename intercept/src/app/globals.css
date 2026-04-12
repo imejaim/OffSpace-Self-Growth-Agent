@@ -15,9 +15,9 @@
   --color-bg:       #FFFFFF;
   --color-bg-card:  #FFFFFF;
   --color-bg-muted: #F8F9FA;
-  --color-text:     #2D3436;
-  --color-text-muted: #636E72;
-  --color-border:   #E9ECEF;
+  --color-text:     #111111;
+  --color-text-muted: #666666;
+  --color-border:   #EEEEEE;
 
   /* Character identity colors */
   --color-ko:   #4A90D9;   /* 코부장 — blue */
@@ -234,7 +234,7 @@ a {
 
 .teatime-date {
   font-size: 0.8rem;
-  color: #666666;
+  color: var(--color-text-muted);
 }
 
 .teatime-main {
@@ -299,11 +299,11 @@ a {
   font-size: 2.25rem;
   font-weight: 800;
   line-height: 1.2;
-  color: #111111;
+  color: var(--color-navy);
   letter-spacing: -0.02em;
   margin: 0 0 1.25rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 /* ─── Editable topic heading + 수다수다 button ────────────────────────── */
@@ -512,7 +512,7 @@ a {
 }
 
 .conversation-line:hover .conversation-msg {
-  background: #f7f7f7;
+  background: var(--color-bg-muted);
 }
 
 .char-name {
@@ -1390,6 +1390,78 @@ a {
   .carousel-page-enter-from-right,
   .carousel-page-enter-from-left {
     animation: none;
+  }
+}
+
+/* ----- Peek-and-drag carousel ----- */
+.carousel-drag-root {
+  cursor: grab;
+}
+.carousel-drag-root.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.carousel-drag-root.is-dragging * {
+  user-select: none;
+}
+.carousel-drag-wrapper {
+  will-change: transform;
+}
+
+/* Static side peek panels — hint that there's a page on either side */
+.carousel-peek {
+  position: fixed;
+  top: 120px; /* below header + carousel nav */
+  bottom: 80px; /* above footer */
+  width: clamp(140px, 14vw, 220px);
+  pointer-events: none;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  will-change: transform;
+}
+.carousel-peek-left {
+  left: 0;
+  justify-content: flex-start;
+  padding-left: 0.5rem;
+  /* fade OUT toward the left edge */
+  mask-image: linear-gradient(to right, transparent, black 80%);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 80%);
+}
+.carousel-peek-right {
+  right: 0;
+  justify-content: flex-end;
+  padding-right: 0.5rem;
+  /* fade OUT toward the right edge */
+  mask-image: linear-gradient(to left, transparent, black 80%);
+  -webkit-mask-image: linear-gradient(to left, transparent, black 80%);
+}
+.carousel-peek-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.9rem 0.85rem;
+  max-width: 100%;
+  font-family: var(--font-geist-mono), monospace;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.carousel-peek-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: var(--color-coral);
+  letter-spacing: -0.01em;
+  margin-bottom: 0.35rem;
+}
+.carousel-peek-hint {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+  line-height: 1.35;
+}
+
+/* Hide peek panels on narrow screens — mobile uses pure swipe */
+@media (max-width: 1100px) {
+  .carousel-peek {
+    display: none;
   }
 }
 

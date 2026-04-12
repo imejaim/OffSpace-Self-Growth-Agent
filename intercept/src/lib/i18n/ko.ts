@@ -20,7 +20,7 @@ export const ko: Translations = {
     feedback: '피드백',
   },
   auth: {
-    signIn: '로그인',
+    signIn: '구글로 시작',
     signOut: '로그아웃',
     guestOnly: '끼어들기만 할래요',
     defaultUser: '사용자',
@@ -174,6 +174,9 @@ export const ko: Translations = {
     sns: '소셜',
     prevPage: '이전',
     nextPage: '다음',
+    myKeepPeek: '내가 만든 뉴스·소식지가 여기에 보관돼요.',
+    instantPagePeek: '오늘의 티타임 — AI 대화가 진행 중이에요.',
+    snsPeek: '다른 사람들의 끼어들기를 구경해요.',
   },
   my: {
     title: '내 보관',
