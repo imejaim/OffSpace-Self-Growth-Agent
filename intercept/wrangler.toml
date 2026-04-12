@@ -6,10 +6,14 @@
 # - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (public, can stay in [vars] if needed)
 
 name = "intercept"
-# ADDED: OpenNext 빌드 결과물 엔트리포인트
 main = ".open-next/worker.js"
 compatibility_date = "2026-04-11"
 compatibility_flags = ["nodejs_compat"]
+
+# Static assets (public/ 폴더 — 캐릭터 SVG, favicon 등)
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 # Workers AI binding for Gemma 4 model access
 [ai]
