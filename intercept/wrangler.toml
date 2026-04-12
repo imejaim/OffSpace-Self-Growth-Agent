@@ -5,6 +5,12 @@
 # - GEMINI_API_KEY
 # - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (public, can stay in [vars] if needed)
 
+[triggers]
+crons = [
+  "0 15 * * *",   # 00:00 KST daily reset   (15:00 UTC)
+  "0 15 1 * *"    # 00:00 KST monthly reset  (15:00 UTC on 1st of month)
+]
+
 name = "intercept"
 main = ".open-next/worker.js"
 compatibility_date = "2026-04-11"
