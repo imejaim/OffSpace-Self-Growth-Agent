@@ -117,4 +117,56 @@ export interface Translations {
   common: {
     loading: string
   }
+  // Newsletter page
+  newsletter: {
+    title: string
+    subtitle: string
+    hotNews: string
+    myInterest: string
+    behindNews: string
+    placeholderInterest: string
+    placeholderHotNews: string
+    placeholderBehindNews: string
+    format: string
+    brief: string
+    detailed: string
+    generate: string
+    generating: string
+    remaining: (n: number) => string
+    yourNewsletter: string
+    signInRequired: string
+    signInDesc: string
+    goHome: string
+    paidFeature: string
+    upgradeDesc: string
+    seePricing: string
+  }
+  // Feed page
+  feed: {
+    title: string
+    subtitle: string
+    tabAll: string
+    tabFollowing: string
+    refresh: string
+    loadFailed: string
+    noFollowing: string
+    noPublic: string
+    loadMore: string
+    authRequired: string
+  }
+  // Teatime page
+  teatime: {
+    offspaceTeatime: string
+    interceptHint: string
+    interceptButton: string
+    referenceLinks: string
+    footerDesc: string
+    editTopicHint: string
+    chatterButton: string
+    chatterGenerating: string
+    chatterTitle: string
+    chatterRegenerate: string
+    chatterDismiss: string
+    chatterError: string
+  }
 }

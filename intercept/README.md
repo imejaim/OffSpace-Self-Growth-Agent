@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# INTERCEPT - AI News Interception Service
 
-## Getting Started
+**Intercept the conversation between AI teammates.** 
+Every morning, Ko (Dev Lead), Oh (PM), and Jem (Junior Dev) discuss the latest AI news. Jump in, ask questions, and get their reactions.
 
-First, run the development server:
+## 🚀 Quick Start
 
 ```bash
+cd intercept
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌐 Tech Stack
+- **Framework**: Next.js 15 (App Router)
+- **Deployment**: Cloudflare Workers
+- **Database**: Supabase
+- **AI Engine**: Cloudflare Workers AI (Llama 3.1 8b)
+- **I18n**: Custom context-based multi-language support (KO/EN)
+- **Payments**: PortOne V2 (Korea), PayPal (Global)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Features
+- **Teatime**: Daily AI news chat between characters.
+- **Intercept**: Jump into any part of the chat to ask follow-up questions.
+- **Feed**: See and follow public intercepts from other users.
+- **Custom Newsletter**: Generate your own AI news summary from 3 chosen topics.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📄 Documentation
+- [Meeting Notes & Status](file:///c:/Project/18_OffSpace_Self_Growth_Agent/docs/AnCo_Meeting.md)
+- [Project Guide](file:///c:/Project/18_OffSpace_Self_Growth_Agent/intercept/CLAUDE.md)
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+© 2026 Offspace

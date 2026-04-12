@@ -305,6 +305,195 @@ a {
   border-bottom: 1px solid #e0e0e0;
 }
 
+/* ─── Editable topic heading + 수다수다 button ────────────────────────── */
+.topic-heading-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+
+.topic-heading-row .topic-heading {
+  margin: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.topic-heading-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  letter-spacing: -0.02em;
+}
+
+.topic-heading-button:hover .topic-heading-edit-icon {
+  opacity: 1;
+}
+
+.topic-heading-edit-icon {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #888);
+  opacity: 0.45;
+  transition: opacity 0.15s;
+  font-weight: 400;
+}
+
+.topic-heading-input {
+  background: var(--color-bg-muted, #f5f5f5);
+  border: 1px solid var(--color-coral, #ff6b6b);
+  border-radius: 6px;
+  padding: 0.35rem 0.6rem;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+}
+
+.chatter-button {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.95rem;
+  background: var(--color-coral, #ff6b6b);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s, opacity 0.15s;
+}
+
+.chatter-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  background: var(--color-coral-dark, #e85a5a);
+}
+
+.chatter-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* ─── Chatter panel (수다뉴스) ────────────────────────────────────────── */
+.chatter-panel {
+  margin: 1rem 0 1.25rem;
+  padding: 0.95rem 1.1rem;
+  background: var(--color-bg-muted, #fafafa);
+  border: 1px dashed var(--color-coral, #ff6b6b);
+  border-radius: 10px;
+}
+
+.chatter-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.chatter-panel-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-coral, #ff6b6b);
+}
+
+.chatter-panel-actions {
+  display: inline-flex;
+  gap: 0.4rem;
+}
+
+.chatter-action-btn {
+  background: transparent;
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #666);
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.chatter-action-btn:hover {
+  color: var(--color-navy, #111);
+  border-color: var(--color-navy, #111);
+}
+
+.chatter-action-dismiss:hover {
+  color: var(--color-coral, #ff6b6b);
+  border-color: var(--color-coral, #ff6b6b);
+}
+
+.chatter-panel-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #666);
+  padding: 0.4rem 0;
+}
+
+.chatter-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  border-top-color: var(--color-coral, #ff6b6b);
+  border-radius: 50%;
+  animation: chatter-spin 0.75s linear infinite;
+}
+
+@keyframes chatter-spin {
+  to { transform: rotate(360deg); }
+}
+
+.chatter-panel-error {
+  font-size: 0.85rem;
+  color: var(--color-coral-dark, #c54242);
+  padding: 0.35rem 0;
+}
+
+.chatter-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.chatter-line {
+  display: flex;
+  gap: 0.55rem;
+  align-items: flex-start;
+}
+
+.chatter-line-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.chatter-take {
+  margin: 0.2rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--color-text, #222);
+}
+
 /* ─── Topic Images ────────────────────────────────────────────────────── */
 
 .topic-images {

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { usePollingFeed } from '@/hooks/usePollingFeed'
 import { InterceptCard } from '@/components/InterceptCard'
 import { useAuth } from '@/components/AuthProvider'
+import { useI18n } from '@/lib/i18n/context'
 
 type TabType = 'all' | 'following'
 
@@ -34,6 +35,7 @@ interface FeedResponse {
 }
 
 export default function FeedPage() {
+  const { t } = useI18n()
   const { isAuthenticated } = useAuth() as unknown as { isAuthenticated: boolean }
   const { user } = useAuth()
   const [tab, setTab] = useState<TabType>('all')
@@ -57,7 +59,7 @@ export default function FeedPage() {
     created_at: item.created_at,
     visibility: item.visibility,
     user_id: item.user_id,
-    nickname: item.profiles?.nickname ?? 'Anonymous',
+    nickname: item.profiles?.nickname ?? (t.auth.defaultUser || 'Anonymous'),
     avatar_url: item.profiles?.avatar_url ?? null,
   }))
 
@@ -85,10 +87,10 @@ export default function FeedPage() {
             margin: '0 0 0.25rem',
           }}
         >
-          공개 피드
+          {t.feed.title}
         </h1>
         <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>
-          다른 사람들이 끼어든 대화를 구경해보세요
+          {t.feed.subtitle}
         </p>
       </div>
 
@@ -102,15 +104,15 @@ export default function FeedPage() {
           paddingBottom: '0',
         }}
       >
-        {(['all', 'following'] as TabType[]).map((t) => {
-          const label = t === 'all' ? '전체' : '팔로잉'
-          const active = tab === t
-          const needsAuth = t === 'following' && !user
+        {(['all', 'following'] as TabType[]).map((tType) => {
+          const label = tType === 'all' ? t.feed.tabAll : t.feed.tabFollowing
+          const active = tab === tType
+          const needsAuth = tType === 'following' && !user
           return (
             <button
-              key={t}
-              onClick={() => !needsAuth && handleTabChange(t)}
-              title={needsAuth ? '로그인 후 이용 가능' : undefined}
+              key={tType}
+              onClick={() => !needsAuth && handleTabChange(tType)}
+              title={needsAuth ? t.feed.authRequired : undefined}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -141,7 +143,7 @@ export default function FeedPage() {
             padding: '0.5rem 0.25rem',
           }}
         >
-          새로고침
+          {t.feed.refresh}
         </button>
       </div>
 
@@ -158,7 +160,7 @@ export default function FeedPage() {
             marginBottom: '1rem',
           }}
         >
-          불러오기 실패: {error}
+          {t.feed.loadFailed}: {error}
         </div>
       )}
 
@@ -190,8 +192,8 @@ export default function FeedPage() {
           }}
         >
           {tab === 'following'
-            ? '팔로우한 사람들의 끼어들기가 없어요.'
-            : '아직 공개된 끼어들기가 없어요. 첫 번째가 되어보세요!'}
+            ? t.feed.noFollowing
+            : t.feed.noPublic}
         </div>
       )}
 
@@ -225,7 +227,7 @@ export default function FeedPage() {
               transition: 'border-color 0.15s, color 0.15s',
             }}
           >
-            더 보기
+            {t.feed.loadMore}
           </button>
         </div>
       )}

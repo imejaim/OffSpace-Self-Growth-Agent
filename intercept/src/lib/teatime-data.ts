@@ -990,4 +990,20 @@ export const TEATIME_VOL5: TeaTime = {
   ],
 };
 
-export const ALL_TEATIMES: TeaTime[] = [TEATIME_VOL5, TEATIME_VOL4];
+/**
+ * 대표님 요청: 티타임은 3토픽 체제 (AI 핫뉴스 / AI 에이전트 / AI 로봇).
+ * 원본 데이터는 그대로 유지하고, 노출 단계에서 3개만 필터링한다.
+ * (models, bonus 토픽은 데이터로만 보관 — 미노출)
+ */
+const VISIBLE_TOPIC_KEYWORDS = ['hotnews', 'agents', 'robots'] as const;
+
+function filterTopics(teatime: TeaTime): TeaTime {
+  return {
+    ...teatime,
+    topics: teatime.topics.filter((t) =>
+      VISIBLE_TOPIC_KEYWORDS.some((k) => t.id.includes(k))
+    ),
+  };
+}
+
+export const ALL_TEATIMES: TeaTime[] = [TEATIME_VOL5, TEATIME_VOL4].map(filterTopics);

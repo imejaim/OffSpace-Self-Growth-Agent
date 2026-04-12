@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
+import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/AuthProvider'
 import { EditableTopic } from '@/components/EditableTopic'
 
@@ -116,6 +117,7 @@ function TopicCard({
   onChange: (updated: TopicInput) => void
   disabled: boolean
 }) {
+  const { t } = useI18n()
   const accent =
     index === 0
       ? 'var(--color-coral)'
@@ -123,11 +125,11 @@ function TopicCard({
       ? 'var(--color-ko)'
       : 'var(--color-jem)'
 
-  const labels = ['#1 Hot News', '#2 My Interest', '#3 Behind-the-News']
+  const labels = [t.newsletter.hotNews, t.newsletter.myInterest, t.newsletter.behindNews]
   const queryPlaceholders = [
-    'e.g. AI, crypto, Big Tech',
-    'Enter any topic you care about',
-    'Community voices from Reddit, Discord, X, YouTube',
+    t.newsletter.placeholderHotNews,
+    t.newsletter.placeholderInterest,
+    t.newsletter.placeholderBehindNews,
   ]
 
   return (
@@ -195,6 +197,7 @@ function TopicCard({
 }
 
 function NewsletterResult({ newsletter }: { newsletter: Newsletter }) {
+  const { t, locale } = useI18n()
   return (
     <div style={{ marginTop: '2.5rem' }}>
       {/* Header */}
@@ -218,10 +221,10 @@ function NewsletterResult({ newsletter }: { newsletter: Newsletter }) {
             margin: 0,
           }}
         >
-          Your Newsletter
+          {t.newsletter.yourNewsletter}
         </h2>
         <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginLeft: 'auto' }}>
-          {new Date(newsletter.created_at).toLocaleString()}
+          {new Date(newsletter.created_at).toLocaleString(locale === 'ko' ? 'ko-KR' : 'en-US')}
         </span>
       </div>
 
@@ -305,6 +308,7 @@ function NewsletterResult({ newsletter }: { newsletter: Newsletter }) {
 /* ── Main Page ───────────────────────────────────────────────────────── */
 
 export default function NewsletterPage() {
+  const { t } = useI18n()
   const { user, tier: rawTier, loading: authLoading } = useAuth()
   // 'guest' is not a valid API tier — map it to 'free'
   const tier = rawTier === 'guest' ? 'free' : rawTier
@@ -396,10 +400,10 @@ export default function NewsletterPage() {
             marginBottom: '0.5rem',
           }}
         >
-          Sign in to generate your newsletter
+          {t.newsletter.signInRequired}
         </h1>
         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-          Basic plan: 5 newsletters/month. Pro: unlimited.
+          {t.newsletter.signInDesc}
         </p>
         <a
           href="/"
@@ -414,7 +418,7 @@ export default function NewsletterPage() {
             textDecoration: 'none',
           }}
         >
-          Go home to sign in
+          {t.newsletter.goHome}
         </a>
       </div>
     )
@@ -440,10 +444,10 @@ export default function NewsletterPage() {
             marginBottom: '0.5rem',
           }}
         >
-          Newsletter is a paid feature
+          {t.newsletter.paidFeature}
         </h1>
         <p style={{ fontSize: '0.9rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
-          Upgrade to Basic ($2.99/mo) for 5 newsletters a month, or Pro ($8/mo) for unlimited.
+          {t.newsletter.upgradeDesc}
         </p>
         <a
           href="/pricing"
@@ -458,7 +462,7 @@ export default function NewsletterPage() {
             textDecoration: 'none',
           }}
         >
-          See pricing
+          {t.newsletter.seePricing}
         </a>
       </div>
     )
@@ -487,7 +491,7 @@ export default function NewsletterPage() {
               margin: 0,
             }}
           >
-            Custom Newsletter
+            {t.newsletter.title}
           </h1>
           <TierBadge tier={tier} />
           {newsletterLimit !== null && (
@@ -498,12 +502,12 @@ export default function NewsletterPage() {
                 marginLeft: 'auto',
               }}
             >
-              {newsletterLimit} remaining this month
+              {t.newsletter.remaining(newsletterLimit)}
             </span>
           )}
         </div>
         <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)', margin: 0 }}>
-          Choose 3 topics. 코부장, 오과장, and 젬대리 will each weigh in.
+          {t.newsletter.subtitle}
         </p>
       </div>
 
@@ -530,7 +534,7 @@ export default function NewsletterPage() {
         }}
       >
         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--color-text-muted)' }}>
-          Format:
+          {t.newsletter.format}
         </span>
         {(['brief', 'detailed'] as const).map((f) => (
           <button
@@ -550,7 +554,7 @@ export default function NewsletterPage() {
               color: format === f ? '#fff' : 'var(--color-text-muted)',
             }}
           >
-            {f === 'brief' ? 'Brief' : 'Detailed'}
+            {f === 'brief' ? t.newsletter.brief : t.newsletter.detailed}
           </button>
         ))}
       </div>
@@ -607,10 +611,10 @@ export default function NewsletterPage() {
                 animation: 'spin 0.7s linear infinite',
               }}
             />
-            Generating...
+            {t.newsletter.generating}
           </>
         ) : (
-          'Generate Newsletter'
+          t.newsletter.generate
         )}
       </button>
 
