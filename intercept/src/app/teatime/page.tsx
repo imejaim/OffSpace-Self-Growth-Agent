@@ -332,7 +332,7 @@ function TopicSection({
         </div>
       )}
 
-      {!inChatterMode && topic.images && <TopicImages images={topic.images} />}
+      {topic.images && topic.images.length > 0 && <TopicImages images={topic.images} />}
 
       <div
         className={`topic-messages${chatterLoading ? ' topic-messages-loading' : ''}`}
@@ -347,7 +347,7 @@ function TopicSection({
         <div className="chatter-inline-error">{chatterError}</div>
       )}
 
-      {!inChatterMode && <ReferenceList references={topic.references} />}
+      <ReferenceList references={topic.references} />
     </section>
   )
 }

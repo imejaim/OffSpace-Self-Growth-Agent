@@ -296,8 +296,9 @@ a {
 }
 
 .topic-heading {
-  font-size: 1.25rem;
-  font-weight: 700;
+  font-size: 2.25rem;
+  font-weight: 800;
+  line-height: 1.2;
   color: #111111;
   letter-spacing: -0.02em;
   margin: 0 0 1.25rem;
@@ -359,6 +360,9 @@ a {
   outline: none;
   width: 100%;
   font-family: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
 }
 
 .chatter-button {
@@ -914,6 +918,10 @@ a {
 
   .teatime-title {
     font-size: 1.4rem;
+  }
+
+  .topic-heading {
+    font-size: 1.75rem;
   }
 
   .conversation-msg {
