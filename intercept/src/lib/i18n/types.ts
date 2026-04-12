@@ -137,8 +137,13 @@ export interface Translations {
     signInPrompt: string
     goHome: string
     emptyTitle: string
+    emptyDesc: string
     emptyHint: string
     emptyForSearch: (q: string) => string
+    howStep1: string
+    howStep2: string
+    howStep3: string
+    goToTeatime: string
     loadFailed: string
     loadMore: string
     loading: string
@@ -197,5 +202,9 @@ export interface Translations {
     chatterRevert: string
     chatterReplaceFailed: string
     chatterAiGenerated: string
+    keepButton: string
+    publishButton: string
+    saveSuccess: string
+    publishSuccess: string
   }
 }

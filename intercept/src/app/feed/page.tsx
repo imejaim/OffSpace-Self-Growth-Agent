@@ -5,6 +5,8 @@ import { usePollingFeed } from '@/hooks/usePollingFeed'
 import { InterceptCard } from '@/components/InterceptCard'
 import { useAuth } from '@/components/AuthProvider'
 import { useI18n } from '@/lib/i18n/context'
+import FloatingCharacters from '@/components/FloatingCharacters'
+import { CharPositionProvider } from '@/components/CharacterPositionContext'
 
 type TabType = 'all' | 'following'
 
@@ -69,13 +71,27 @@ export default function FeedPage() {
   }
 
   return (
-    <div
-      style={{
-        maxWidth: 680,
-        margin: '0 auto',
-        padding: '2rem 1.5rem 4rem',
-      }}
-    >
+    <CharPositionProvider>
+      <div className="teatime-perspective">
+        <div className="magazine-container">
+          {/* Left Peek: Home/Teatime */}
+          <aside
+            className="magazine-peek magazine-peek-left"
+            onClick={() => window.location.href = '/teatime'}
+            title={t.carousel.instantPagePeek}
+          >
+            <div className="peek-label">{t.carousel.instantPage}</div>
+            <div className="peek-preview">
+              <p>{t.carousel.instantPagePeek}</p>
+            </div>
+          </aside>
+
+          <div
+            className="magazine-content"
+            style={{
+              padding: '2rem 1.5rem 4rem',
+            }}
+          >
       {/* Page heading */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h1
@@ -191,6 +207,18 @@ export default function FeedPage() {
             fontSize: '0.9rem',
           }}
         >
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1rem' }}>
+            {['Ko-bujang', 'Oh-gwajang', 'Jem-daeri'].map((name) => (
+              <img
+                key={name}
+                src={`/characters/${name}.svg`}
+                alt={name}
+                width={40}
+                height={40}
+                style={{ imageRendering: 'pixelated', opacity: 0.75 }}
+              />
+            ))}
+          </div>
           {tab === 'following'
             ? t.feed.noFollowing
             : t.feed.noPublic}
@@ -238,6 +266,23 @@ export default function FeedPage() {
           50% { opacity: 1; }
         }
       `}</style>
-    </div>
+          </div>
+
+          {/* Right Peek: My Keep */}
+          <aside
+            className="magazine-peek magazine-peek-right"
+            onClick={() => window.location.href = '/my'}
+            title={t.carousel.myKeepPeek}
+          >
+            <div className="peek-label">{t.carousel.myKeep}</div>
+            <div className="peek-preview">
+              <p>{t.carousel.myKeepPeek}</p>
+            </div>
+          </aside>
+        </div>
+
+        <FloatingCharacters />
+      </div>
+    </CharPositionProvider>
   )
 }
