@@ -315,7 +315,7 @@ export default function AboutPage() {
             }}
           >
             <SplineCharacter
-              fallbackSrc="/characters/kobujang.svg"
+              fallbackSrc="/characters/Ko-bujang.svg"
               fallbackAlt="코부장 3D"
               size={240}
               accentColor="var(--color-ko)"

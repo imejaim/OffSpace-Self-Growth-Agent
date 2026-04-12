@@ -63,6 +63,7 @@ export default function RootLayout({
                 INTERCEPT
               </span>
               <span
+                className="header-subtitle-mobile-hide"
                 style={{
                   fontSize: "0.75rem",
                   fontWeight: 500,

@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown'
-    const { success } = rateLimit(ip)
+    const { success } = await rateLimit(ip)
     if (!success) return NextResponse.json({ error: 'Too many requests' }, { status: 429 })
 
     const body = await request.json() as { paymentId: string }

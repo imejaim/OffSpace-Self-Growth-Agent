@@ -19,6 +19,11 @@ binding = "ASSETS"
 [ai]
 binding = "AI"
 
+# KV namespace for distributed rate limiting across Cloudflare isolates
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "7ee3f4f54f414f3bb2529ade0f207580"
+
 # Custom domain — routes traffic from interceptnews.app to this Worker
 routes = [
   { pattern = "interceptnews.app", custom_domain = true },

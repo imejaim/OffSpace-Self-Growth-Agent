@@ -202,10 +202,10 @@ export default function PricingPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-zinc-800">
-                <th className="text-left px-4 py-3 text-zinc-500 font-normal w-1/4">Feature</th>
-                <th className="px-4 py-3 text-zinc-400 font-medium text-center">Free</th>
-                <th className="px-4 py-3 text-amber-400 font-medium text-center">Basic</th>
-                <th className="px-4 py-3 text-zinc-300 font-medium text-center">Pro</th>
+                <th className="text-left px-2 sm:px-4 py-3 text-zinc-500 font-normal w-1/4">Feature</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-400 font-medium text-center">Free</th>
+                <th className="px-2 sm:px-4 py-3 text-amber-400 font-medium text-center">Basic</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-300 font-medium text-center">Pro</th>
               </tr>
             </thead>
             <tbody>
@@ -214,10 +214,10 @@ export default function PricingPage() {
                   key={row.label}
                   className={i % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-950/30'}
                 >
-                  <td className="px-4 py-2.5 text-zinc-400">{row.label}</td>
-                  <td className="px-4 py-2.5 text-zinc-500 text-center">{row.free}</td>
-                  <td className="px-4 py-2.5 text-zinc-300 text-center">{row.basic}</td>
-                  <td className="px-4 py-2.5 text-zinc-200 text-center">{row.pro}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-400">{row.label}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-500 text-center">{row.free}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-300 text-center">{row.basic}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-200 text-center">{row.pro}</td>
                 </tr>
               ))}
             </tbody>
