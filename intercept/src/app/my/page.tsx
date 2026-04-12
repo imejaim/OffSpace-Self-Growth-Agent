@@ -93,6 +93,37 @@ export default function MyPage() {
           textAlign: 'center',
         }}
       >
+        {/* Characters row */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'flex-end',
+            gap: '0.75rem',
+            marginBottom: '1.25rem',
+          }}
+        >
+          {[
+            { src: '/characters/Ko-bujang.svg', name: '코부장', color: '#4A90D9' },
+            { src: '/characters/Oh-gwajang.svg', name: '오과장', color: '#E67E22' },
+            { src: '/characters/Jem-daeri.svg', name: '젬대리', color: '#27AE60' },
+          ].map((char) => (
+            <img
+              key={char.name}
+              src={char.src}
+              alt={char.name}
+              width={44}
+              height={44}
+              style={{
+                width: 44,
+                height: 44,
+                imageRendering: 'pixelated',
+                outline: `2px solid ${char.color}`,
+                borderRadius: 4,
+              }}
+            />
+          ))}
+        </div>
         <p style={{ fontSize: '1.1rem', color: 'var(--color-text-muted)', marginBottom: '1.5rem' }}>
           {t.my.signInPrompt}
         </p>
@@ -116,7 +147,21 @@ export default function MyPage() {
   }
 
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: '2rem 1.5rem 4rem' }}>
+    <div className="teatime-perspective">
+      <div className="magazine-container">
+        {/* Left Peek: Home/Teatime */}
+        <aside
+          className="magazine-peek magazine-peek-left"
+          onClick={() => window.location.href = '/teatime'}
+          title={t.carousel.instantPagePeek}
+        >
+          <div className="peek-label">{t.carousel.instantPage}</div>
+          <div className="peek-preview">
+            <p>{t.carousel.instantPagePeek}</p>
+          </div>
+        </aside>
+
+        <div className="magazine-content" style={{ padding: '2rem 1.5rem 4rem' }}>
       {/* Heading */}
       <div style={{ marginBottom: '1.5rem' }}>
         <h1
@@ -193,16 +238,136 @@ export default function MyPage() {
 
       {/* Empty */}
       {!loading && items.length === 0 && !error && (
-        <div
-          style={{
-            textAlign: 'center',
-            padding: '3rem 1rem',
-            color: 'var(--color-text-muted)',
-            fontSize: '0.9rem',
-          }}
-        >
-          {debouncedSearch ? t.my.emptyForSearch(debouncedSearch) : t.my.emptyHint}
-        </div>
+        debouncedSearch ? (
+          <div
+            style={{
+              textAlign: 'center',
+              padding: '3rem 1rem',
+              color: 'var(--color-text-muted)',
+              fontSize: '0.9rem',
+            }}
+          >
+            {t.my.emptyForSearch(debouncedSearch)}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '2.5rem 1rem' }}>
+            {/* Characters row */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-end',
+                gap: '0.75rem',
+                marginBottom: '1.25rem',
+              }}
+            >
+              {[
+                { src: '/characters/Ko-bujang.svg', name: '코부장', color: '#4A90D9' },
+                { src: '/characters/Oh-gwajang.svg', name: '오과장', color: '#E67E22' },
+                { src: '/characters/Jem-daeri.svg', name: '젬대리', color: '#27AE60' },
+              ].map((char) => (
+                <img
+                  key={char.name}
+                  src={char.src}
+                  alt={char.name}
+                  width={44}
+                  height={44}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    imageRendering: 'pixelated',
+                    outline: `2px solid ${char.color}`,
+                    borderRadius: 4,
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Empty title + desc */}
+            <p
+              style={{
+                fontSize: '1rem',
+                fontWeight: 700,
+                color: 'var(--color-navy)',
+                margin: '0 0 0.4rem',
+              }}
+            >
+              {t.my.emptyTitle}
+            </p>
+            <p
+              style={{
+                fontSize: '0.85rem',
+                color: 'var(--color-text-muted)',
+                margin: '0 0 1.5rem',
+              }}
+            >
+              {t.my.emptyDesc}
+            </p>
+
+            {/* CTA button */}
+            <a
+              href="/teatime"
+              style={{
+                display: 'inline-block',
+                background: 'var(--color-coral)',
+                color: '#fff',
+                padding: '0.65rem 1.5rem',
+                borderRadius: 'var(--radius-pill)',
+                fontWeight: 700,
+                fontSize: '0.9rem',
+                textDecoration: 'none',
+                marginBottom: '2rem',
+              }}
+            >
+              {t.my.goToTeatime}
+            </a>
+
+            {/* How-to steps */}
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.5rem',
+                maxWidth: 320,
+                margin: '0 auto',
+                textAlign: 'left',
+              }}
+            >
+              {[t.my.howStep1, t.my.howStep2, t.my.howStep3].map((step, i) => (
+                <div
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.6rem',
+                    fontSize: '0.82rem',
+                    color: 'var(--color-text-muted)',
+                  }}
+                >
+                  <span
+                    style={{
+                      flexShrink: 0,
+                      width: 20,
+                      height: 20,
+                      borderRadius: '50%',
+                      background: 'var(--color-bg-muted)',
+                      border: '1px solid var(--color-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      color: 'var(--color-text-muted)',
+                    }}
+                  >
+                    {i + 1}
+                  </span>
+                  <span style={{ paddingTop: 2 }}>{step}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )
       )}
 
       {/* List */}
@@ -253,6 +418,20 @@ export default function MyPage() {
           {t.my.loading}
         </div>
       )}
+        </div>
+
+        {/* Right Peek: Feed */}
+        <aside
+          className="magazine-peek magazine-peek-right"
+          onClick={() => window.location.href = '/feed'}
+          title={t.carousel.snsPeek}
+        >
+          <div className="peek-label">{t.carousel.sns}</div>
+          <div className="peek-preview">
+            <p>{t.carousel.snsPeek}</p>
+          </div>
+        </aside>
+      </div>
     </div>
   )
 }
