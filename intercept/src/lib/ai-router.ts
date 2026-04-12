@@ -2,15 +2,20 @@
  * AI Router — routes intercept generation to Workers AI (Cloudflare) or Gemini fallback.
  *
  * On Cloudflare Pages runtime: uses Workers AI binding
- *   Primary:  @cf/google/gemma-4-26b-a4b-it
- *   Fallback: @cf/meta/llama-3.1-8b-instruct-fp8
+ *   Primary:  @cf/qwen/qwen2.5-coder-32b-instruct  (strong Korean, good JSON following)
+ *   Fallback: @cf/meta/llama-3.3-70b-instruct-fp8-fast  (70B, decent Korean)
+ *   Last-ditch: @cf/google/gemma-3-12b-it  (legacy)
  * On local dev (no CF binding): uses Gemini 2.5-flash REST API
+ *
+ * Llama 3.1 8B was removed from the fallback chain — it produces Korean token
+ * repetition loops (slashes, garbled hangul, mid-sentence cuts).
  */
 
 /** Workers AI models tried in order */
 const WORKERS_AI_MODELS = [
-  '@cf/google/gemma-4-26b-a4b-it',
-  '@cf/meta/llama-3.1-8b-instruct-fp8',
+  '@cf/qwen/qwen2.5-coder-32b-instruct',
+  '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  '@cf/google/gemma-3-12b-it',
 ]
 
 interface WorkersAiTextResult {
@@ -108,6 +113,22 @@ async function generateViaGemini(
 }
 
 /**
+ * Scrub common small-model failure modes from raw AI output:
+ * - Slash / punctuation repetition loops (e.g. "서/////////////")
+ * - Private Use Area garbage glyphs from bad tokenizer output
+ * - Any single character repeated 9+ times in a row
+ * Leading / trailing whitespace is trimmed.
+ */
+export function sanitizeAiResponse(text: string): string {
+  if (!text) return ''
+  return text
+    .replace(/\/{3,}/g, '')
+    .replace(/[\uE000-\uF8FF]/g, '')
+    .replace(/(.)\1{8,}/g, '$1$1$1')
+    .trim()
+}
+
+/**
  * Generate an intercept AI response using the best available model.
  * Returns the raw text output (JSON array string) from the model.
  */
@@ -118,9 +139,10 @@ export async function generateInterceptResponse(
   // Try Workers AI first (Cloudflare runtime only) — tries multiple models in order
   const workersResult = await generateViaWorkersAI(systemPrompt, userPrompt)
   if (workersResult !== null) {
-    return workersResult
+    return sanitizeAiResponse(workersResult)
   }
 
   // Fall back to Gemini 2.5-flash (local dev only; Korea may be geo-blocked on prod)
-  return generateViaGemini(systemPrompt, userPrompt)
+  const geminiResult = await generateViaGemini(systemPrompt, userPrompt)
+  return sanitizeAiResponse(geminiResult)
 }
