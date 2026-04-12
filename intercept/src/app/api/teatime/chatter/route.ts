@@ -164,9 +164,9 @@ function splitRawIntoTakes(raw: string): ParsedTakes | null {
 }
 
 export async function POST(request: NextRequest) {
-  // IP-based rate limiting (covers the raw request rate)
+  // IP-based rate limiting — chatter is core exploration feature so higher quota
   const ip = request.headers.get('x-forwarded-for') ?? request.headers.get('x-real-ip') ?? 'unknown'
-  const rateLimitResult = await rateLimit(ip)
+  const rateLimitResult = await rateLimit(ip, 200)
   if (!rateLimitResult.success) {
     return NextResponse.json(
       { error: 'Too many requests. Please try again later.' },
