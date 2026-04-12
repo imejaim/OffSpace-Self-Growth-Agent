@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { CHARACTERS, ALL_TEATIMES } from '@/lib/teatime-data'
+import { CHARACTERS, ALL_TEATIMES, pickText } from '@/lib/teatime-data'
 import { useCharPositions } from './CharacterPositionContext'
 
 /* ── Types ──────────────────────────────────────────────────────────── */
@@ -78,7 +78,8 @@ function getAllMessages() {
     for (const topic of teatime.topics) {
       for (const msg of topic.messages) {
         if (CHARACTER_IDS.includes(msg.characterId as typeof CHARACTER_IDS[number])) {
-          msgs.push({ characterId: msg.characterId, content: msg.content })
+          // Content may be bilingual — resolve to Korean for floating-char bubbles.
+          msgs.push({ characterId: msg.characterId, content: pickText(msg.content, 'ko') })
         }
       }
     }

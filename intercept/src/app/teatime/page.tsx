@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
-import { ALL_TEATIMES, CHARACTERS } from '@/lib/teatime-data'
+import { ALL_TEATIMES, CHARACTERS, localizeTeatime } from '@/lib/teatime-data'
 import type { Message, Topic, TopicImage, Reference } from '@/lib/teatime-data'
 import InterceptButton from './InterceptButton'
 import FloatingCharacters from '@/components/FloatingCharacters'
@@ -41,32 +41,61 @@ function ConversationMessage({ message }: { message: Message }) {
 
   if (!character) return null
 
-  const context = `${character.name}: ${message.content}`
+  // Prefer localized name/role from i18n; fall back to data file.
+  // i18n uses 'ko' as the key for Ko-bujang (not 'kobu').
+  const i18nKey =
+    message.characterId === 'kobu'
+      ? 'ko'
+      : message.characterId === 'oh'
+      ? 'oh'
+      : message.characterId === 'jem'
+      ? 'jem'
+      : null
+  const i18nChar = i18nKey ? t.characters[i18nKey] : null
+  const displayName = i18nChar?.name ?? character.name
+  const displayRole = i18nChar?.role
+
+  const context = `${displayName}: ${message.content}`
 
   return (
     <PretextMessage text={message.content}>
-      <div className="conversation-line">
-        <div className="conversation-msg">
-          {character.avatar && (
-            <Image
-              src={character.avatar}
-              alt={character.name}
-              width={22}
-              height={22}
-              className="char-avatar"
-              style={{
-                borderRadius: '3px',
-                imageRendering: 'pixelated',
-                flexShrink: 0,
-                alignSelf: 'center',
-              }}
-            />
-          )}
-          <span className="char-name" style={{ color: character.color }}>
-            {character.name}
-          </span>
-          <span className="char-role">{character.role}</span>
-          <span className="msg-text">
+        <div className="conversation-msg" style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.4rem', width: '4.5rem', flexShrink: 0 }}>
+            {character.avatar && (
+              <Image
+                src={character.avatar}
+                alt={displayName}
+                width={40}
+                height={40}
+                className="char-avatar"
+                style={{
+                  borderRadius: '8px',
+                  imageRendering: 'pixelated',
+                  border: '1.5px solid var(--color-border)',
+                }}
+              />
+            )}
+            <span className="char-name" style={{ color: character.color, fontSize: '0.85rem', textAlign: 'center', display: 'flex', flexDirection: 'column', lineHeight: 1.2 }}>
+              {displayName.includes('(') ? (
+                <>
+                  <span>{displayName.split(' (')[0]}</span>
+                  <span style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 400 }}>
+                    {displayName.split(' (')[1].replace(')', '')}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span>{displayName}</span>
+                  {displayRole && (
+                    <span style={{ fontSize: '0.65rem', opacity: 0.8, fontWeight: 400 }}>
+                      {displayRole}
+                    </span>
+                  )}
+                </>
+              )}
+            </span>
+          </div>
+          <span className="msg-text" style={{ alignSelf: 'center' }}>
             <InlineMarkdown text={message.content} />
           </span>
           {!interceptOpen && (
@@ -88,7 +117,6 @@ function ConversationMessage({ message }: { message: Message }) {
             onClose={() => setInterceptOpen(false)}
           />
         )}
-      </div>
     </PretextMessage>
   )
 }
@@ -205,6 +233,7 @@ function EditableTopicHeading({
         }}
         className="topic-heading topic-heading-input"
         aria-label={t.teatime.editTopicHint}
+        style={{ color: 'var(--color-navy)', background: 'var(--color-bg-muted)' }}
       />
     )
   }
@@ -354,7 +383,7 @@ function TopicSection({
 
 export default function TeaTimePage() {
   const { t, locale } = useI18n()
-  const teatime = ALL_TEATIMES[0]
+  const teatime = localizeTeatime(ALL_TEATIMES[0], locale)
 
   const dateObj = new Date(teatime.date)
   const dateLabel = dateObj.toLocaleDateString(locale === 'ko' ? 'ko-KR' : 'en-US', {
@@ -366,7 +395,7 @@ export default function TeaTimePage() {
 
   return (
     <CharPositionProvider>
-    <div className="teatime-root">
+    <div className="teatime-root" style={{ background: 'var(--color-bg)' }}>
       <header className="teatime-header">
         <div className="teatime-header-inner">
           <span className="teatime-pub">{t.teatime.offspaceTeatime}</span>
@@ -382,18 +411,20 @@ export default function TeaTimePage() {
             {(['kobu', 'oh', 'jem'] as const).map((id) => {
               const c = CHARACTERS[id]
               if (!c) return null
+              const i18nKey = id === 'kobu' ? 'ko' : id
+              const name = t.characters[i18nKey].name
               return (
                 <span key={id} className="byline-char" style={{ color: c.color, display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
                   {c.avatar && (
                     <Image
                       src={c.avatar}
-                      alt={c.name}
+                      alt={name}
                       width={20}
                       height={20}
                       style={{ borderRadius: '3px', imageRendering: 'pixelated' }}
                     />
                   )}
-                  {c.name}
+                  {name}
                 </span>
               )
             })}
