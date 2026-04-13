@@ -81,8 +81,28 @@ export default function MyPage() {
 
   // Load localStorage items on mount (client-only). These are entries saved
   // via the "보관하기" button on /teatime and are shown even without login.
+  // Also re-load on storage/focus/pageshow so entries saved in this same tab
+  // (or after bfcache restore) show up without a manual refresh.
   useEffect(() => {
-    setLocalItems(loadLocalKeepAsInterceptItems())
+    const reload = () => {
+      const loaded = loadLocalKeepAsInterceptItems()
+      console.log('[my] reload localItems', { count: loaded.length })
+      setLocalItems(loaded)
+    }
+    reload()
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'intercept-my-keep' || e.key === null) reload()
+    }
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('focus', reload)
+    window.addEventListener('pageshow', reload)
+
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('focus', reload)
+      window.removeEventListener('pageshow', reload)
+    }
   }, [])
 
   // Debounce search input

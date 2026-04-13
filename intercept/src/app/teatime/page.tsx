@@ -384,8 +384,28 @@ function TopicSection({
       )
       deduped.unshift(entry)
       localStorage.setItem(storeKey, JSON.stringify(deduped))
+      console.log('[publish] saved to localStorage', {
+        storeKey,
+        entryId: entry.id,
+        totalItems: deduped.length,
+        visibility,
+      })
+      // Notify listeners in the same tab. The native `storage` event only
+      // fires in OTHER tabs, so /my and /feed pages (which listen for it)
+      // wouldn't otherwise notice a save made here. Dispatch manually.
+      try {
+        window.dispatchEvent(
+          new StorageEvent('storage', {
+            key: storeKey,
+            newValue: JSON.stringify(deduped),
+          })
+        )
+      } catch {
+        // Some browsers reject StorageEvent construction; fall back to a CustomEvent.
+        window.dispatchEvent(new Event('focus'))
+      }
     } catch (storageErr) {
-      console.warn('[publish] localStorage save failed', storageErr)
+      console.error('[publish] localStorage save FAILED', storageErr)
     }
 
     // 2) Trigger Pretext-style fly-out animation (private = left to Keep, public = right to Feed)

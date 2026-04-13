@@ -1,12 +1,59 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePollingFeed } from '@/hooks/usePollingFeed'
 import { InterceptCard } from '@/components/InterceptCard'
 import { useAuth } from '@/components/AuthProvider'
 import { useI18n } from '@/lib/i18n/context'
 import FloatingCharacters from '@/components/FloatingCharacters'
 import { CharPositionProvider } from '@/components/CharacterPositionContext'
+
+// Shape of items written by /teatime via the "공개하기" button.
+// Mirrors the `entry` object in teatime/page.tsx handlePublish().
+interface LocalPublishEntry {
+  id: string
+  teatimeId: string
+  topicId: string
+  title: string
+  messages: Array<{
+    id: string
+    characterId: 'kobu' | 'oh' | 'jem'
+    content: string
+    type?: string
+  }>
+  savedAt: string
+  visibility: 'private' | 'public'
+}
+
+function loadLocalPublishAsFeedItems(): FeedItem[] {
+  if (typeof window === 'undefined') return []
+  try {
+    const raw = window.localStorage.getItem('intercept-public-feed')
+    if (!raw) return []
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    return (parsed as LocalPublishEntry[])
+      .filter((it) => it && Array.isArray(it.messages) && typeof it.id === 'string')
+      .map((it) => ({
+        id: it.id,
+        nickname: 'Guest',
+        avatar_url: null,
+        user_message: it.title ?? '',
+        ai_responses: (it.messages ?? [])
+          .filter(
+            (m) =>
+              m &&
+              (m.characterId === 'kobu' || m.characterId === 'oh' || m.characterId === 'jem')
+          )
+          .map((m) => ({ characterId: m.characterId, content: m.content })),
+        created_at: it.savedAt ?? new Date().toISOString(),
+        visibility: 'public' as const,
+        user_id: undefined,
+      }))
+  } catch {
+    return []
+  }
+}
 
 type TabType = 'all' | 'following'
 
@@ -48,13 +95,55 @@ export default function FeedPage() {
       ? `/api/feed/following?page=${page}&limit=20`
       : `/api/feed?page=${page}&limit=20`
 
-  const { data, loading, error, refetch } = usePollingFeed<FeedResponse>(feedUrl)
+  const { data, loading, error, refetch } = usePollingFeed<FeedResponse & { followingIds?: string[] }>(feedUrl)
+
+  const [localFollowingIds, setLocalFollowingIds] = useState<string[]>([])
+  const [followProcessing, setFollowProcessing] = useState<string | null>(null)
+  const [localItems, setLocalItems] = useState<FeedItem[]>([])
+
+  // Load localStorage-published items and keep them in sync with saves that
+  // happen in the same tab (/teatime dispatches a synthetic storage event).
+  useEffect(() => {
+    const reload = () => {
+      const loaded = loadLocalPublishAsFeedItems()
+      console.log('[feed] reload localItems', { count: loaded.length })
+      setLocalItems(loaded)
+    }
+    reload()
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'intercept-public-feed' || e.key === null) reload()
+    }
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('focus', reload)
+    window.addEventListener('pageshow', reload)
+
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('focus', reload)
+      window.removeEventListener('pageshow', reload)
+    }
+  }, [])
+
+  // Sync server followingIds to local state
+  useState(() => {
+    if (data?.followingIds) {
+      setLocalFollowingIds(data.followingIds)
+    }
+  })
+
+  // Also sync when data changes
+  useState(() => {
+    if (data?.followingIds) {
+      setLocalFollowingIds(data.followingIds)
+    }
+  })
 
   const rawItems = data?.intercepts ?? []
   const hasMore = data?.hasMore ?? false
 
   // Flatten nested profiles join into the shape InterceptCard expects
-  const items: FeedItem[] = rawItems.map((item) => ({
+  const dbItems: FeedItem[] = rawItems.map((item) => ({
     id: item.id,
     user_message: item.user_message,
     ai_responses: item.ai_responses,
@@ -65,9 +154,41 @@ export default function FeedPage() {
     avatar_url: item.profiles?.avatar_url ?? null,
   }))
 
+  // Merge DB items with localStorage-published items (dedupe by id).
+  // Only show local items on the "all" tab — "following" is user-scoped.
+  const dbIds = new Set(dbItems.map((i) => i.id))
+  const items: FeedItem[] =
+    tab === 'all'
+      ? [...dbItems, ...localItems.filter((i) => !dbIds.has(i.id))]
+      : dbItems
+
   const handleTabChange = (next: TabType) => {
     setTab(next)
     setPage(1)
+  }
+
+  const handleFollowToggle = async (targetUserId: string, isFollowing: boolean) => {
+    if (!user) return
+    setFollowProcessing(targetUserId)
+    try {
+      const method = isFollowing ? 'DELETE' : 'POST'
+      const res = await fetch('/api/follow', {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetUserId }),
+      })
+      if (!res.ok) throw new Error()
+      
+      setLocalFollowingIds(prev => 
+        isFollowing 
+          ? prev.filter(id => id !== targetUserId)
+          : [...prev, targetUserId]
+      )
+    } catch (err) {
+      alert(t.feed.followFailed)
+    } finally {
+      setFollowProcessing(null)
+    }
   }
 
   return (
@@ -233,6 +354,9 @@ export default function FeedPage() {
               key={item.id}
               intercept={item}
               onVisibilityToggle={refetch}
+              isFollowing={item.user_id ? localFollowingIds.includes(item.user_id) : false}
+              onFollowToggle={handleFollowToggle}
+              isProcessingFollow={item.user_id === followProcessing}
             />
           ))}
         </div>
