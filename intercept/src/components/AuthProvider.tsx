@@ -82,22 +82,47 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      const authUser = data.user ?? null
-      setUser(authUser)
-      await loadProfile(authUser)
-      setLoading(false)
-    })
+    let mounted = true
+
+    // Initial user fetch — unblock UI immediately, load profile in background
+    supabase.auth.getUser()
+      .then(async ({ data }) => {
+        if (!mounted) return
+        const authUser = data.user ?? null
+        setUser(authUser)
+        setLoading(false) // unblock UI BEFORE profile fetch
+        if (authUser) {
+          try {
+            await loadProfile(authUser)
+          } catch (err) {
+            console.error('[AuthProvider] loadProfile failed:', err)
+          }
+        }
+      })
+      .catch((err) => {
+        console.error('[AuthProvider] getUser failed:', err)
+        if (mounted) setLoading(false)
+      })
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return
       const authUser = session?.user ?? null
       setSession(session)
       setUser(authUser)
-      await loadProfile(authUser)
-      setLoading(false)
+      setLoading(false) // unblock UI BEFORE profile fetch
+      if (authUser) {
+        try {
+          await loadProfile(authUser)
+        } catch (err) {
+          console.error('[AuthProvider] loadProfile failed on auth change:', err)
+        }
+      }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      mounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const signOut = async () => {
