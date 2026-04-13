@@ -348,7 +348,7 @@ export default function FloatingCharacters() {
             ]
             const off = triangleOffsets[idx]!
             targetX = clamp(cx + off.ox, 10, rect.left - 90)
-            targetY = cy + off.oy
+            targetY = clamp(cy + off.oy, 10, h - size - 10)
             action = 'listening'
           }
         } else if (mouse.active) {
@@ -560,12 +560,23 @@ export default function FloatingCharacters() {
 
       {/* Overlay */}
       {visible && (
-        <div className="floating-overlay" aria-hidden="true">
+        <div 
+          className="floating-overlay" 
+          aria-hidden="true"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            pointerEvents: 'none', // MODIFIED: Container doesn't block clicks
+            zIndex: 100, // MODIFIED: Below header (1000)
+          }}
+        >
           {chars.map((c) => {
             const char = CHARACTERS[c.id]
             if (!char) return null
 
             const size = getCharSize()
+            const vw = typeof window !== 'undefined' ? window.innerWidth : 1024
+            const vh = typeof window !== 'undefined' ? window.innerHeight : 768
 
             // Bob animation for walking
             const bobY = c.action === 'walking'
@@ -583,7 +594,7 @@ export default function FloatingCharacters() {
 
             // Bubble goes AWAY from content center (outward)
             // Left-side chars → bubble goes further left; right-side → further right
-            const screenMidX = window.innerWidth / 2
+            const screenMidX = typeof window !== 'undefined' ? window.innerWidth / 2 : 500
             const charOnLeft = c.x < screenMidX
             const bubbleStyle: React.CSSProperties = charOnLeft
               ? { // Character on LEFT → bubble goes LEFT (away from content)
@@ -604,9 +615,14 @@ export default function FloatingCharacters() {
                 key={c.id}
                 className="floating-char"
                 style={{
-                  left: c.x,
-                  top: c.y + bobY,
+                  position: 'absolute',
+                  // Clamp at render time so characters stay in viewport
+                  // regardless of state (prevents top: -1309px after scroll)
+                  left: clamp(c.x, 0, Math.max(0, vw - size)),
+                  top: clamp(c.y + bobY, 0, Math.max(0, vh - size)),
                   transform: `scale(${scale})`,
+                  pointerEvents: 'auto', // MODIFIED: Individual characters are clickable
+                  cursor: 'grab',
                 }}
                 onMouseDown={(e) => onMouseDown(e, c.id)}
                 onClick={() => handleClick(c.id)}

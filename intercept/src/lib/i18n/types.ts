@@ -193,6 +193,15 @@ export interface Translations {
     unfollowSuccess: string
     followFailed: string
   }
+  // Nickname modal
+  nickname: {
+    beforeIntercept: string
+    description: string
+    placeholder: string
+    cancel: string
+    start: string
+    randomTitle: string
+  }
   // Teatime page
   teatime: {
     offspaceTeatime: string

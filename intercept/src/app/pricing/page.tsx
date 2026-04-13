@@ -35,16 +35,16 @@ export default function PricingPage() {
   ]
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-16">
+    <main className="min-h-screen bg-white text-zinc-900 px-4 py-16">
       {/* Header */}
       <div className="mx-auto max-w-4xl text-center mb-14">
-        <span className="inline-block rounded-sm bg-zinc-800 border border-zinc-700 px-3 py-1 text-xs font-mono uppercase tracking-widest text-zinc-400 mb-5">
+        <span className="inline-block rounded-sm bg-zinc-100 border border-zinc-200 px-3 py-1 text-xs font-mono uppercase tracking-widest text-zinc-500 mb-5">
           {t.pricing.sandboxBeta}
         </span>
-        <h1 className="text-4xl font-bold text-white leading-tight">
+        <h1 className="text-4xl font-bold text-zinc-900 leading-tight">
           {t.pricing.pickPlan}
         </h1>
-        <p className="mt-3 text-base text-zinc-400 max-w-xl mx-auto">
+        <p className="mt-3 text-base text-zinc-600 max-w-xl mx-auto">
           {t.pricing.pickPlanSubtitle}
         </p>
       </div>
@@ -61,10 +61,10 @@ export default function PricingPage() {
               className={[
                 'relative flex flex-col rounded-xl border p-6 transition-all',
                 isBasic
-                  ? 'border-amber-500/60 bg-zinc-900 shadow-[0_0_0_1px_rgba(245,158,11,0.15)]'
+                  ? 'border-amber-400 bg-white shadow-xl shadow-amber-900/5'
                   : isPro
-                  ? 'border-zinc-600 bg-zinc-900'
-                  : 'border-zinc-800 bg-zinc-900',
+                  ? 'border-zinc-200 bg-white'
+                  : 'border-zinc-200 bg-white',
               ].join(' ')}
             >
               {plan.badge && (
@@ -81,19 +81,19 @@ export default function PricingPage() {
               )}
 
               <div className="mb-5">
-                <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1">
+                <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-1">
                   {plan.name}
                 </p>
                 <div className="flex items-end gap-1">
-                  <span className="text-3xl font-bold text-white">{plan.price}</span>
-                  <span className="text-sm text-zinc-500 pb-0.5">{plan.period}</span>
+                  <span className="text-3xl font-bold text-zinc-900">{plan.price}</span>
+                  <span className="text-sm text-zinc-400 pb-0.5">{plan.period}</span>
                 </div>
               </div>
 
               <ul className="flex-1 space-y-2 mb-6">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2 text-sm text-zinc-300">
-                    <span className="mt-0.5 text-zinc-500 shrink-0">—</span>
+                  <li key={f} className="flex items-start gap-2 text-sm text-zinc-700">
+                    <span className="mt-0.5 text-zinc-400 shrink-0">—</span>
                     {f}
                   </li>
                 ))}
@@ -102,7 +102,7 @@ export default function PricingPage() {
               {plan.id === 'free' && (
                 <a
                   href="/"
-                  className="block w-full rounded-lg border border-zinc-700 px-4 py-2.5 text-center text-sm font-medium text-zinc-300 hover:border-zinc-500 hover:text-white transition"
+                  className="block w-full rounded-lg border border-zinc-200 px-4 py-2.5 text-center text-sm font-medium text-zinc-600 hover:border-zinc-400 hover:text-zinc-900 transition"
                 >
                   {t.pricing.startFree}
                 </a>
@@ -116,19 +116,19 @@ export default function PricingPage() {
 
       {/* Pay-per-use card */}
       <div className="mx-auto max-w-4xl mb-14">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
           <div>
-            <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-1">
+            <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-1">
               {t.pricing.payPerUseLabel}
             </p>
-            <p className="text-lg font-semibold text-white">{t.pricing.payPerUsePrice}</p>
-            <p className="text-sm text-zinc-400 mt-1">
+            <p className="text-lg font-semibold text-zinc-900">{t.pricing.payPerUsePrice}</p>
+            <p className="text-sm text-zinc-500 mt-1">
               {t.pricing.payPerUseDesc}
             </p>
           </div>
           <a
             href="/pricing/credits"
-            className="shrink-0 rounded-lg bg-zinc-800 border border-zinc-700 px-5 py-2.5 text-sm font-medium text-zinc-200 hover:bg-zinc-700 hover:text-white transition"
+            className="shrink-0 rounded-lg bg-zinc-100 border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-700 hover:bg-white hover:text-zinc-900 transition shadow-sm"
           >
             {t.pricing.buyCredits}
           </a>
@@ -137,13 +137,13 @@ export default function PricingPage() {
 
       {/* Korean payment section */}
       <div className="mx-auto max-w-4xl mb-14">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6">
+        <div className="rounded-xl border border-zinc-100 bg-zinc-50/50 p-6">
           <div className="mb-5">
-            <span className="inline-block rounded-sm bg-zinc-800 border border-zinc-700 px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-zinc-500 mb-3">
+            <span className="inline-block rounded-sm bg-zinc-200 border border-zinc-300 px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">
               {t.pricing.koreaOnly}
             </span>
-            <h2 className="text-lg font-semibold text-white">{t.pricing.koreaTitle}</h2>
-            <p className="text-sm text-zinc-400 mt-1">
+            <h2 className="text-lg font-semibold text-zinc-900">{t.pricing.koreaTitle}</h2>
+            <p className="text-sm text-zinc-500 mt-1">
               {t.pricing.koreaDesc}
             </p>
           </div>
@@ -156,26 +156,26 @@ export default function PricingPage() {
         <h2 className="text-sm font-mono uppercase tracking-widest text-zinc-500 mb-4">
           {t.pricing.compareTitle}
         </h2>
-        <div className="overflow-x-auto rounded-xl border border-zinc-800">
+        <div className="overflow-x-auto rounded-xl border border-zinc-200 bg-white">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-800">
+              <tr className="border-b border-zinc-200">
                 <th className="text-left px-2 sm:px-4 py-3 text-zinc-500 font-normal w-1/4">{t.pricing.feature}</th>
-                <th className="px-2 sm:px-4 py-3 text-zinc-400 font-medium text-center">{t.pricing.free}</th>
-                <th className="px-2 sm:px-4 py-3 text-amber-400 font-medium text-center">{t.pricing.basic}</th>
-                <th className="px-2 sm:px-4 py-3 text-zinc-300 font-medium text-center">{t.pricing.pro}</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-600 font-medium text-center">{t.pricing.free}</th>
+                <th className="px-2 sm:px-4 py-3 text-amber-600 font-medium text-center">{t.pricing.basic}</th>
+                <th className="px-2 sm:px-4 py-3 text-zinc-900 font-medium text-center">{t.pricing.pro}</th>
               </tr>
             </thead>
             <tbody>
               {t.pricing.comparisonRows.map((row, i) => (
                 <tr
                   key={row.label}
-                  className={i % 2 === 0 ? 'bg-zinc-900/50' : 'bg-zinc-950/30'}
+                  className={i % 2 === 0 ? 'bg-zinc-50' : 'bg-white'}
                 >
-                  <td className="px-2 sm:px-4 py-2.5 text-zinc-400">{row.label}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-600">{row.label}</td>
                   <td className="px-2 sm:px-4 py-2.5 text-zinc-500 text-center">{row.free}</td>
-                  <td className="px-2 sm:px-4 py-2.5 text-zinc-300 text-center">{row.basic}</td>
-                  <td className="px-2 sm:px-4 py-2.5 text-zinc-200 text-center">{row.pro}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-800 text-center">{row.basic}</td>
+                  <td className="px-2 sm:px-4 py-2.5 text-zinc-900 text-center">{row.pro}</td>
                 </tr>
               ))}
             </tbody>
@@ -184,7 +184,7 @@ export default function PricingPage() {
       </div>
 
       {/* Footer */}
-      <p className="mx-auto max-w-md text-center text-xs text-zinc-600">
+      <p className="mx-auto max-w-md text-center text-xs text-zinc-500">
         {t.pricing.sandboxNote}
       </p>
     </main>

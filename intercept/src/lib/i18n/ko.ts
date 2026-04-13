@@ -239,6 +239,14 @@ export const ko: Translations = {
     unfollowSuccess: '팔로우를 취소했습니다.',
     followFailed: '반영에 실패했습니다.',
   },
+  nickname: {
+    beforeIntercept: '끼어들기 전에',
+    description: '닉네임으로 대화에 참여해요. 로그인 없이도 OK.',
+    placeholder: '닉네임 입력',
+    cancel: '취소',
+    start: '시작하기',
+    randomTitle: '랜덤 닉네임',
+  },
   teatime: {
     offspaceTeatime: 'Offspace 티타임',
     interceptHint: '어디든 끼어들어 궁금한 것을 더 물어보고 의견 남길 수 있어요',

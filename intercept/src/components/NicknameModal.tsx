@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { generateNickname } from '@/lib/nicknames'
+import { useI18n } from '@/lib/i18n/context'
 
 interface NicknameModalProps {
   isOpen: boolean
@@ -14,6 +15,7 @@ function generateSessionId(): string {
 }
 
 export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps) {
+  const { t } = useI18n()
   const [nickname, setNickname] = useState('')
 
   useEffect(() => {
@@ -59,10 +61,10 @@ export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps)
             className="text-lg font-bold tracking-tight"
             style={{ color: 'var(--color-text)' }}
           >
-            끼어들기 전에
+            {t.nickname.beforeIntercept}
           </h2>
           <p className="text-sm mt-1" style={{ color: 'var(--color-text-muted)' }}>
-            닉네임으로 대화에 참여해요. 로그인 없이도 OK.
+            {t.nickname.description}
           </p>
         </div>
 
@@ -73,7 +75,7 @@ export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps)
             onChange={(e) => setNickname(e.target.value)}
             onKeyDown={handleKeyDown}
             maxLength={20}
-            placeholder="닉네임"
+            placeholder={t.nickname.placeholder}
             className="flex-1 rounded-lg px-3 py-2 text-sm outline-none"
             style={{
               background: 'var(--color-bg-muted)',
@@ -90,7 +92,7 @@ export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps)
               border: '1px solid var(--color-border)',
               color: 'var(--color-text-muted)',
             }}
-            title="랜덤 닉네임"
+            title={t.nickname.randomTitle}
           >
             🎲
           </button>
@@ -102,7 +104,7 @@ export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps)
             className="px-4 py-2 rounded-lg text-sm transition-opacity hover:opacity-70"
             style={{ color: 'var(--color-text-muted)' }}
           >
-            취소
+            {t.nickname.cancel}
           </button>
           <button
             onClick={handleSubmit}
@@ -113,7 +115,7 @@ export function NicknameModal({ isOpen, onClose, onSubmit }: NicknameModalProps)
               color: '#fff',
             }}
           >
-            시작하기
+            {t.nickname.start}
           </button>
         </div>
       </div>

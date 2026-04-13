@@ -239,6 +239,14 @@ export const en: Translations = {
     unfollowSuccess: 'Unfollowed.',
     followFailed: 'Action failed.',
   },
+  nickname: {
+    beforeIntercept: 'Before you intercept',
+    description: 'Set a nickname to join the conversation. No login required.',
+    placeholder: 'Pick a nickname',
+    cancel: 'Cancel',
+    start: 'Start',
+    randomTitle: 'Random nickname',
+  },
   teatime: {
     offspaceTeatime: 'Offspace Teatime',
     interceptHint: 'Intercept anywhere — ask follow-ups, drop your take.',
