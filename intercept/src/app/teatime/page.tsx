@@ -163,26 +163,22 @@ function EditableTopicHeading({
   index: number
 }) {
   const { t } = useI18n()
-  // Lazy init reads localStorage only on client; SSR falls through to originalTitle.
-  const [title, setTitle] = useState<string>(() => {
-    if (typeof window === 'undefined') return originalTitle
-    try {
-      const saved = window.localStorage.getItem(storageKey)
-      return saved && saved.trim() ? saved : originalTitle
-    } catch {
-      return originalTitle
-    }
-  })
+  // Always initialise from originalTitle so SSR and CSR produce identical HTML.
+  // localStorage is read only after mount to avoid hydration mismatch (#418).
+  const [title, setTitle] = useState<string>(originalTitle)
   const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState<string>(title)
+  const [draft, setDraft] = useState<string>(originalTitle)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // Sync title when locale changes (originalTitle updates) — only if user hasn't saved a custom title
+  // On mount: hydrate from localStorage if user saved a custom title.
+  // On originalTitle change (locale switch): revert to new locale title unless user has a custom title.
   useEffect(() => {
-    if (typeof window === 'undefined') return
     try {
       const saved = window.localStorage.getItem(storageKey)
-      if (!saved || !saved.trim()) {
+      if (saved && saved.trim()) {
+        setTitle(saved)
+        setDraft(saved)
+      } else {
         setTitle(originalTitle)
         setDraft(originalTitle)
       }
@@ -276,6 +272,7 @@ function TopicSection({
   const [publishStatus, setPublishStatus] = useState<'idle' | 'saved' | 'published'>('idle')
   const [flyDirection, setFlyDirection] = useState<'left' | 'right' | null>(null)
   const [toast, setToast] = useState<string | null>(null)
+  const publishNavTimerRef = useRef<number | null>(null)
 
   const getCurrentTitle = (): string => {
     try {
@@ -439,7 +436,12 @@ function TopicSection({
 
     // 5) After the fly-out animation finishes (~800ms), navigate to the
     //    destination page so the saved item is actually visible.
-    window.setTimeout(() => {
+    //    Cancel any pending navigation first (prevents double-trigger on fast clicks).
+    if (publishNavTimerRef.current !== null) {
+      window.clearTimeout(publishNavTimerRef.current)
+    }
+    publishNavTimerRef.current = window.setTimeout(() => {
+      publishNavTimerRef.current = null
       setFlyDirection(null)
       setToast(null)
       setPublishStatus('idle')
@@ -674,9 +676,12 @@ export default function TeaTimePage() {
             </div>
           </aside>
         </div>
-
-        <FloatingCharacters />
       </div>
+      {/* FloatingCharacters must be OUTSIDE .teatime-perspective because its
+          `perspective: 1500px` creates a containing block for fixed descendants,
+          which breaks `position: fixed` on .floating-overlay (chars scroll with
+          the page instead of tracking the viewport). */}
+      <FloatingCharacters />
     </CharPositionProvider>
   )
 }
