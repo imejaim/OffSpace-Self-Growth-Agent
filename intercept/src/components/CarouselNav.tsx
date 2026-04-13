@@ -110,9 +110,9 @@ export function CarouselNav() {
                   background: 'transparent',
                   border: 'none',
                   borderBottom: active
-                    ? '2px solid var(--color-coral)'
-                    : '2px solid transparent',
-                  color: active ? 'var(--color-coral)' : 'var(--color-text-muted)',
+                    ? '3px solid var(--color-coral)'
+                    : '3px solid transparent',
+                  color: active ? 'var(--color-navy)' : 'var(--color-text-muted)',
                   fontWeight: active ? 800 : 600,
                   fontSize: '0.82rem',
                   letterSpacing: '-0.01em',

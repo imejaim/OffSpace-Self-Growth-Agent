@@ -1,5 +1,12 @@
 // PortOne V2 server-side helper — REST API (fetch only, no axios)
-// 환경변수: PORTONE_TEST_SECRET_KEY
+// 환경변수: PORTONE_TEST_SECRET_KEY, PORTONE_WEBHOOK_SECRET
+//
+// Important: on Cloudflare Workers with nodejs_compat, secrets declared via
+// `wrangler secret put` are surfaced through `getCloudflareContext().env`, NOT
+// through `process.env`. Using `process.env` alone silently returns undefined
+// in production.
+
+import { resolveEnv } from './paypal'
 
 const PORTONE_API_BASE = 'https://api.portone.io'
 
@@ -14,7 +21,7 @@ export type PortOnePayment = {
 }
 
 export async function verifyPayment(paymentId: string): Promise<PortOnePayment> {
-  const secretKey = process.env.PORTONE_TEST_SECRET_KEY
+  const secretKey = await resolveEnv('PORTONE_TEST_SECRET_KEY')
   if (!secretKey) {
     throw new Error('PORTONE_TEST_SECRET_KEY is not set')
   }
@@ -49,7 +56,7 @@ export async function verifyWebhookSignature(
   webhookTimestamp: string,
   webhookSignature: string
 ): Promise<boolean> {
-  const secretKey = process.env.PORTONE_WEBHOOK_SECRET
+  const secretKey = await resolveEnv('PORTONE_WEBHOOK_SECRET')
   if (!secretKey) {
     throw new Error('PORTONE_WEBHOOK_SECRET is not set')
   }

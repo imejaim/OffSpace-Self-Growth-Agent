@@ -23,6 +23,9 @@ interface InterceptItem {
 interface InterceptCardProps {
   intercept: InterceptItem
   onVisibilityToggle?: () => void
+  isFollowing?: boolean // ADDED: Follow state
+  onFollowToggle?: (targetUserId: string, isFollowing: boolean) => void // ADDED: Follow toggle handler
+  isProcessingFollow?: boolean // ADDED: Loading state for follow
 }
 
 const CHARACTER_META: Record<string, { name: string; color: string; avatar: string }> = {
@@ -43,7 +46,13 @@ function relativeTime(iso: string): string {
   return `${day}일 전`
 }
 
-export function InterceptCard({ intercept, onVisibilityToggle }: InterceptCardProps) {
+export function InterceptCard({ 
+  intercept, 
+  onVisibilityToggle, 
+  isFollowing = false, 
+  onFollowToggle, 
+  isProcessingFollow = false 
+}: InterceptCardProps) {
   const { user } = useAuth()
   const isOwn = user?.id === intercept.user_id
 
@@ -59,7 +68,7 @@ export function InterceptCard({ intercept, onVisibilityToggle }: InterceptCardPr
         gap: '0.65rem',
       }}
     >
-      {/* Header: avatar + nickname + timestamp */}
+      {/* Header: avatar + nickname + follow + timestamp */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         {intercept.avatar_url ? (
           <img
@@ -86,18 +95,50 @@ export function InterceptCard({ intercept, onVisibilityToggle }: InterceptCardPr
             {intercept.nickname[0]?.toUpperCase() ?? '?'}
           </div>
         )}
-        <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-text)' }}>
-          {intercept.nickname}
-        </span>
-        <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)', marginLeft: 'auto' }}>
-          {relativeTime(intercept.created_at)}
-        </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--color-text)' }}>
+              {intercept.nickname}
+            </span>
+            {!isOwn && intercept.user_id && onFollowToggle && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onFollowToggle(intercept.user_id!, isFollowing)
+                }}
+                disabled={isProcessingFollow}
+                style={{
+                  background: isFollowing ? 'transparent' : 'var(--color-coral)',
+                  border: isFollowing ? '1px solid var(--color-border)' : 'none',
+                  color: isFollowing ? 'var(--color-text-muted)' : '#fff',
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  padding: '0.2rem 0.5rem',
+                  borderRadius: 'var(--radius-pill)',
+                  cursor: isProcessingFollow ? 'default' : 'pointer',
+                  opacity: isProcessingFollow ? 0.7 : 1,
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.2rem'
+                }}
+              >
+                {isProcessingFollow ? '...' : (isFollowing ? 'Following' : '+ Follow')}
+              </button>
+            )}
+          </div>
+          <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>
+            {relativeTime(intercept.created_at)}
+          </span>
+        </div>
         {isOwn && onVisibilityToggle && (
-          <PublicToggle
-            interceptId={intercept.id}
-            currentVisibility={intercept.visibility}
-            onToggle={onVisibilityToggle}
-          />
+          <div style={{ marginLeft: 'auto' }}>
+            <PublicToggle
+              interceptId={intercept.id}
+              currentVisibility={intercept.visibility}
+              onToggle={onVisibilityToggle}
+            />
+          </div>
         )}
       </div>
 

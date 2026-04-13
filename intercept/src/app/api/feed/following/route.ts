@@ -43,12 +43,13 @@ export async function GET(request: NextRequest) {
         ai_responses,
         created_at,
         visibility,
+        user_id,
         profiles!inner (
           id,
           nickname,
           avatar_url
         )
-      `)
+      `) // MODIFIED: Added user_id
       .eq('visibility', 'public')
       .in('user_id', followingIds)
       .order('created_at', { ascending: false })
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest) {
     const hasMore = (data?.length ?? 0) === limit + 1
     const intercepts = hasMore ? data!.slice(0, limit) : (data ?? [])
 
-    return NextResponse.json({ intercepts, hasMore })
+    return NextResponse.json({ intercepts, hasMore, followingIds }) // MODIFIED: Added followingIds
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ error: message }, { status: 500 })

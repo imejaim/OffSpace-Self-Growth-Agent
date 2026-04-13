@@ -7,18 +7,18 @@ export default function CreditsPage() {
   const { t } = useI18n()
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100 px-4 py-16">
+    <main className="min-h-screen bg-white text-zinc-900 px-4 py-16">
       <div className="mx-auto max-w-2xl">
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-zinc-900 mb-2">
             {t.pricing.buyCredits}
           </h1>
-          <p className="text-zinc-400">
+          <p className="text-zinc-500">
             {t.pricing.payPerUseDesc}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8 shadow-2xl">
+        <div className="rounded-2xl border border-zinc-100 bg-zinc-50/30 p-8 shadow-sm">
           <PaymentSelector />
         </div>
 

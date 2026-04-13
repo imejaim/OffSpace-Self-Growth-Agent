@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser() // ADDED: Check current user for follow status batching
 
     const { data, error } = await supabase
       .from('intercepts')
@@ -28,12 +29,13 @@ export async function GET(request: NextRequest) {
         ai_responses,
         created_at,
         visibility,
+        user_id,
         profiles!inner (
           id,
           nickname,
           avatar_url
         )
-      `)
+      `) // MODIFIED: Added user_id to select
       .eq('visibility', 'public')
       .order('created_at', { ascending: false })
       .range(offset, offset + limit)
@@ -46,7 +48,20 @@ export async function GET(request: NextRequest) {
     const hasMore = (data?.length ?? 0) === limit + 1
     const intercepts = hasMore ? data!.slice(0, limit) : (data ?? [])
 
-    return NextResponse.json({ intercepts, hasMore })
+    // Batch fetch follow status if user is logged in
+    let followingIds: string[] = [] // ADDED: Initialize followingIds array
+    if (user) {
+      const { data: followData } = await supabase
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', user.id)
+      
+      if (followData) {
+        followingIds = followData.map(f => f.following_id)
+      }
+    }
+
+    return NextResponse.json({ intercepts, hasMore, followingIds }) // MODIFIED: Return followingIds
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     return NextResponse.json({ error: message }, { status: 500 })

@@ -236,23 +236,15 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
     ? 'none'
     : 'transform 0.32s cubic-bezier(0.22, 0.61, 0.36, 1)'
 
-  // Peek panels slide in from the opposite direction
-  // Dragging right (dx>0) reveals LEFT peek more; dragging left reveals RIGHT peek more
-  const leftPeekAmount = Math.max(0, dragOffset) // positive when dragging right
-  const rightPeekAmount = Math.max(0, -dragOffset) // positive when dragging left
+  // Peek panels
+  const leftPeekIdx = activeIdx > 0 ? activeIdx - 1 : null
+  const rightPeekIdx = activeIdx < ROUTES.length - 1 ? activeIdx + 1 : null
 
-  const hasPrev = activeIdx > 0
-  const hasNext = activeIdx < ROUTES.length - 1
-
-  // Map the neighbor index → peek label/snippet
   const peekFor = (idx: number) => {
     if (idx === 0) return { title: t.carousel.myKeep, hint: t.carousel.myKeepPeek }
     if (idx === 1) return { title: t.carousel.instantPage, hint: t.carousel.instantPagePeek }
     return { title: t.carousel.sns, hint: t.carousel.snsPeek }
   }
-
-  const leftPeek = hasPrev ? peekFor(activeIdx - 1) : null
-  const rightPeek = hasNext ? peekFor(activeIdx + 1) : null
 
   return (
     <div
@@ -261,36 +253,38 @@ export function SwipeNavigator({ children }: { children: React.ReactNode }) {
       style={{ touchAction: 'pan-y', overflowX: 'hidden', position: 'relative' }}
       onMouseDown={onMouseDown}
     >
-      {/* Left peek panel */}
-      {leftPeek && (
+      {/* Left peek panel — Persistent and Clickable */}
+      {leftPeekIdx !== null && (
         <aside
-          aria-hidden
           className="carousel-peek carousel-peek-left"
+          onClick={() => router.push(ROUTES[leftPeekIdx])}
           style={{
-            transform: `translateX(${-100 + Math.min(100, leftPeekAmount * 0.6)}%)`,
-            transition: wrapperTransition,
+            zIndex: 30,
+            opacity: isDragging ? (dragOffset > 0 ? 0 : 0.2) : 1,
+            pointerEvents: isDragging ? 'none' : 'auto',
           }}
         >
           <div className="carousel-peek-card">
-            <div className="carousel-peek-title">{leftPeek.title}</div>
-            <div className="carousel-peek-hint">{leftPeek.hint}</div>
+            <div className="carousel-peek-title">{peekFor(leftPeekIdx).title}</div>
+            <div className="carousel-peek-hint">{peekFor(leftPeekIdx).hint}</div>
           </div>
         </aside>
       )}
 
-      {/* Right peek panel */}
-      {rightPeek && (
+      {/* Right peek panel — Persistent and Clickable */}
+      {rightPeekIdx !== null && (
         <aside
-          aria-hidden
           className="carousel-peek carousel-peek-right"
+          onClick={() => router.push(ROUTES[rightPeekIdx])}
           style={{
-            transform: `translateX(${100 - Math.min(100, rightPeekAmount * 0.6)}%)`,
-            transition: wrapperTransition,
+            zIndex: 30,
+            opacity: isDragging ? (dragOffset < 0 ? 0 : 0.2) : 1,
+            pointerEvents: isDragging ? 'none' : 'auto',
           }}
         >
           <div className="carousel-peek-card">
-            <div className="carousel-peek-title">{rightPeek.title}</div>
-            <div className="carousel-peek-hint">{rightPeek.hint}</div>
+            <div className="carousel-peek-title">{peekFor(rightPeekIdx).title}</div>
+            <div className="carousel-peek-hint">{peekFor(rightPeekIdx).hint}</div>
           </div>
         </aside>
       )}

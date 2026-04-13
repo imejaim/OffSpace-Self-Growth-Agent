@@ -25,21 +25,21 @@ function PayPalSubscribeInner({ planType }: Props) {
 
   if (status === 'success') {
     return (
-      <div className="rounded-xl bg-green-900/30 border border-green-700 px-4 py-3 text-center">
-        <p className="text-sm font-semibold text-green-400">Subscription active!</p>
-        <p className="mt-1 text-xs text-green-500">{message}</p>
+      <div className="rounded-xl bg-green-50 border border-green-300 px-4 py-3 text-center">
+        <p className="text-sm font-semibold text-green-700">Subscription active!</p>
+        <p className="mt-1 text-xs text-green-600">{message}</p>
       </div>
     )
   }
 
   if (status === 'error') {
     return (
-      <div className="rounded-xl bg-red-900/30 border border-red-700 px-4 py-3 text-center">
-        <p className="text-sm font-semibold text-red-400">Something went wrong</p>
-        <p className="mt-1 text-xs text-red-500">{message}</p>
+      <div className="rounded-xl bg-red-50 border border-red-300 px-4 py-3 text-center">
+        <p className="text-sm font-semibold text-red-700">Something went wrong</p>
+        <p className="mt-1 text-xs text-red-600">{message}</p>
         <button
           onClick={() => setStatus('idle')}
-          className="mt-2 text-xs text-red-400 underline"
+          className="mt-2 text-xs text-red-600 underline"
         >
           Try again
         </button>
@@ -51,7 +51,7 @@ function PayPalSubscribeInner({ planType }: Props) {
     <div className="w-full">
       {isPending && (
         <div className="flex justify-center py-3">
-          <span className="text-xs text-zinc-400">Loading payment...</span>
+          <span className="text-xs text-zinc-500">Loading payment...</span>
         </div>
       )}
       <PayPalButtons
@@ -68,16 +68,21 @@ function PayPalSubscribeInner({ planType }: Props) {
           setStatus('success')
           setMessage(`Subscription started! (ID: ${data.subscriptionID ?? 'confirming...'})`)
         }}
-        onError={(err) => {
-          console.error('[PayPal Error]', err)
+        onError={(err: any) => {
+          // MODIFIED: Logging full error for debugging subscription failures
+          console.error('[PayPal Error Details]', {
+            message: err?.message,
+            stack: err?.stack,
+            error: err
+          })
           setStatus('error')
-          setMessage('Payment failed. Please try again.')
+          setMessage('Payment failed. Check console for details or try again.')
         }}
         onCancel={() => {
           setStatus('idle')
         }}
       />
-      <p className="mt-2 text-center text-xs text-zinc-500">
+      <p className="mt-2 text-center text-xs text-zinc-400">
         Sandbox mode — no real charges
       </p>
     </div>

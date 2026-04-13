@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyWebhookSignature } from '@/lib/paypal'
+import { verifyWebhookSignature, resolveEnv } from '@/lib/paypal'
 import { createClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
@@ -21,9 +21,10 @@ type PayPalWebhookEvent = {
 
 // Maps PayPal plan IDs to internal tier names
 // Set PAYPAL_PLAN_ID_BASIC and PAYPAL_PLAN_ID_PRO in environment variables
-function getPlanTier(planId?: string): string {
+async function getPlanTier(planId?: string): Promise<string> {
   if (!planId) return 'basic'
-  if (planId === process.env.PAYPAL_PLAN_ID_PRO) return 'pro'
+  const proPlanId = await resolveEnv('PAYPAL_PLAN_ID_PRO')
+  if (planId === proPlanId) return 'pro'
   return 'basic'
 }
 
@@ -35,7 +36,7 @@ const SUBSCRIPTION_CANCEL_EVENTS = new Set([
 export async function POST(request: NextRequest) {
   const body = await request.text()
 
-  const webhookId = process.env.PAYPAL_WEBHOOK_ID
+  const webhookId = await resolveEnv('PAYPAL_WEBHOOK_ID')
   if (!webhookId) {
     return NextResponse.json({ error: 'PAYPAL_WEBHOOK_ID not configured' }, { status: 500 })
   }
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
     if (event_type === 'BILLING.SUBSCRIPTION.ACTIVATED') {
       const subscriptionId = resource.id
       const userId = resource.custom_id
-      const newTier = getPlanTier(resource.plan_id)
+      const newTier = await getPlanTier(resource.plan_id)
 
       if (subscriptionId && userId) {
         await supabase

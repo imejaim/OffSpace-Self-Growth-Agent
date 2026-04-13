@@ -61,7 +61,7 @@ export default function PaymentSelector() {
         return
       }
 
-      const response = await PortOne.requestPayment({
+      const requestParams: any = {
         storeId,
         paymentId,
         orderName: `Intercept ${pkg.label}`,
@@ -73,7 +73,13 @@ export default function PaymentSelector() {
           customerId: userId,
         },
         customData: { userId },
-      })
+      }
+
+      // PortOne V2: EASY_PAY uses the PG's unified selection UI when no
+      // `easyPayProvider` is supplied. Passing an empty `easyPay: {}` object is
+      // invalid and causes the SDK to reject the request — omit the field.
+
+      const response = await (PortOne.requestPayment as any)(requestParams)
 
       if (!response || response.code) {
         setStatus('error')
@@ -106,12 +112,12 @@ export default function PaymentSelector() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-xl border border-green-700/50 bg-green-900/20 px-5 py-4 text-center">
-        <p className="text-sm font-semibold text-green-400">충전 완료!</p>
-        <p className="mt-1 text-xs text-green-500">{message}</p>
+      <div className="rounded-xl border border-green-300 bg-green-50 px-5 py-4 text-center">
+        <p className="text-sm font-semibold text-green-700">충전 완료!</p>
+        <p className="mt-1 text-xs text-green-600">{message}</p>
         <button
           onClick={() => { setStatus('idle'); setMessage('') }}
-          className="mt-3 text-xs text-green-400 underline underline-offset-2"
+          className="mt-3 text-xs text-green-700 underline underline-offset-2"
         >
           다시 충전하기
         </button>
@@ -123,7 +129,7 @@ export default function PaymentSelector() {
     <div className="space-y-5">
       {/* Credit package selection */}
       <div>
-        <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-2">충전 패키지</p>
+        <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-2">충전 패키지</p>
         <div className="grid grid-cols-3 gap-2">
           {CREDIT_PACKAGES.map((pkg, i) => (
             <button
@@ -132,12 +138,12 @@ export default function PaymentSelector() {
               className={[
                 'relative flex flex-col items-center rounded-lg border px-3 py-3 text-center transition-all',
                 selectedPackage === i
-                  ? 'border-amber-500/60 bg-amber-500/10 text-amber-300'
-                  : 'border-zinc-700 bg-zinc-800/50 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300',
+                  ? 'border-amber-400 bg-amber-50 text-amber-700'
+                  : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-700',
               ].join(' ')}
             >
               {pkg.badge && (
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-2 py-px text-[10px] font-semibold text-zinc-900 whitespace-nowrap">
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-2 py-px text-[10px] font-semibold text-white whitespace-nowrap">
                   {pkg.badge}
                 </span>
               )}
@@ -152,7 +158,7 @@ export default function PaymentSelector() {
 
       {/* Payment method selection */}
       <div>
-        <p className="text-xs font-mono uppercase tracking-widest text-zinc-500 mb-2">결제 수단</p>
+        <p className="text-xs font-mono uppercase tracking-widest text-zinc-400 mb-2">결제 수단</p>
         <div className="grid grid-cols-2 gap-2">
           {PAY_METHODS.map((method) => (
             <button
@@ -161,8 +167,8 @@ export default function PaymentSelector() {
               className={[
                 'flex items-center gap-2.5 rounded-lg border px-3 py-2.5 text-left transition-all',
                 selectedMethod === method.id
-                  ? 'border-zinc-500 bg-zinc-800 text-zinc-100'
-                  : 'border-zinc-700 bg-zinc-800/40 text-zinc-400 hover:border-zinc-600 hover:text-zinc-300',
+                  ? 'border-zinc-400 bg-zinc-50 text-zinc-900'
+                  : 'border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300 hover:text-zinc-700',
               ].join(' ')}
             >
               <span className="text-base leading-none">{method.emoji}</span>
@@ -177,12 +183,12 @@ export default function PaymentSelector() {
 
       {/* Error message */}
       {status === 'error' && (
-        <div className="rounded-lg border border-red-700/50 bg-red-900/20 px-4 py-3 flex items-center justify-between gap-4">
-          <p className="text-xs text-red-400 font-medium">{message}</p>
+        <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3 flex items-center justify-between gap-4">
+          <p className="text-xs text-red-700 font-medium">{message}</p>
           {!userId && (
             <button
               onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/auth/callback' } })}
-              className="shrink-0 rounded-md bg-red-500/20 border border-red-500/40 px-2.5 py-1 text-[10px] font-bold text-red-100 hover:bg-red-500/40 transition"
+              className="shrink-0 rounded-md bg-red-100 border border-red-300 px-2.5 py-1 text-[10px] font-bold text-red-700 hover:bg-red-200 transition"
             >
               {t.auth.signIn}
             </button>
@@ -194,7 +200,7 @@ export default function PaymentSelector() {
       <button
         onClick={handlePay}
         disabled={status === 'loading'}
-        className="w-full rounded-lg bg-zinc-100 px-4 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="w-full rounded-lg bg-zinc-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-50"
       >
         {status === 'loading'
           ? '결제 처리 중...'
