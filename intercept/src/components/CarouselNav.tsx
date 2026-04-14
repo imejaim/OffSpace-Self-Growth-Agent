@@ -16,25 +16,27 @@ const TABS: TabDef[] = [
   { key: 'feed', href: '/feed' },
 ]
 
-export function getCarouselIndex(pathname: string | null): number {
-  if (!pathname) return -1
-  if (pathname.startsWith('/my')) return 0
-  if (pathname.startsWith('/teatime')) return 1
-  if (pathname.startsWith('/feed')) return 2
+import { useAppRouter, ViewType } from '@/lib/router-context'
+
+export function getCarouselIndex(pathname: string | ViewType): number {
+  if (pathname === 'my' || pathname === '/my') return 0
+  if (pathname === 'teatime' || pathname === '/teatime' || pathname === '/') return 1
+  if (pathname === 'feed' || pathname === '/feed') return 2
   return -1
 }
 
 export function CarouselNav() {
-  const router = useRouter()
-  const pathname = usePathname()
+  const { activeView, navigate } = useAppRouter()
   const { t } = useI18n()
-  const activeIdx = getCarouselIndex(pathname)
+  const activeIdx = getCarouselIndex(activeView)
 
   if (activeIdx < 0) return null
 
   const goto = (idx: number) => {
     if (idx < 0 || idx >= TABS.length) return
-    router.push(TABS[idx].href)
+    const target = TABS[idx].key
+    const direction = idx > activeIdx ? 'right' : 'left'
+    navigate(target, direction)
   }
 
   const labelFor = (key: CarouselKey) => {
@@ -46,14 +48,12 @@ export function CarouselNav() {
   return (
     <nav
       aria-label="Carousel navigation"
-      className="carousel-nav"
+      className="carousel-nav premium-glass"
       style={{
         position: 'sticky',
         top: 0,
         zIndex: 40,
-        background: 'var(--color-bg-card)',
-        borderBottom: '1px solid var(--color-border)',
-        backdropFilter: 'saturate(140%) blur(6px)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
       }}
     >
       <div
