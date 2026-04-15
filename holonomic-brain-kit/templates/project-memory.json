@@ -1,0 +1,41 @@
+{
+  "version": "1.0.0",
+  "projectRoot": "",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [],
+    "gitBranches": {
+      "defaultBranch": "master",
+      "branchingStrategy": null
+    }
+  },
+  "holonomicBrain": {
+    "agents": [],
+    "environments": [],
+    "notes": [
+      "Seeded from holonomic-brain-kit. Fill in as the project evolves.",
+      "Durable knowledge belongs in docs/wiki/, not only here."
+    ]
+  },
+  "customNotes": []
+}
