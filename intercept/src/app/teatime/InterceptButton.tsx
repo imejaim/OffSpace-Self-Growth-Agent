@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
 import { useAuth } from '@/components/AuthProvider'
@@ -45,6 +45,8 @@ export default function InterceptButton({
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [interceptError, setInterceptError] = useState<string | null>(null)
   const [userLabel, setUserLabel] = useState<string>(t.common.you)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const authName =
@@ -61,13 +63,10 @@ export default function InterceptButton({
         return
       }
     } catch {
-      // ignore
+      // Ignore storage failures.
     }
     setUserLabel(t.common.you)
   }, [user, t.common.you])
-
-  const inputRef = useRef<HTMLInputElement>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -76,6 +75,12 @@ export default function InterceptButton({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, isLoading])
+
+  useEffect(() => {
+    return () => {
+      document.body.classList.remove('intercept-loading')
+    }
+  }, [])
 
   async function handleSubmit() {
     const msg = inputValue.trim()
@@ -89,12 +94,10 @@ export default function InterceptButton({
     document.body.classList.add('intercept-loading')
 
     const historyContext = messages
-      .map((m) =>
-        m.type === 'user' ? `사용자: ${m.content}` : `${m.name}: ${m.content}`
-      )
+      .map((m) => (m.type === 'user' ? `${userLabel}: ${m.content}` : `${m.name}: ${m.content}`))
       .join('\n')
     const fullContext = historyContext
-      ? `${conversationContext}\n\n[이전 대화]\n${historyContext}`
+      ? `${conversationContext}\n\n[Previous conversation]\n${historyContext}`
       : conversationContext
 
     try {
@@ -105,15 +108,16 @@ export default function InterceptButton({
           conversationContext: fullContext,
           userMessage: msg,
           characterId,
-          nickname: localStorage.getItem('intercept-nickname'), // ADDED: Pass nickname from localStorage
-          sessionId: localStorage.getItem('intercept-session-id'), // ADDED: Pass sessionId from localStorage
+          messageId,
+          nickname: localStorage.getItem('intercept-nickname'),
+          sessionId: localStorage.getItem('intercept-session-id'),
         }),
       })
       const data = await res.json()
       if (data.responses && Array.isArray(data.responses)) {
         const charMsgs: ChatMessage[] = data.responses.map(
           (r: { characterId: string; name: string; content: string }) => ({
-            type: 'character' as const,
+            type: 'character',
             content: r.content,
             characterId: r.characterId,
             name: r.name,
@@ -126,9 +130,10 @@ export default function InterceptButton({
       }
     } catch {
       setInterceptError(t.teatime.interceptNetworkError)
+    } finally {
+      setIsLoading(false)
+      document.body.classList.remove('intercept-loading')
     }
-    setIsLoading(false)
-    document.body.classList.remove('intercept-loading')
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -140,9 +145,8 @@ export default function InterceptButton({
 
   return (
     <div className="intercept-inline">
-      {/* Header */}
       <div className="intercept-inline-header">
-        <span className="intercept-inline-label">💬 {t.teatime.interceptPanelTitle}</span>
+        <span className="intercept-inline-label">{t.teatime.interceptPanelTitle}</span>
         <button
           className="intercept-inline-close"
           onClick={onClose}
@@ -152,22 +156,22 @@ export default function InterceptButton({
         </button>
       </div>
 
-      {/* Messages */}
       {messages.length > 0 && (
         <div className="intercept-inline-messages" role="log" aria-live="polite">
           {messages.map((msg, i) =>
             msg.type === 'user' ? (
               <div key={i} className="chat-bubble-row chat-bubble-row--user">
-                <div className="chat-bubble-body chat-bubble-body--user" style={{ alignItems: 'flex-end' }}>
+                <div
+                  className="chat-bubble-body chat-bubble-body--user"
+                  style={{ alignItems: 'flex-end' }}
+                >
                   <span
                     className="chat-bubble-name"
                     style={{ color: 'var(--color-text-muted)' }}
                   >
                     {userLabel}
                   </span>
-                  <div className="chat-bubble chat-bubble--user">
-                    {msg.content}
-                  </div>
+                  <div className="chat-bubble chat-bubble--user">{msg.content}</div>
                 </div>
                 <div
                   className="chat-bubble-avatar chat-bubble-avatar--user"
@@ -179,25 +183,24 @@ export default function InterceptButton({
             ) : (
               <div key={i} className="chat-bubble-row chat-bubble-row--char">
                 <div className="chat-bubble-avatar chat-bubble-avatar--char">
-                  {CHARACTER_AVATARS[msg.characterId!] ? (
+                  {msg.characterId && CHARACTER_AVATARS[msg.characterId] ? (
                     <Image
-                      src={CHARACTER_AVATARS[msg.characterId!]}
+                      src={CHARACTER_AVATARS[msg.characterId]}
                       alt={msg.name ?? ''}
                       width={28}
                       height={28}
                       style={{ imageRendering: 'pixelated', borderRadius: '4px' }}
                     />
                   ) : (
-                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: msg.color }}>
+                    <span
+                      style={{ fontSize: '0.65rem', fontWeight: 700, color: msg.color }}
+                    >
                       {msg.name?.[0]}
                     </span>
                   )}
                 </div>
                 <div className="chat-bubble-body">
-                  <span
-                    className="chat-bubble-name"
-                    style={{ color: msg.color }}
-                  >
+                  <span className="chat-bubble-name" style={{ color: msg.color }}>
                     {msg.name}
                   </span>
                   <div
@@ -226,14 +229,12 @@ export default function InterceptButton({
         </div>
       )}
 
-      {/* Error */}
       {interceptError && (
         <div className="intercept-inline-error" role="alert">
           {interceptError}
         </div>
       )}
 
-      {/* Input */}
       <div className="intercept-inline-input-row">
         <input
           ref={inputRef}

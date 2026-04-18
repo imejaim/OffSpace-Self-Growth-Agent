@@ -270,5 +270,6 @@ export const en: Translations = {
     interceptClose: 'Close',
     interceptInputAria: 'Message input',
     interceptNetworkError: 'AI team is busy. Try again in a moment.',
+    chatterFailPrefix: 'Chatter failed:',
   },
 }

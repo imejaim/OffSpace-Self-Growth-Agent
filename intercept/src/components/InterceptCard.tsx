@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { PublicToggle } from './PublicToggle'
 import { useAuth } from './AuthProvider'
+import PretextMessage from './PretextMessage' // ADDED
 
 interface AiResponse {
   characterId: 'kobu' | 'oh' | 'jem'
@@ -58,14 +59,15 @@ export function InterceptCard({
 
   return (
     <article
+      className="premium-card-hover reveal-on-scroll" // MODIFIED
       style={{
         background: 'var(--color-bg-card)',
         border: '1px solid var(--color-border)',
         borderRadius: 'var(--radius-md)',
-        padding: '1rem 1.1rem',
+        padding: '1.25rem', // MODIFIED
         display: 'flex',
         flexDirection: 'column',
-        gap: '0.65rem',
+        gap: '0.85rem', // MODIFIED
       }}
     >
       {/* Header: avatar + nickname + follow + timestamp */}
@@ -175,21 +177,24 @@ export function InterceptCard({
                   <span style={{ fontSize: '0.7rem', fontWeight: 700, color: meta.color }}>
                     {meta.name}
                   </span>
-                  <span
-                    style={{
-                      fontSize: '0.85rem',
-                      color: 'var(--color-navy)', // MODIFIED: Use navy for text
-                      background: 'var(--color-bg-muted)', // MODIFIED: Use muted bg
-                      border: `1px solid ${meta.color}33`, // MODIFIED: Themed border
-                      borderRadius: '0 12px 12px 12px',
-                      padding: '0.6rem 0.8rem', // MODIFIED: Better spacing
-                      lineHeight: 1.55,
-                      wordBreak: 'break-word',
-                      boxShadow: '0 1px 2px rgba(0,0,0,0.02)', // ADDED: Subtle shadow
-                    }}
-                  >
-                    {resp.content}
-                  </span>
+                  <PretextMessage text={resp.content}>
+                    <span
+                      style={{
+                        fontSize: '0.85rem',
+                        color: 'var(--color-navy)',
+                        background: 'var(--color-bg-muted)',
+                        border: `1px solid ${meta.color}33`,
+                        borderRadius: '0 12px 12px 12px',
+                        padding: '0.65rem 0.9rem', // MODIFIED
+                        lineHeight: 1.55,
+                        wordBreak: 'break-word',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.03)', // MODIFIED
+                        display: 'block', // ADDED
+                      }}
+                    >
+                      {resp.content}
+                    </span>
+                  </PretextMessage>
                 </div>
               </div>
             )

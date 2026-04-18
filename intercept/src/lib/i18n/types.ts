@@ -226,5 +226,6 @@ export interface Translations {
     interceptClose: string
     interceptInputAria: string
     interceptNetworkError: string
+    chatterFailPrefix: string
   }
 }

@@ -10,8 +10,10 @@ main = ".open-next/worker.js"
 compatibility_date = "2026-04-11"
 compatibility_flags = ["nodejs_compat"]
 
-# workers.dev 서브도메인도 유지 (디버깅용)
-workers_dev = true
+# workers.dev 서브도메인 차단 (2026-04-14)
+# true로 두면 *.workers.dev 서브도메인이 공개되어 봇/크롤러가 쿼터를 태움.
+# 커스텀 도메인(interceptnews.app) 하나만 공개 엔드포인트로 유지.
+workers_dev = false
 
 # Custom domain — routes traffic from interceptnews.app to this Worker
 routes = [
@@ -45,6 +47,8 @@ NEXT_PUBLIC_SITE_URL = "https://interceptnews.app"
 NEXT_PUBLIC_BASE_URL = "https://interceptnews.app"
 NEXT_PUBLIC_SUPABASE_URL = "https://ptbumikpnehlbxsbhmsx.supabase.co"
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_P0-gx7EwZI5klunBPzg6EQ_kNVRWocI"
-NEXT_PUBLIC_PAYPAL_CLIENT_ID = "AQ5k7141GHxhOLZ_tV3V2RjcMMZ9-4NyaZI8AaC5nWNR_i-lfHNtXCWOhrKJ_BGO9xA1pFlMFsoEFTx-"
+NEXT_PUBLIC_PAYPAL_CLIENT_ID = "ATJRLpBwAkI0htaR9tHyjopjNJzY75AXJiEARBp-dseLdT46Fz2vjuypf05Ao-lOkaj0Tj_TwOhJweg6"
+NEXT_PUBLIC_PAYPAL_BASIC_PLAN_ID = "P-3C6783332R1925541NHRYO5I"
+NEXT_PUBLIC_PAYPAL_PRO_PLAN_ID = "P-6GU21385CG741880HNHRYO5Q"
 NEXT_PUBLIC_PORTONE_STORE_ID = "store-0a5b3230-285a-4342-9c3b-83effcfda5af"
 NEXT_PUBLIC_PORTONE_CHANNEL_KEY = "channel-key-71713fd7-5dc6-4571-b049-be13de0516e1"

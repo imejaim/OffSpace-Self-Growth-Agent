@@ -37,7 +37,17 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all paths except static files and images
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Refresh the Supabase session for page navigations only.
+    // Exclusions — none of these need (or want) auth cookie refresh:
+    //   - _next/static, _next/image, favicon, common image extensions: static assets
+    //   - robots.txt, sitemap.xml, manifest.json: crawler / PWA metadata
+    //   - api/cron/*: Cloudflare cron triggers, no user context
+    //   - api/payment/paypal/webhook, api/payment/portone/webhook: external webhooks
+    //   - api/*: App Router API routes use `createClient()` from `@/lib/supabase/server`,
+    //     which refreshes the session on its own via the Next cookies() API. Running
+    //     the middleware on API requests just duplicates that work and multiplies
+    //     backend fanout — which was the trigger for the 2026-04-14 Cloudflare
+    //     daily-limit incident. Keep the middleware on page navigations only.
+    '/((?!api/|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|manifest\\.json|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|css|js|map)$).*)',
   ],
 }

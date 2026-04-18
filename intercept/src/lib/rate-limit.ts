@@ -1,7 +1,7 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare'
 
 const WINDOW_SECONDS = 60 * 60 // 1 hour
-const DEFAULT_MAX_REQUESTS = 60 // 베타 단계: 시간당 60회 (테스트/탐색 친화적)
+const DEFAULT_MAX_REQUESTS = 60 // 기본값 60/h; 탐색용 라우트는 호출부에서 200 등으로 상향
 
 // In-memory fallback for local dev (single-process only)
 const localStore = new Map<string, { count: number; resetAt: number }>()

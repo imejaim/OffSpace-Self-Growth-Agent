@@ -2,6 +2,7 @@
 
 import SubscribeButton from './SubscribeButton'
 import PaymentSelector from '@/components/PaymentSelector'
+import PricingHeader from '@/components/PricingHeader'
 import { useI18n } from '@/lib/i18n/context'
 
 export default function PricingPage() {
@@ -36,17 +37,14 @@ export default function PricingPage() {
 
   return (
     <main className="min-h-screen bg-white text-zinc-900 px-4 py-16">
-      {/* Header */}
-      <div className="mx-auto max-w-4xl text-center mb-14">
-        <span className="inline-block rounded-sm bg-zinc-100 border border-zinc-200 px-3 py-1 text-xs font-mono uppercase tracking-widest text-zinc-500 mb-5">
-          {t.pricing.sandboxBeta}
-        </span>
-        <h1 className="text-4xl font-bold text-zinc-900 leading-tight">
-          {t.pricing.pickPlan}
-        </h1>
-        <p className="mt-3 text-base text-zinc-600 max-w-xl mx-auto">
-          {t.pricing.pickPlanSubtitle}
-        </p>
+      <div className="mx-auto max-w-4xl">
+        <PricingHeader
+          eyebrow={t.pricing.sandboxBeta}
+          title={t.pricing.pickPlan}
+          description={t.pricing.pickPlanSubtitle}
+          backHref="/teatime"
+          backLabel={t.nav.teatime}
+        />
       </div>
 
       {/* Plan cards */}
@@ -135,16 +133,29 @@ export default function PricingPage() {
         </div>
       </div>
 
+      <div className="mx-auto max-w-4xl mb-8 rounded-xl border border-blue-100 bg-blue-50/70 p-4">
+        <p className="text-xs font-mono uppercase tracking-widest text-blue-600">
+          Checkout guide
+        </p>
+        <div className="mt-2 grid gap-2 text-sm text-zinc-700 sm:grid-cols-3">
+          <p>Subscriptions: PayPal only for now.</p>
+          <p>Global credits: PayPal checkout.</p>
+          <p>Korea credits: PortOne with easy pay, card, or bank transfer.</p>
+        </div>
+      </div>
+
       {/* Korean payment section */}
       <div className="mx-auto max-w-4xl mb-14">
         <div className="rounded-xl border border-zinc-100 bg-zinc-50/50 p-6">
           <div className="mb-5">
             <span className="inline-block rounded-sm bg-zinc-200 border border-zinc-300 px-2 py-0.5 text-[10px] font-mono uppercase tracking-widest text-zinc-600 mb-3">
-              {t.pricing.koreaOnly}
+              Korea credits
             </span>
-            <h2 className="text-lg font-semibold text-zinc-900">{t.pricing.koreaTitle}</h2>
+            <h2 className="text-lg font-semibold text-zinc-900">
+              Korea credit top-up
+            </h2>
             <p className="text-sm text-zinc-500 mt-1">
-              {t.pricing.koreaDesc}
+              Domestic checkout is currently for credit top-ups, not subscriptions.
             </p>
           </div>
           <PaymentSelector />

@@ -168,7 +168,7 @@ export default function FloatingCharacters() {
   const dragRef = useRef<{ id: string; offsetX: number; offsetY: number } | null>(null)
   const msgIndexRef = useRef(0)
   const allMessages = useRef(getAllMessages())
-  const { setPositions } = useCharPositions()
+  const { setPositions, anchorId, anchorRect } = useCharPositions()
   const mountedRef = useRef(true)
 
   // Track mount state to guard async callbacks after unmount
@@ -301,24 +301,20 @@ export default function FloatingCharacters() {
         const isLoading = document.body.classList.contains('intercept-loading')
 
         if (isLoading) {
-          // Gather near the intercept-inline area in a triangle while waiting
+          // Gather near the intercept-inline area
           const inlineEl = document.querySelector('.intercept-inline') as HTMLElement | null
           if (inlineEl) {
             const rect = inlineEl.getBoundingClientRect()
-            // Triangle formation around the input area (like sitting around a table)
-            // One char above-left, one above-right, one below-center
             const triangleOffsets = [
               { ox: -70, oy: -50 },   // 코부장: above-left
               { ox: rect.width + 20, oy: -40 },  // 오과장: above-right
               { ox: rect.width / 2 - size / 2, oy: rect.height + 10 },  // 젬대리: below-center
             ]
             const off = triangleOffsets[idx]!
-            // Add gentle sway animation
             const sway = Math.sin(now / 1500 + idx * 2) * 8
             targetX = clamp(rect.left + off.ox + sway, 10, w - size - 10)
             targetY = clamp(rect.top + off.oy, 10, h - size - 10)
             action = 'walking'
-            // Show loading bubbles
             if (!c.bubbleVisible) {
               const loadingBubbles = [
                 ['흠...', '좋은 질문이야', '잠깐만...'],
@@ -334,11 +330,10 @@ export default function FloatingCharacters() {
             }
           }
         } else if (isTyping) {
-          // Gather left of the input in triangle — outside Pretext OVERLAP_MARGIN (80px)
+          // Gather left of the input
           const input = document.querySelector('.intercept-input:focus') as HTMLElement | null
           if (input) {
             const rect = input.getBoundingClientRect()
-            // Triangle formation to the left — spread out to avoid bubble overlap
             const cx = rect.left - 120
             const cy = rect.top + rect.height / 2
             const triangleOffsets = [
@@ -351,10 +346,21 @@ export default function FloatingCharacters() {
             targetY = clamp(cy + off.oy, 10, h - size - 10)
             action = 'listening'
           }
+        } else if (anchorId && anchorRect) {
+          // ADDED: Anchor Gathering
+          // Move characters to the margins of the anchored section
+          const side = preferredSides[idx]!
+          const stagger = idx * 60 - 60 // staggered vertically
+          targetX = clampToMargin(anchorRect.left, size, bounds, w, side)
+          targetY = clamp(anchorRect.top + anchorRect.height / 2 + stagger, 80, h - size - 80)
+          
+          if (action === 'listening') action = 'idle'
+          
+          // Face the content
+          flipX = side === 'right'
+
         } else if (mouse.active) {
-          // Follow cursor, but stay in the nearest side margin so we don't cover text.
-          // Pick preferred side per character (kobu=left, oh/jem=right); if the mouse
-          // is in the opposite margin, swap to that side.
+          // Follow cursor
           const mouseInLeftMargin = mouse.x < bounds.left
           const mouseInRightMargin = mouse.x > bounds.right
           const preferred = preferredSides[idx]!
@@ -363,12 +369,12 @@ export default function FloatingCharacters() {
             : mouseInRightMargin ? 'right'
             : preferred
           const stagger = [-40, 0, 40][idx] ?? 0
-          // Park inside the chosen margin at mouse Y
           targetX = clampToMargin(mouse.x - size / 2, size, bounds, w, side)
           targetY = clamp(mouse.y + stagger - size / 2, 20, h - size - 20)
           if (action === 'listening') action = 'idle'
+          flipX = targetX < mouse.x 
         } else {
-          // Gentle wander — constrained to the character's preferred margin zone
+          // Gentle wander
           actionTimer += dt
           if (actionTimer > 200) {
             const side = preferredSides[idx]!
@@ -380,14 +386,14 @@ export default function FloatingCharacters() {
         }
 
         // ── Move toward target ──
-        const speed = isTyping ? GATHER_SPEED : mouse.active ? FOLLOW_SPEED : WANDER_SPEED
+        const speed = (isTyping || anchorId) ? GATHER_SPEED : mouse.active ? FOLLOW_SPEED : WANDER_SPEED
         const newX = lerp(x, clamp(targetX, 0, w - size), speed * dt)
         const newY = lerp(y, clamp(targetY, 0, h - size), speed * dt)
 
         // ── Determine action & flip ──
         const moving = dist(newX, newY, x, y) > 0.3
         if (moving) {
-          flipX = newX < x // face direction of movement
+          if (!anchorId) flipX = newX < x
           bobPhase += 0.15 * dt
           if (action !== 'listening') action = 'walking'
         } else {
@@ -424,9 +430,9 @@ export default function FloatingCharacters() {
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current)
     }
-  }, [visible, setPositions])
+  }, [visible, setPositions, anchorId, anchorRect]) // ADDED dependencies
 
-  // ── Speech bubble sequencer ──
+  // ── Speech bubble sequencer (Context-Aware) ──
   useEffect(() => {
     if (!visible) return
     const msgs = allMessages.current
@@ -436,17 +442,35 @@ export default function FloatingCharacters() {
 
     function showNext() {
       if (!mountedRef.current) return
-      // Don't override listening bubbles while user is typing
       if (typingRef.current) {
         timeoutId = setTimeout(showNext, 2000)
         return
       }
-      const msg = msgs[msgIndexRef.current % msgs.length]
-      msgIndexRef.current++
+
+      // ADDED: Context-aware reactions
+      let nextBubble = ''
+      let targetId = ''
+
+      if (anchorId) {
+        const reactions: Record<string, string[]> = {
+          kobu: ['음, 이 이슈는 중요해 보이네.', '코부장 생각도 비슷해.', '오과장, 자네 의견은 어떤가?', '흥미로운 주제군.'],
+          oh: ['아, 이거 저번에 봤던 그 뉴스네요.', '젬대리님, 이거 체크해보셨나요?', '기술적으로는 이런 접근도 가능하겠어요.', '허허, 세상 참 빠릅니다.'],
+          jem: ['와! 이거 진짜 대박인데요?', '저도 이거 궁금했어요!', '오과장님, 설명 좀 해주세요 ᄒᄒ', '메모 메모...!'],
+        }
+        const ids = ['kobu', 'oh', 'jem']
+        targetId = ids[Math.floor(Math.random() * ids.length)]!
+        const pool = reactions[targetId] || ['...']
+        nextBubble = pool[Math.floor(Math.random() * pool.length)]!
+      } else {
+        const msg = msgs[msgIndexRef.current % msgs.length]
+        msgIndexRef.current++
+        targetId = msg.characterId
+        nextBubble = truncate(msg.content)
+      }
 
       charsRef.current = charsRef.current.map((c) =>
-        c.id === msg.characterId
-          ? { ...c, bubble: truncate(msg.content), bubbleVisible: true }
+        c.id === targetId
+          ? { ...c, bubble: nextBubble, bubbleVisible: true }
           : { ...c, bubbleVisible: false }
       )
       setChars([...charsRef.current])
@@ -457,13 +481,13 @@ export default function FloatingCharacters() {
           charsRef.current = charsRef.current.map((c) => ({ ...c, bubbleVisible: false }))
           setChars([...charsRef.current])
         }
-        timeoutId = setTimeout(showNext, 2000)
+        timeoutId = setTimeout(showNext, anchorId ? 5000 : 3000)
       }, 4000)
     }
 
     timeoutId = setTimeout(showNext, 3000)
     return () => clearTimeout(timeoutId)
-  }, [visible])
+  }, [visible, anchorId]) // ADDED dependency
 
   // ── Click action handler ──
   const handleClick = useCallback((id: string) => {
@@ -655,7 +679,7 @@ export default function FloatingCharacters() {
                   alt={char.name}
                   width={size}
                   height={size}
-                  className="floating-avatar"
+                  className="floating-avatar char-breathing"
                   style={{
                     width: size,
                     height: size,

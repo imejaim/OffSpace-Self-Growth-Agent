@@ -23,7 +23,7 @@ type PayPalWebhookEvent = {
 // Set PAYPAL_PLAN_ID_BASIC and PAYPAL_PLAN_ID_PRO in environment variables
 async function getPlanTier(planId?: string): Promise<string> {
   if (!planId) return 'basic'
-  const proPlanId = await resolveEnv('PAYPAL_PLAN_ID_PRO')
+  const proPlanId = await resolveEnv('PAYPAL_PRO_PLAN_ID')
   if (planId === proPlanId) return 'pro'
   return 'basic'
 }

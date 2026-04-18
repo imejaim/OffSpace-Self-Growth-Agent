@@ -270,5 +270,6 @@ export const ko: Translations = {
     interceptClose: '닫기',
     interceptInputAria: '메시지 입력',
     interceptNetworkError: 'AI 팀이 잠시 쉬고 있어요. 잠시 후 다시 시도해주세요.',
+    chatterFailPrefix: '수다수다 실패:',
   },
 }

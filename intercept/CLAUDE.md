@@ -10,7 +10,27 @@ Next.js 16.2.2 + React 19 + Tailwind 4 personal news platform — users pick top
 npm run dev    # Dev server (localhost:3000)
 npm run build  # Production build
 npm run lint   # ESLint
+npm run deploy # Build + deploy to Cloudflare Workers (run ONLY after local verification)
 ```
+
+## Development Workflow — Local-First (Non-Negotiable)
+
+`http://localhost:3000` is the primary development surface. Do not iterate
+against the deployed site (`https://interceptnews.app`) — every hit there
+burns the Cloudflare Workers daily request quota even with zero real users.
+
+Protocol:
+
+1. `npm run dev`, exercise the change in the browser, verify login, intercept,
+   feed, and the feature you're editing
+2. Deploy only when the change is confirmed to work locally
+3. Smoke-test the deployed URL once, then stop
+
+Full rule, environment variables, and failure modes:
+`../docs/wiki/architecture/local-first-development.md`
+
+Historical context (why this matters):
+`../docs/wiki/log.md` → 2026-04-14 entry on the Cloudflare daily-limit incident.
 
 ## Key Directories
 

@@ -84,6 +84,15 @@ function HeaderBar() {
 
 function FooterBar() {
   const { t } = useI18n()
+  const businessInfo = {
+    companyName: '오프스페이스',
+    representative: '윤동호',
+    registrationNumber: '801-23-01944',
+    phone: '070-2876-1006',
+    address: '경기도 용인시 기흥구 서천동로43번길 13, 코너',
+    email: 'offspace.intercept@gmail.com',
+  }
+
   return (
     <footer
       style={{
@@ -103,10 +112,20 @@ function FooterBar() {
           gap: '1rem',
         }}
       >
-        <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-          {t.footer.copyright}
-        </span>
-        <div style={{ display: 'flex', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
+            {t.footer.copyright}
+          </span>
+          <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+            <div>상호: {businessInfo.companyName}</div>
+            <div>대표자명: {businessInfo.representative}</div>
+            <div>사업자등록번호: {businessInfo.registrationNumber}</div>
+            <div>유선번호: {businessInfo.phone}</div>
+            <div>주소: {businessInfo.address}</div>
+            <div>이메일: {businessInfo.email}</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem 1.5rem' }}>
           <a href="/teatime" className="footer-link">
             {t.footer.teatime}
           </a>
@@ -116,22 +135,35 @@ function FooterBar() {
           <a href="/feedback" className="footer-link">
             {t.footer.feedback}
           </a>
+          <a href="/terms" className="footer-link">
+            이용약관
+          </a>
+          <a href="/privacy" className="footer-link">
+            개인정보처리방침
+          </a>
+          <a href="/refund-policy" className="footer-link">
+            환불정책
+          </a>
         </div>
       </div>
     </footer>
   )
 }
 
+import { AppRouterProvider } from '@/lib/router-context'
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <I18nProvider>
       <AuthProvider>
-        <HeaderBar />
-        <CarouselNav />
-        <main className="flex-1">
-          <SwipeNavigator>{children}</SwipeNavigator>
-        </main>
-        <FooterBar />
+        <AppRouterProvider>
+          <HeaderBar />
+          <CarouselNav />
+          <main className="flex-1">
+            {children}
+          </main>
+          <FooterBar />
+        </AppRouterProvider>
       </AuthProvider>
     </I18nProvider>
   )

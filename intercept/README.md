@@ -26,8 +26,10 @@ npm run dev
 - **Custom Newsletter**: Generate your own AI news summary from 3 chosen topics.
 
 ## 📄 Documentation
-- [Meeting Notes & Status](file:///c:/Project/18_OffSpace_Self_Growth_Agent/docs/AnCo_Meeting.md)
-- [Project Guide](file:///c:/Project/18_OffSpace_Self_Growth_Agent/intercept/CLAUDE.md)
+- [Wiki Index](../docs/wiki/index.md)
+- [Wiki Schema](../docs/wiki/SCHEMA.md)
+- [Meeting Notes & Status](../docs/AnCo_Meeting.md)
+- [Project Guide](./CLAUDE.md)
 
 ---
 © 2026 Offspace
