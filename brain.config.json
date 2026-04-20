@@ -1,0 +1,39 @@
+{
+  "version": "1.0",
+  "project_name": "18_OffSpace_Self_Growth_Agent",
+  "brain_db_path": "data/brain/brain.db",
+  "sources": [
+    {
+      "glob": "docs/wiki/**/*.md",
+      "source_type": "wiki"
+    },
+    {
+      "glob": "docs/raw/**/*.md",
+      "source_type": "raw"
+    },
+    {
+      "path": ".omc/project-memory.json",
+      "source_type": "memory"
+    },
+    {
+      "path": "CLAUDE.md",
+      "source_type": "doc"
+    },
+    {
+      "path": "AGENTS.md",
+      "source_type": "doc"
+    },
+    {
+      "path": "intercept/CLAUDE.md",
+      "source_type": "doc"
+    },
+    {
+      "path": "intercept/AGENTS.md",
+      "source_type": "doc"
+    },
+    {
+      "path": "output/SESSION_HANDOFF.md",
+      "source_type": "handoff"
+    }
+  ]
+}

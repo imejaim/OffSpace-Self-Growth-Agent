@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "project_name": "My Project",
+  "brain_db_path": "data/brain/brain.db",
+  "sources": [
+    {"glob": "docs/wiki/**/*.md", "source_type": "wiki"},
+    {"glob": "docs/knowledge/**/*.md", "source_type": "knowledge"},
+    {"glob": "docs/raw/**/*.md", "source_type": "raw"},
+    {"glob": "docs/rules/**/*.md", "source_type": "rules"},
+    {"path": ".omc/project-memory.json", "source_type": "memory"},
+    {"path": "CLAUDE.md", "source_type": "doc"},
+    {"path": "AGENTS.md", "source_type": "doc"},
+    {"path": "output/SESSION_HANDOFF.md", "source_type": "handoff"}
+  ]
+}
