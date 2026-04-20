@@ -19,6 +19,7 @@
 - [LLM Wiki Adoption Plan](./strategy/llm-wiki-adoption-plan.md): How Karpathy-style LLM Wiki concepts are adapted to Intercept as a project second brain.
 - [Product Identity And Surface Model](./strategy/product-identity-and-surface-model.md): Identity pivot, three-surface product structure, character roles, and durable UI direction.
 - [User Operating Preferences](./strategy/user-operating-preferences.md): 대표님의 reporting style, operating principles, and technical preferences as a USER layer separate from project facts.
+- [Teatime Publishing — Tistory](./strategy/teatime-publishing-tistory.md): Tistory Open API 종료(2024-02) 확인, Playwright 반자동 발행(1안) 및 velog 채널 전환(2안) 실행 계획, 대표님 결정 필요 포인트 정리.
 
 ## Tooling
 

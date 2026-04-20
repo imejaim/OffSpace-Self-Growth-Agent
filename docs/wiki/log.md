@@ -98,6 +98,14 @@
 - `.codex/hooks.json`, `.gemini/settings.json`, `.opencode/plugins/graphify.js`, `.agent/rules·workflows/graphify.md`, 루트 `AGENTS.md`/`GEMINI.md`/`opencode.json` 신설 — 모든 에이전트가 동일한 graphify 그래프 사용·재생성하도록 통일.
 - `holonomic-brain-kit/` 내 README/scripts/templates/example 정리: 다른 프로젝트로 복제 가능한 포터블 킷 형태로 갖춤.
 
+## [2026-04-21] strategy | tistory publishing investigation
+
+- Tistory Open API가 2024년 2월 완전 종료된 사실 확인 (신규 앱 등록 불가, 모든 엔드포인트 차단).
+- 1안: Playwright 브라우저 자동화 (MD→HTML 변환 + 에디터 자동 입력 + 승인 게이트) 실행 계획 수립.
+- 2안: velog 채널 전환 (MD 네이티브, 개발자 독자층) 대안으로 제시.
+- 대표님 결정 필요 항목 5개 도출 (계정 존재 여부, 채널 선택, 승인 게이트 방식, 이미지 전략, 발행 타이밍).
+- `docs/wiki/strategy/teatime-publishing-tistory.md` 신설.
+
 ## [2026-04-20] content | 티타임 Vol.10 발행
 
 - `output/teatime/2026-04-20_AI동향_티타임.md` 생성. `python scripts/teatime-skeleton.py --validate` 통과(errors 0, warnings 0). 링크 25/이미지 2/SNS 다수.
