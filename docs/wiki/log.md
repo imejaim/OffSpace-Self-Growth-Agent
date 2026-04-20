@@ -77,3 +77,28 @@
 - Added USER preferences layer at `docs/wiki/strategy/user-operating-preferences.md` to hold 대표님의 reporting style and operating principles, separate from project facts.
 - Added delegation contract at `docs/wiki/strategy/delegation-contract.md`: subagents start from zero knowledge; parent must pass explicit minimum context packet.
 - Added regenerable SQLite FTS5 search index at `data/brain/brain.db`, rebuilt via `scripts/index_brain.py`, queried via `scripts/search_brain.py`.
+
+## [2026-04-20] brand | "끼어들기" → "인터셉트" 표기 통일 (안팀장)
+
+- 서비스 전반의 사용자향 카피에서 "끼어들기"를 "인터셉트"로 일괄 치환. 코드 식별자(kobu/oh/jem, route /api/intercept)는 변경 없음.
+- 영향 범위: API 시스템 프롬프트(`api/intercept`, `api/teatime/chatter`), `api/og`, `i18n/ko.ts`, `translations.json`, AppShell·ShareCard·FeedView·MyKeepView·PricingHeader, profile/share/feedback/pricing-credits 페이지.
+- 동시에 `<a>`→`<Link>` prefetch 정리, `ShareCard` 하이드레이션 안정화, `FloatingCharacters` 클램프 보강을 같은 묶음에서 진행.
+- 캐릭터 페르소나 프롬프트도 "프리미엄 매거진" 톤으로 강화: 코부장(테크 리드), 오과장(마켓 전략가), 젬대리(커뮤니티 스카우트). 각 take 2~4문장·구체 수치/사례 권장.
+
+## [2026-04-20] payment | wrangler 환경/시크릿 정리 (안팀장)
+
+- `intercept/wrangler.toml` 에 `PAYPAL_CLIENT_ID` (서버측), `CRON_SECRET`, `PAYPAL_WEBHOOK_ID` 시크릿 명시.
+- TossPayments 테스트 시크릿 의존성 정리(`PORTONE_TEST_SECRET_KEY` 주석 제거), 시크릿 등록 명령을 `wrangler versions secret put` 으로 갱신.
+- 직전 커밋 `e122460 feat(payment): finalize intercept-exclusive paypal subscription` 의 환경 변수 매칭 작업.
+- 잔존 이슈: `PAYPAL_CLIENT_ID` 가 `[vars]` 평문(공개 키와 동일값). 후속에서 시크릿로 재배치 검토 필요 — 안팀장 핑.
+
+## [2026-04-20] tooling | graphify 출력물 ignore + 다중 IDE 에이전트 표준화
+
+- `.gitignore` 에 `graphify-out/`, `intercept/graphify-out/` 추가. 환경별(Codex/Gemini/OpenCode/Antigravity) 재생성 산출물이라 커밋 시 diff 폭발 방지 목적.
+- `.codex/hooks.json`, `.gemini/settings.json`, `.opencode/plugins/graphify.js`, `.agent/rules·workflows/graphify.md`, 루트 `AGENTS.md`/`GEMINI.md`/`opencode.json` 신설 — 모든 에이전트가 동일한 graphify 그래프 사용·재생성하도록 통일.
+- `holonomic-brain-kit/` 내 README/scripts/templates/example 정리: 다른 프로젝트로 복제 가능한 포터블 킷 형태로 갖춤.
+
+## [2026-04-20] content | 티타임 Vol.10 발행
+
+- `output/teatime/2026-04-20_AI동향_티타임.md` 생성. `python scripts/teatime-skeleton.py --validate` 통과(errors 0, warnings 0). 링크 25/이미지 2/SNS 다수.
+- 헤드라인: Anthropic 매출 OpenAI 첫 추월, MS Agent Framework 1.0 LTS, Gemma 4 오픈소스, Boston Dynamics IPO 준비, EU AI Act 약화 움직임.
