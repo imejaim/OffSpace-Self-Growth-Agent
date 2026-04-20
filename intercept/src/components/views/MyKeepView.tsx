@@ -19,11 +19,11 @@ export default function MyKeepView() {
         <div className="view-coming-soon-badge">MY KEEP</div>
         <h1 className="view-coming-soon-title">내 보관함은 준비 중이에요</h1>
         <p className="view-coming-soon-lede">
-          저장한 끼어들기를 다시 꺼내 볼 수 있는 보관함은 곧 열립니다.
+          저장한 인터셉트를 다시 꺼내 볼 수 있는 보관함은 곧 열립니다.
           먼저 티타임 경험을 다듬고 있어요.
         </p>
         <ul className="view-coming-soon-list">
-          <li>저장한 끼어들기 아카이브</li>
+          <li>저장한 인터셉트 아카이브</li>
           <li>주간 하이라이트 리포트</li>
           <li>개인 노트 &amp; 태그</li>
         </ul>

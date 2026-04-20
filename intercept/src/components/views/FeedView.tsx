@@ -19,11 +19,11 @@ export default function FeedView() {
         <div className="view-coming-soon-badge">FEED</div>
         <h1 className="view-coming-soon-title">피드는 준비 중이에요</h1>
         <p className="view-coming-soon-lede">
-          공개된 끼어들기를 모아볼 수 있는 커뮤니티 피드는 곧 열립니다.
+          공개된 인터셉트를 모아볼 수 있는 커뮤니티 피드는 곧 열립니다.
           우선 티타임부터 제대로 세팅 중이에요.
         </p>
         <ul className="view-coming-soon-list">
-          <li>공개 끼어들기 타임라인</li>
+          <li>공개 인터셉트 타임라인</li>
           <li>캐릭터 반응 하이라이트</li>
           <li>주제별 필터와 저장</li>
         </ul>

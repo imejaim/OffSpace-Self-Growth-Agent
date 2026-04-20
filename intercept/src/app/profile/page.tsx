@@ -1,9 +1,10 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { getSubscriptionStatus } from '@/lib/subscription'
 
 export const metadata: Metadata = {
-  title: '나의 끼어들기 히스토리 — INTERCEPT',
-  description: '내가 AI 대화에 끼어든 기록과 레벨을 확인하세요.',
+  title: '나의 인터셉트 히스토리 — INTERCEPT', // MODIFIED: Rebranding '끼어들기' to '인터셉트'
+  description: '내가 AI 대화에서 인터셉트한 기록과 레벨을 확인하세요.', // MODIFIED: Rebranding '끼어들기' to '인터셉트'
 }
 
 // Level system
@@ -109,10 +110,10 @@ export default function ProfilePage() {
               letterSpacing: '-0.03em',
             }}
           >
-            나의 끼어들기 히스토리
+            나의 인터셉트 히스토리 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </h1>
           <p style={{ fontSize: '0.9375rem', color: 'var(--color-text-muted)', margin: 0 }}>
-            AI 대화에 얼마나 끼어들었는지 확인해 보세요
+            AI 대화를 얼마나 인터셉트했는지 확인해 보세요 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </p>
         </div>
 
@@ -145,7 +146,7 @@ export default function ProfilePage() {
               {TOTAL_COUNT}
             </div>
             <div style={{ fontSize: '0.8125rem', color: 'var(--color-text-muted)', fontWeight: 600 }}>
-              총 끼어들기
+              총 인터셉트 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
             </div>
           </div>
 
@@ -320,7 +321,7 @@ export default function ProfilePage() {
               letterSpacing: '-0.02em',
             }}
           >
-            끼어들기 기록
+            인터셉트 기록 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
@@ -476,9 +477,9 @@ export default function ProfilePage() {
               margin: '0 0 var(--space-lg)',
             }}
           >
-            당신만의 뉴스 대화에 끼어들어 레벨을 올려보세요.
+            당신만의 뉴스 대화를 인터셉트하여 레벨을 올려보세요. {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </p>
-          <a href="/teatime" className="btn-primary">
+          <Link href="/teatime" className="btn-primary">
             티타임 바로가기 →
           </a>
         </div>

@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
                 fontWeight: 500,
               }}
             >
-              AI 대화에 끼어들다
+              AI 대화를 인터셉트하다
             </span>
           </div>
 
@@ -139,7 +139,7 @@ export async function GET(request: NextRequest) {
                 flexShrink: 0,
               }}
             >
-              나의 끼어들기
+              나의 인터셉트
             </div>
             <div
               style={{
@@ -207,7 +207,7 @@ export async function GET(request: NextRequest) {
           }}
         >
           <span style={{ fontSize: '14px', color: '#636E72', fontWeight: 500 }}>
-            intercept.offspace.kr — 나도 AI 대화에 끼어들어 보세요
+            intercept.offspace.kr — 나도 AI 대화를 인터셉트해 보세요
           </span>
         </div>
       </div>

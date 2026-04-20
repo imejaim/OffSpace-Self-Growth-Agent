@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 interface ShareCardProps {
   interceptId: string
@@ -23,12 +23,16 @@ export default function ShareCard({
   userQuestion,
   aiAnswer,
 }: ShareCardProps) {
-  const [copied, setCopied] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const [copied, setCopied] = useState(false) // RESTORED: Missing state
 
-  const shareUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/share/${interceptId}`
-      : `/share/${interceptId}`
+  // Use useEffect to handle window-dependent logic after mount to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  const baseUrl = mounted ? window.location.origin : ''
+  const shareUrl = `${baseUrl}/share/${interceptId}`
 
   const ogParams = new URLSearchParams({
     character,
@@ -36,13 +40,10 @@ export default function ShareCard({
     userQuestion: userQuestion.slice(0, 120),
     aiAnswer: aiAnswer.slice(0, 150),
   })
-  const ogImageUrl =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}/api/og?${ogParams}`
-      : `/api/og?${ogParams}`
+  const ogImageUrl = `${baseUrl}/api/og?${ogParams}`
 
   const twitterText = encodeURIComponent(
-    `AI 대화에 끼어들었어요! "${userQuestion.slice(0, 60)}…" #INTERCEPT`
+    `AI 대화를 인터셉트했어요! "${userQuestion.slice(0, 60)}…" #INTERCEPT`
   )
   const twitterUrl = `https://twitter.com/intent/tweet?text=${twitterText}&url=${encodeURIComponent(shareUrl)}`
 

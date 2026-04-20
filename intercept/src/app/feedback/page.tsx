@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 const FEEDBACK_TYPES = ['기능 제안', '버그 신고', '기타'] as const
 
@@ -58,7 +59,7 @@ export default function FeedbackPage() {
           >
             보내주신 의견은 INTERCEPT를 더 좋게 만드는 데 소중히 사용하겠습니다.
           </p>
-          <a href="/teatime" className="btn-primary">
+          <Link href="/teatime" className="btn-primary">
             티타임 바로가기 →
           </a>
         </div>
@@ -159,7 +160,7 @@ export default function FeedbackPage() {
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 'var(--space-xl)' }}>
-          <a href="/teatime" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-coral)' }}>
+          <Link href="/teatime" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-coral)' }}>
             티타임 바로가기 →
           </a>
         </div>

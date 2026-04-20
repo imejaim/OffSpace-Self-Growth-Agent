@@ -121,39 +121,39 @@ function clampToMargin(
   viewportW: number,
   preferSide: 'left' | 'right' | 'auto' = 'auto',
 ): number {
-  const leftMarginWidth = bounds.left
-  const rightMarginWidth = viewportW - bounds.right
+  const leftMarginWidth = Math.max(0, bounds.left)
+  const rightMarginWidth = Math.max(0, viewportW - bounds.right)
   const leftUsable = leftMarginWidth >= MARGIN_MIN
   const rightUsable = rightMarginWidth >= MARGIN_MIN
 
   // Narrow viewport — corner mode
   if (!leftUsable && !rightUsable) {
-    if (preferSide === 'right') return viewportW - size - 8
-    return 8
+    if (preferSide === 'right' || (preferSide === 'auto' && targetX > viewportW / 2)) {
+      return viewportW - size - 12 // MODIFIED: More breathing room
+    }
+    return 12 // MODIFIED: More breathing room
   }
 
-  const charCenter = targetX + size / 2
-  const outsideLeft = targetX + size <= bounds.left
-  const outsideRight = targetX >= bounds.right
-  if (outsideLeft || outsideRight) {
-    // Already in a margin → just clamp to viewport
-    return clamp(targetX, 4, viewportW - size - 4)
+  // Already outside? Just keep them there but clamped to viewport padding
+  const padding = 12
+  if (targetX + size <= bounds.left || targetX >= bounds.right) {
+    return clamp(targetX, padding, viewportW - size - padding)
   }
 
-  // Inside the content column — push to nearest usable margin
-  let pushLeft: number
-  let pushRight: number
-  if (leftUsable) pushLeft = Math.max(4, bounds.left - size - 8)
-  else pushLeft = Number.POSITIVE_INFINITY
-  if (rightUsable) pushRight = Math.min(viewportW - size - 4, bounds.right + 8)
-  else pushRight = Number.POSITIVE_INFINITY
+  // Inside content column — push to nearest or preferred usable margin
+  const pushLeft = leftUsable ? Math.max(padding, bounds.left - size - 16) : viewportW + 1000
+  const pushRight = rightUsable ? Math.min(viewportW - size - padding, bounds.right + 16) : viewportW + 1000
 
   if (preferSide === 'left' && leftUsable) return pushLeft
   if (preferSide === 'right' && rightUsable) return pushRight
 
-  const distLeft = Math.abs(charCenter - bounds.left)
-  const distRight = Math.abs(bounds.right - charCenter)
-  return distLeft <= distRight ? pushLeft : pushRight
+  const distLeft = Math.abs((targetX + size / 2) - bounds.left)
+  const distRight = Math.abs(bounds.right - (targetX + size / 2))
+
+  if (leftUsable && (!rightUsable || distLeft <= distRight)) return pushLeft
+  if (rightUsable) return pushRight
+  
+  return padding // Absolute fallback
 }
 
 /* ── Component ──────────────────────────────────────────────────────── */
@@ -188,8 +188,9 @@ export default function FloatingCharacters() {
     const narrow = leftMargin < MARGIN_MIN && rightMargin < MARGIN_MIN
 
     // Place chars in the centers of available margins (or corners on narrow screens)
-    const leftX = narrow ? 8 : Math.max(8, leftMargin / 2 - size / 2)
-    const rightX = narrow ? w - size - 8 : Math.min(w - size - 8, bounds.right + rightMargin / 2 - size / 2)
+    const padding = 16
+    const leftX = narrow ? padding : Math.max(padding, leftMargin / 2 - size / 2)
+    const rightX = narrow ? w - size - padding : Math.min(w - size - padding, bounds.right + rightMargin / 2 - size / 2)
 
     const initial: CharacterState[] = [
       {
@@ -200,8 +201,8 @@ export default function FloatingCharacters() {
         flipX: false, bobPhase: 0, pinned: false,
       },
       {
-        id: 'oh', x: rightX, y: h * 0.15,
-        targetX: rightX, targetY: h * 0.15,
+        id: 'oh', x: rightX, y: Math.max(80, h * 0.15), // MODIFIED: Prevent hiding behind header
+        targetX: rightX, targetY: Math.max(80, h * 0.15),
         action: 'idle', actionTimer: 0,
         bubble: null, bubbleVisible: false,
         flipX: true, bobPhase: Math.PI * 0.66, pinned: false,
@@ -368,9 +369,9 @@ export default function FloatingCharacters() {
             mouseInLeftMargin ? 'left'
             : mouseInRightMargin ? 'right'
             : preferred
-          const stagger = [-40, 0, 40][idx] ?? 0
+          const stagger = [-50, 0, 50][idx] ?? 0
           targetX = clampToMargin(mouse.x - size / 2, size, bounds, w, side)
-          targetY = clamp(mouse.y + stagger - size / 2, 20, h - size - 20)
+          targetY = clamp(mouse.y + stagger - size / 2, 80, h - size - 60) // MODIFIED: safe Y zone
           if (action === 'listening') action = 'idle'
           flipX = targetX < mouse.x 
         } else {

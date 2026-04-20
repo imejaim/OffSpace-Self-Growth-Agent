@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { getTeatime } from '@/lib/teatime-utils'
 import ShareCard from '@/components/ShareCard'
 
 type Props = {
@@ -61,9 +63,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `"${intercept.userQuestion.slice(0, 50)}…" — INTERCEPT`,
-    description: `${intercept.character}의 AI 뉴스 대화에 끼어든 나의 질문: ${intercept.userQuestion.slice(0, 100)}`,
+    description: `${intercept.character}의 AI 뉴스 대화에서 인터셉트한 나의 질문: ${intercept.userQuestion.slice(0, 100)}`,
     openGraph: {
-      title: `INTERCEPT — AI 대화에 끼어들다`,
+      title: `INTERCEPT — AI 대화를 인터셉트하다`,
       description: intercept.userQuestion.slice(0, 120),
       images: [
         {
@@ -77,7 +79,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: 'summary_large_image',
-      title: `INTERCEPT — AI 대화에 끼어들다`,
+      title: `INTERCEPT — AI 대화를 인터셉트하다`, // MODIFIED: Rebranding '끼어들기' to '인터셉트'
       description: intercept.userQuestion.slice(0, 120),
       images: [ogImageUrl],
     },
@@ -165,7 +167,7 @@ export default async function SharePage({ params }: Props) {
                 margin: '4px 0 0',
               }}
             >
-              AI 대화 끼어들기 공유
+              AI 대화 인터셉트 공유 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
             </p>
           </div>
 
@@ -219,7 +221,7 @@ export default async function SharePage({ params }: Props) {
                   fontWeight: 700,
                 }}
               >
-                나의 끼어들기
+                나의 인터셉트 {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
               </span>
             </div>
             <div
@@ -310,10 +312,10 @@ export default async function SharePage({ params }: Props) {
               lineHeight: 1.6,
             }}
           >
-            코부장, 오과장, 젬대리의 티타임 대화에 끼어들어 보세요.
+            코부장, 오과장, 젬대리의 티타임 대화를 인터셉트해 보세요. {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </p>
-          <a href="/teatime" className="btn-primary">
-            나도 끼어들어 보기 →
+          <Link href="/teatime" className="btn-primary">
+            나도 인터셉트해 보기 → {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
           </a>
         </div>
       </div>

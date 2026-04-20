@@ -25,9 +25,9 @@ export default function PricingHeader({
   const resolvedBackLabel = backLabel ?? t.newsletter.seePricing
 
   return (
-    <section className="mb-10 rounded-3xl border border-zinc-200 bg-white/90 p-5 shadow-sm sm:p-7">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+    <section className="mb-12 overflow-hidden rounded-[2.5rem] border border-white/40 bg-white/40 p-6 backdrop-blur-xl transition-all hover:bg-white/60 sm:p-10">
+      <div className="flex flex-col gap-8">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => {
@@ -37,59 +37,61 @@ export default function PricingHeader({
               }
               router.push(backHref)
             }}
-            className="inline-flex items-center gap-2 rounded-full border border-zinc-300 bg-white px-3 py-1.5 text-xs font-semibold text-zinc-700 transition hover:border-zinc-400 hover:text-zinc-900"
+            className="group inline-flex items-center gap-2 rounded-full border border-zinc-200 bg-white/80 px-4 py-2 text-xs font-bold text-zinc-700 shadow-sm transition-all hover:border-coral hover:bg-white hover:text-coral"
           >
-            <span aria-hidden="true">←</span>
+            <span className="transition-transform group-hover:-translate-x-1" aria-hidden="true">←</span>
             <span>{resolvedBackLabel}</span>
           </button>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Link
-              href="/teatime"
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900"
-            >
-              {t.nav.teatime}
-            </Link>
-            <Link
-              href="/feed"
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900"
-            >
-              {t.nav.feed}
-            </Link>
-            <Link
-              href="/my"
-              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-medium text-zinc-600 transition hover:border-zinc-400 hover:text-zinc-900"
-            >
-              {t.nav.my}
-            </Link>
-          </div>
+          <nav className="flex items-center gap-1 overflow-hidden rounded-full border border-zinc-200/50 bg-white/50 p-1 backdrop-blur-md">
+            {[
+              { href: '/teatime', label: t.nav.teatime },
+              { href: '/feed', label: t.nav.feed },
+              { href: '/my', label: t.nav.my }
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-full px-4 py-1.5 text-xs font-semibold text-zinc-600 transition-colors hover:bg-white/80 hover:text-coral"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
         </div>
 
-        <div className="space-y-3">
+        <div className="relative z-10 space-y-4">
           <Link
             href="/"
-            className="inline-flex items-baseline gap-2 text-decoration-none"
-            style={{ textDecoration: 'none' }}
+            className="inline-flex items-baseline gap-2 transition-opacity hover:opacity-80"
           >
-            <span className="text-xl font-black tracking-[-0.04em] text-[var(--color-coral)]">
+            <span className="text-2xl font-black tracking-tighter text-[var(--color-coral)]">
               INTERCEPT
             </span>
-            <span className="text-xs font-medium text-zinc-500">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
               {t.header.subtitle}
             </span>
           </Link>
 
-          <div>
+          <div className="max-w-2xl">
             {eyebrow ? (
-              <span className="mb-3 inline-block rounded-sm border border-zinc-200 bg-zinc-100 px-3 py-1 text-xs font-mono uppercase tracking-widest text-zinc-500">
+              <span className="mb-4 inline-block rounded-full bg-coral/10 px-4 py-1 text-[10px] font-bold uppercase tracking-widest text-coral border border-coral/20">
                 {eyebrow}
               </span>
             ) : null}
-            <h1 className="text-3xl font-bold text-zinc-900 sm:text-4xl">{title}</h1>
-            <p className="mt-2 max-w-2xl text-sm text-zinc-600 sm:text-base">{description}</p>
+            <h1 className="text-4xl font-extrabold tracking-tight text-zinc-900 sm:text-5xl lg:text-6xl">
+              {title}
+            </h1>
+            <p className="mt-4 text-balance text-base font-medium leading-relaxed text-zinc-600 sm:text-lg">
+              {description}
+            </p>
           </div>
         </div>
       </div>
+      
+      {/* Decorative gradient element to bleed into the glass */}
+      <div className="absolute -right-20 -top-20 -z-10 h-64 w-64 rounded-full bg-coral/10 blur-3xl" />
+      <div className="absolute -bottom-20 -left-20 -z-10 h-64 w-64 rounded-full bg-amber-200/20 blur-3xl" />
     </section>
   )
 }

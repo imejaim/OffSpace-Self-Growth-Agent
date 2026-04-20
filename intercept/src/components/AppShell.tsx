@@ -1,5 +1,4 @@
-'use client'
-
+import Link from 'next/link'
 import { I18nProvider, useI18n } from '@/lib/i18n/context'
 import { AuthProvider } from '@/components/AuthProvider'
 import { LoginButton } from '@/components/LoginButton'
@@ -30,7 +29,7 @@ function HeaderBar() {
           justifyContent: 'space-between',
         }}
       >
-        <a
+        <Link
           href="/"
           style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem', textDecoration: 'none' }}
         >
@@ -55,9 +54,9 @@ function HeaderBar() {
           >
             {t.header.subtitle}
           </span>
-        </a>
+        </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <a
+          <Link
             href="/pricing"
             style={{
               fontSize: '0.875rem',
@@ -73,7 +72,7 @@ function HeaderBar() {
             onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
           >
             {t.nav.pricing}
-          </a>
+          </Link>
           <LanguageToggle />
           <LoginButton />
         </div>
@@ -126,24 +125,24 @@ function FooterBar() {
           </div>
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem 1.5rem' }}>
-          <a href="/teatime" className="footer-link">
+          <Link href="/teatime" className="footer-link">
             {t.footer.teatime}
-          </a>
-          <a href="/about" className="footer-link">
+          </Link>
+          <Link href="/about" className="footer-link">
             {t.footer.about}
-          </a>
-          <a href="/feedback" className="footer-link">
+          </Link>
+          <Link href="/feedback" className="footer-link">
             {t.footer.feedback}
-          </a>
-          <a href="/terms" className="footer-link">
+          </Link>
+          <Link href="/terms" className="footer-link">
             이용약관
-          </a>
-          <a href="/privacy" className="footer-link">
+          </Link>
+          <Link href="/privacy" className="footer-link">
             개인정보처리방침
-          </a>
-          <a href="/refund-policy" className="footer-link">
+          </Link>
+          <Link href="/refund-policy" className="footer-link">
             환불정책
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

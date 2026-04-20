@@ -414,7 +414,7 @@ export const TEATIME_VOL5: RawTeaTime = {
           id: 'v5-ag-5',
           characterId: 'kobu',
           content: {
-            ko: 'Conway가 정식 출시되면 게임이 바뀔 수 있어. 지금까지 에이전트는 "사용자가 시작해야 움직이는" 구조였는데, Conway는 **"이벤트가 오면 스스로 깨어나는"** 구조야. 우리 끼어들기 서비스에도 적용할 만한 패턴이지.',
+            ko: 'Conway가 정식 출시되면 게임이 바뀔 수 있어. 지금까지 에이전트는 "사용자가 시작해야 움직이는" 구조였는데, Conway는 **"이벤트가 오면 스스로 깨어나는"** 구조야. 우리 인터셉트 서비스에도 적용할 만한 패턴이지.',
             en: 'If Conway ships, the game could change. Agents today are built around "the user has to kick them off" — Conway flips that to **"events wake the agent up."** It\'s a pattern we could actually borrow for Intercept.',
           },
           type: 'normal',

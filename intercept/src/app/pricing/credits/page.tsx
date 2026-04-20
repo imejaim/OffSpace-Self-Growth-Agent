@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import PayPalCreditsButton from '@/components/PayPalCreditsButton'
 import PaymentSelector from '@/components/PaymentSelector'
 import PricingHeader from '@/components/PricingHeader'
@@ -51,12 +52,12 @@ export default function CreditsPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <a
+          <Link
             href="/pricing"
             className="text-sm text-zinc-500 hover:text-zinc-300 transition underline underline-offset-4"
           >
             {t.newsletter.seePricing}
-          </a>
+          </Link>
         </div>
       </div>
     </main>
