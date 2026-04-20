@@ -21,6 +21,10 @@ intercept/.wrangler/
 # SQLite brain search index (regenerable, not source of truth)
 data/brain/
 
+# Graphify code graph outputs (regenerable per environment)
+graphify-out/
+intercept/graphify-out/
+
 # 사업자등록증 및 기밀 서류 (사업자 등록 관련)
 docs/사업자등록증_오프스페이스.png
 docs/*통장사본*
