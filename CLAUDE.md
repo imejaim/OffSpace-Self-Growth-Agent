@@ -77,5 +77,36 @@ Pixel art style — `imageRendering: 'pixelated'`
 - **Teatime Rules**: `.claude/rules/teatime.md` (path-scoped, loads only for teatime work)
 - **Session Handoff**: `output/SESSION_HANDOFF.md`
 - **Memory**: `~/.claude/projects/.../memory/MEMORY.md`
+- **Wiki Schema**: `docs/wiki/SCHEMA.md`
+- **Wiki Index**: `docs/wiki/index.md`
+- **Wiki Log**: `docs/wiki/log.md`
+
+## Project Second Brain
+
+This repo now uses a lightweight LLM Wiki pattern:
+
+- `docs/raw/` = immutable source layer
+- `docs/wiki/` = compiled project knowledge layer
+- `docs/wiki/SCHEMA.md` = maintenance rules for agents
+- `.omc/project-memory.json` = compact machine-readable memory
+
+Rules:
+- Durable knowledge must not live only in meeting logs or chat.
+- Incidents must be promoted into `docs/wiki/incidents/`.
+- Architectural fixes must be promoted into `docs/wiki/architecture/`.
+- Strategy and operating-model changes must be promoted into `docs/wiki/strategy/`.
+
+## Holonomic Brain
+
+This repository is operated by multiple agents across multiple environments, but should learn as one shared project brain.
+
+Current stable references:
+- `docs/wiki/strategy/holonomic-brain-operating-model.md`
+- `docs/wiki/SCHEMA.md`
+- `.omc/project-memory.json`
+
+Operational rule:
+- if team composition, environment topology, or coordination rules change, update the wiki and machine memory in the same session
+- prefer stable romanized agent aliases in machine-readable memory to avoid encoding drift across tools
 
 <!-- Maintainer: Last updated 2026-04-11. Blackwell servers NOT available for Intercept. -->
