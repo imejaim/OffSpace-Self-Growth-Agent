@@ -110,3 +110,10 @@
 
 - `output/teatime/2026-04-20_AI동향_티타임.md` 생성. `python scripts/teatime-skeleton.py --validate` 통과(errors 0, warnings 0). 링크 25/이미지 2/SNS 다수.
 - 헤드라인: Anthropic 매출 OpenAI 첫 추월, MS Agent Framework 1.0 LTS, Gemma 4 오픈소스, Boston Dynamics IPO 준비, EU AI Act 약화 움직임.
+
+## [2026-04-21] strategy | intercept teatime service upgrade plan
+
+- Track 3 분석: 서비스 티타임 콘텐츠 밀도가 MD 대비 ~20~25% 수준. 데이터 모델은 이미 MD 스키마와 1:1 대응(`RawReference.rating`, `RawTopicImage.source`, 바이링구얼).
+- 진짜 병목은 `default-topics.ts` seed 얕음과 MD→TS 변환기 부재.
+- 4단계 로드맵 (0: 모델 minor 확장 / 1: 변환기 / 2: UI / 3: cron 자동화). Vol.10·11 수동 포팅이 2일 내 효과 가장 큼.
+- 결정 필요 포인트 6건: 카테고리 체계, 바이링구얼 번역, 아카이브 노출, 수동 포팅 우선, 이미지 호스팅, SNS 배치.
