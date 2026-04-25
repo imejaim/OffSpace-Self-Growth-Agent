@@ -826,6 +826,155 @@ export const TEATIME_VOL5: RawTeaTime = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// Vol.12 — Korean only (current featured teatime). Added 2026-04-23.
+// ---------------------------------------------------------------------------
+export const TEATIME_VOL12: RawTeaTime = {
+  id: 'teatime-2026-04-23',
+  date: '2026-04-23',
+  title: 'Offspace 티타임 Vol.12',
+  intro: '목요일 오전. 오과장이 Google Cloud Next 라이브 중계 창 열어둔 채 "어제 라스베가스에서 숫자 엄청 나왔어요" 하며 들어왔다. 젬대리는 X 타임라인 스크롤하며 "대표님, SpaceX가 Cursor를 $60B에 사겠다는 소식 보셨어요?" 물었다. 코부장이 커피 들고 자리 앉으며 "오늘 앵글 많다, 순서부터 잡자" 말했다.',
+  topics: [
+    {
+      id: 'v12-topic-hotnews',
+      category: 'AI 핫뉴스',
+      subtitle: 'SpaceX가 Cursor를 $60B에 선점 + Google Cloud $750M 파트너 펀드',
+      title: 'AI 핫뉴스 — "SpaceX가 Cursor를 $60B에 선점 + Google Cloud $750M 파트너 펀드"',
+      images: [
+        {
+          src: '/teatime-images/2026-04-23/cursor-ceo-michael-truell-and-anysphere-.png',
+          alt: 'Cursor CEO Michael Truell and Anysphere — SpaceX $10B collaboration with $60B acquisition option for AI coding startup | TechCrunch',
+          source: 'Cursor CEO Michael Truell and Anysphere — SpaceX $10B collaboration with $60B acquisition option for AI coding startup | TechCrunch',
+        },
+      ],
+      messages: [
+        { id: 'v12-hn-1', characterId: 'jem', content: '어제 저녁 X·뉴스피드 가장 뜨거운 게 이거예요 — SpaceX가 Cursor에 $10B 협업 계약 + $60B 인수 옵션 묶어서 딜을 걸었어요. Cursor는 이미 a16z·Thrive 주도로 $2B / $50B 밸류 라운드 거의 클로징 단계였거든요. 근데 Elon이 더 높은 숫자 들이미니까 그 라운드 자체를 중단하고 SpaceX 쪽으로 기울었어요. 여름 IPO 이후에 공모 주식으로 인수할 계획이래요. (발생 4/21 · 보도 4/21~22)', type: 'normal' },
+        { id: 'v12-hn-2', characterId: 'oh', content: 'Cursor 숫자는 말이 안 돼요. 2025년 1월 ARR $100M → 6월 $500M → 11월 $1B → 2026년 2월 $2B. 3년 만에 $2B ARR 도달이면 B2B SaaS 역사상 최고 속도예요. Slack·Zoom·Snowflake 전부 앞질렀어요. 근데 Cursor가 Claude·GPT API 위에 올라가 있잖아요 — 모델을 파는 회사들이랑 경쟁하는 구조라 자체 모델이 필요해요. SpaceX Colossus(H100 100만 대급) 쓰게 해주는 게 이번 딜의 핵심이에요.', type: 'normal' },
+        { id: 'v12-hn-3', characterId: 'kobu', content: '한 발 물러서서 보면 — SpaceX는 IPO 앞두고 "우리 AI 회사다"라는 포지셔닝이 필요했던 거야. 코딩 AI는 지금 월가가 가장 높은 멀티플 주는 카테고리고. 동시에 어제 Google Cloud Next \'26 키노트에서 Thomas Kurian이 파트너 생태계에 $750M 펀드를 약속했어. 12만 명 파트너 풀에 forward-deployed 엔지니어 붙이고, Accenture·Capgemini·Deloitte에 실전 팀 투입하겠다는 거야. 에이전트 플랫폼 경쟁이 \'모델\' 싸움에서 \'채널·통합\' 싸움으로 넘어가고 있다는 신호야. (발생/보도 4/22)', type: 'normal' },
+        { id: 'v12-hn-4', characterId: 'oh', content: '같이 묶을 소식 — AstraZeneca가 Modella AI를 완전 인수했어요. 제약사가 자체 AI 팀을 내재화하는 첫 빅딜이에요. 2025년 7월 파트너십으로 시작해서 JPM 2026 헬스케어 컨퍼런스에서 풀인수로 전환됐고요. 생체 조직 슬라이드(pathology) 다중모달 파운데이션 모델을 AZ 종양학 파이프라인에 직접 붙이겠다는 거예요. 금액은 비공개. (보도 4월 중순)', type: 'normal' },
+        { id: 'v12-hn-5', characterId: 'jem', content: 'OpenAI도 움직였어요. 이번 달 초에 TBPN(Technology Business Programming Network)이라는 실리콘밸리 일일 토크쇼를 통째로 인수했어요. 인수가는 "low hundreds of millions"라고 FT가 보도했고요. OpenAI가 미디어 회사를 산 건 이번이 처음이에요. Chris Lehane(정치 전략 담당) 산하로 들어가는데 "편집 독립 보장" 한다고 했지만 커뮤니티 반응이 엇갈려요 — Slate 칼럼 제목이 "sleazy"였고, HN 스레드에서도 "샘 알트먼이 AI 담론을 직접 소유하려는 거" 비판이 꽤 많아요. (발생/보도 4/2)', type: 'normal' },
+      ],
+      references: [
+        { title: 'How SpaceX preempted a $2B fundraise with a $60B buyout offer', url: 'https://techcrunch.com/2026/04/22/how-spacex-preempted-a-2b-fundraise-with-a-60b-buyout-offer/', source: 'TechCrunch', date: '2026-04-22', rating: 5 },
+        { title: 'SpaceX is working with Cursor and has an option to buy the startup for $60B', url: 'https://techcrunch.com/2026/04/21/spacex-is-working-with-cursor-and-has-an-option-to-buy-the-startup-for-60-billion/', source: 'TechCrunch', date: '2026-04-21', rating: 5 },
+        { title: 'SpaceX strikes $60 billion deal for the right to buy AI coding startup Cursor', url: 'https://fortune.com/2026/04/22/spacex-strikes-60-billion-deal-cursor/', source: 'Fortune', date: '2026-04-22', rating: 4 },
+        { title: 'Google Cloud Commits $750 Million to Accelerate Partners\' Agentic AI Development', url: 'https://www.googlecloudpresscorner.com/2026-04-22-Google-Cloud-Commits-750-Million-to-Accelerate-Partners-Agentic-AI-Development', source: 'Google Cloud Press', date: '2026-04-22', rating: 5 },
+        { title: 'Modella AI Announces Acquisition by AstraZeneca to Advance AI-Driven Oncology R&D', url: 'https://www.modella.ai/az-acquisition', source: 'Modella AI', date: '2026-04', rating: 4 },
+        { title: 'OpenAI acquires TBPN, the buzzy founder-led business talk show', url: 'https://techcrunch.com/2026/04/02/openai-acquires-tbpn-the-buzzy-founder-led-business-talk-show/', source: 'TechCrunch', date: '2026-04-02', rating: 4 },
+        { title: 'AI coding startup Cursor in talks to raise $2 billion funding round', url: 'https://www.cnbc.com/2026/04/19/cursor-ai-2-billion-funding-round.html', source: 'CNBC', date: '2026-04-19', rating: 4 },
+        { title: 'SpaceX says it has agreement to acquire Cursor for $60B — HN Discussion', url: 'https://news.ycombinator.com/item?id=47855293', source: 'HackerNews', date: '2026-04-21', rating: 3 },
+      ],
+    },
+    {
+      id: 'v12-topic-agents',
+      category: 'AI 에이전트',
+      subtitle: 'Google Gemini Enterprise Agent Platform + Microsoft Agent Framework 1.0 + Photon Spectrum 오픈소스',
+      title: 'AI 에이전트 — "Google Gemini Enterprise Agent Platform + Microsoft Agent Framework 1.0 + Photon Spectrum 오픈소스"',
+      images: [
+        {
+          src: '/teatime-images/2026-04-23/google-cloud-next-2026-keynote-header-su.jpg',
+          alt: 'Google Cloud Next 2026 keynote header — Sundar Pichai unveils Gemini Enterprise Agent Platform in Las Vegas | Google Blog',
+          source: 'Google Cloud Next 2026 keynote header — Sundar Pichai unveils Gemini Enterprise Agent Platform in Las Vegas | Google Blog',
+        },
+      ],
+      messages: [
+        { id: 'v12-ag-1', characterId: 'kobu', content: '에이전트 플랫폼 쪽이 어제 하루에 정리됐어. Google Cloud Next \'26에서 Gemini Enterprise Agent Platform을 공개했어 — Agent Designer(시각 빌더), Agent Inbox(실행 관리), Skills(재사용 가능한 기능), long-running agents(며칠 단위로 돌아가는 에이전트), Projects 다 묶여있어. 핵심 발표는 Agentic Data Cloud — 크로스클라우드 Lakehouse + Knowledge Catalog로, 에이전트가 여러 클라우드의 데이터를 한 번에 다루게 한다는 거야. SiliconANGLE이 이 구조를 "agent control plane"이라고 부르는데, 이게 이 시대의 새 싸움터라는 거야. (발생/보도 4/22)', type: 'normal' },
+        { id: 'v12-ag-2', characterId: 'oh', content: '인프라 숫자 정리해드릴게요. 8세대 TPU "TPU 8t" 발표됐어요 — 트레이닝용 칩으로 이전 세대 대비 3배 컴퓨트예요. NVIDIA와 같이 A5X 인스턴스도 발표했어요. Vera Rubin NVL72 기반인데 멀티사이트 클러스터로 96만 GPU까지 확장 가능하고, 이전 세대 대비 "토큰당 추론 비용 10배 낮고, MW당 처리량 10배 높다"는 수치를 같이 던졌어요. Databricks 리포트에서는 멀티 에이전트 사용량이 최근 4개월간 327% 증가했다고 언급됐고요.', type: 'normal' },
+        { id: 'v12-ag-3', characterId: 'kobu', content: '에이전트 프레임워크 자체도 4월에 대형 릴리즈가 몰렸어. Microsoft Agent Framework 1.0 GA가 4월 3일에 나왔어. AutoGen의 다중 에이전트 오케스트레이션이랑 Semantic Kernel의 프로덕션 기반이 하나로 통합됐고, .NET·Python 둘 다 지원해. MCP·A2A 프로토콜 둘 다 기본 지원. DevUI(브라우저 디버거) 내장. LTS 약속까지 달려있어. (발생/보도 4/3)', type: 'normal' },
+        { id: 'v12-ag-4', characterId: 'jem', content: '개발자들이 당장 손댈만한 건 Photon Spectrum이에요. 어제(4월 22일) 오픈소스로 풀렸어요 — TypeScript 프레임워크인데 **한 번 짠 에이전트 로직을 iMessage, WhatsApp, Telegram, Slack, Discord, Instagram, X에 전부 배포**해요. MIT 라이선스, 자체 호스팅 가능, `npm install spectrum-ts` 한 줄이에요. Ditto라는 iMessage 매치메이커 에이전트가 이미 140K 활성 사용자, 400만 메시지 찍고 있어요. "앱 다운로드 받으라"는 허들 없이 사용자 카톡·문자로 바로 쳐들어가는 게 새 패러다임이에요 ㅋㅋ', type: 'normal' },
+        { id: 'v12-ag-5', characterId: 'kobu', content: '맥락 하나 붙이면 — 4월 9일이 Google A2A 1주년이었어. 150개 조직, 22K GitHub 스타. 그 1주년 발표 이후 2주 만에 Google이 "A2A는 프로토콜이었고, 이제 플랫폼 내려놓는다"는 식으로 Gemini Enterprise Agent Platform 발표까지 이어진 거야. 4월은 에이전트 영역이 \'실험\'에서 \'상용 플랫폼\'으로 완전히 넘어간 달로 기록될 것 같아.', type: 'normal' },
+      ],
+      references: [
+        { title: 'The agent control plane hits overdrive at Next 2026', url: 'https://siliconangle.com/2026/04/22/agent-control-plane-race-hits-overdrive-next-2026-googlecloudnext/', source: 'SiliconANGLE', date: '2026-04-22', rating: 5 },
+        { title: 'Sundar Pichai shares news from Google Cloud Next 2026', url: 'https://blog.google/innovation-and-ai/infrastructure-and-cloud/google-cloud/cloud-next-2026-sundar-pichai/', source: 'Google Blog', date: '2026-04-22', rating: 5 },
+        { title: 'Photon Releases Spectrum: An Open-Source TypeScript Framework', url: 'https://www.marktechpost.com/2026/04/22/photon-releases-spectrum-an-open-source-typescript-framework-that-deploys-ai-agents-directly-to-imessage-whatsapp-and-telegram/', source: 'MarkTechPost', date: '2026-04-22', rating: 4 },
+        { title: 'Spectrum — Photon official', url: 'https://photon.codes/spectrum', source: 'Photon', date: '2026-04-22', rating: 4 },
+        { title: 'Microsoft Agent Framework Version 1.0', url: 'https://devblogs.microsoft.com/agent-framework/microsoft-agent-framework-version-1-0/', source: 'Microsoft DevBlog', date: '2026-04-03', rating: 5 },
+        { title: 'Microsoft Ships Production-Ready Agent Framework 1.0 for .NET and Python', url: 'https://visualstudiomagazine.com/articles/2026/04/06/microsoft-ships-production-ready-agent-framework-1-0-for-net-and-python.aspx', source: 'Visual Studio Magazine', date: '2026-04-06', rating: 4 },
+        { title: 'Photon Spectrum GitHub (photon-hq)', url: 'https://github.com/photon-hq', source: 'GitHub', date: '2026-04', rating: 3 },
+      ],
+    },
+    {
+      id: 'v12-topic-papers',
+      category: 'AI 논문과 모델',
+      subtitle: 'Claude Opus 4.7 SWE-Bench Pro 64.3% 신기록 + NVIDIA·Google Vera Rubin 추론 10배 효율',
+      title: 'AI 논문과 모델 — "Claude Opus 4.7 SWE-Bench Pro 64.3% 신기록 + NVIDIA·Google Vera Rubin 추론 10배 효율"',
+      images: [
+        {
+          src: '/teatime-images/2026-04-23/anthropic-claude-opus-4.7-announcement-a.png',
+          alt: 'Anthropic Claude Opus 4.7 announcement artwork — SWE-bench Pro 64.3% record, xhigh reasoning effort level | Anthropic',
+          source: 'Anthropic Claude Opus 4.7 announcement artwork — SWE-bench Pro 64.3% record, xhigh reasoning effort level | Anthropic',
+        },
+      ],
+      messages: [
+        { id: 'v12-pm-1', characterId: 'oh', content: '모델 쪽 대형 릴리즈 정리할게요. Claude Opus 4.7이 4월 16일에 GA로 풀렸어요. 헤드라인 숫자 — **SWE-Bench Verified 80.8% → 87.6%, SWE-Bench Pro 53.4% → 64.3%**. GPT-5.4(57.7%) 대비 6.6%p 앞섰어요. 현재 업계 최고 실사용 소프트웨어 엔지니어링 점수예요. 비전도 크게 업 — 2,576px 장변 이미지 지원(이전 대비 3배+), 시각 정확도 벤치 98.5%(이전 54.5%). 가격은 그대로 입력 $5/M · 출력 $25/M이고요. (발생/보도 4/16)', type: 'normal' },
+        { id: 'v12-pm-2', characterId: 'kobu', content: '중요한 디테일 — Anthropic이 이번에 `xhigh`라는 새 reasoning effort 레벨을 추가했어. 기존 high와 max 사이인데, 코딩·에이전트 워크로드에는 이걸 기본으로 쓰라고 권고하고 있어. 의미는 분명해 — 같은 비용으로 더 좋은 결과 뽑아내려면 reasoning budget 튜닝이 이제 개발자 책임이 됐다는 거야. 그리고 Mythos(아직 비공개) 대비 "사이버 공격 능력은 일부러 줄였다"는 언급이 함께 있었어. 프론티어 랩이 스스로 downgrade 한 내부 버전을 공식 언급한 건 드문 케이스야.', type: 'normal' },
+        { id: 'v12-pm-3', characterId: 'oh', content: '추론 인프라 쪽도 같이 봐야 해요. 어제 NVIDIA·Google Cloud Next에서 발표된 스택 — **Vera Rubin NVL72 기반 A5X 인스턴스**가 이전 Blackwell Ultra 대비 토큰당 추론 비용 10배 낮고, MW당 처리량 10배 높아요. 최대 96만 GPU 클러스터까지 확장 가능하고요. NVIDIA Nemotron 3 Super(120B MoE, 12B active, 1M 컨텍스트)가 Gemini Enterprise Agent Platform 안에서 돌아가기 시작했어요. Confidential Computing(프롬프트·파인튜닝 데이터 암호화 상태 유지) 기능도 Gemini + Blackwell 조합으로 GA 됐고요. (발생/보도 4/22)', type: 'normal' },
+        { id: 'v12-pm-4', characterId: 'jem', content: 'r/LocalLLaMA, r/ClaudeAI에서 Opus 4.7 벤치 재현 스레드가 계속 올라오고 있어요. 개발자들 반응 두 가지인데 — (1) "4.6에서 4.7로 $0 업그레이드된 거네, 그냥 쓰면 됨" (2) "`xhigh` 안 쓰면 이전이랑 비슷함, 이제 effort 튜닝이 프롬프트 엔지니어링 일부가 됐다" 두 개예요. 그리고 "GPT-6 Spud" 떡밥은 이번 주까지 구체적 업데이트가 없어요 — Sam Altman이 "weeks away" 말한 게 3월 말이니까 더 미뤄졌다는 해석이 X에서 돌고 있고요.', type: 'normal' },
+        { id: 'v12-pm-5', characterId: 'kobu', content: '정리하면 — 모델 측면에서는 Anthropic이 코딩·에이전트 벤치 1위를 다시 탈환했고, 인프라 측면에서는 Google·NVIDIA가 "10배 효율" 숫자를 내놓으며 추론 경제학을 흔들었어. 양쪽 모두 \'에이전트 상용화\'를 겨냥한 움직임이야.', type: 'normal' },
+      ],
+      references: [
+        { title: 'Introducing Claude Opus 4.7', url: 'https://www.anthropic.com/news/claude-opus-4-7', source: 'Anthropic', date: '2026-04-16', rating: 5 },
+        { title: 'Anthropic releases Claude Opus 4.7, concedes it trails unreleased Mythos', url: 'https://www.axios.com/2026/04/16/anthropic-claude-opus-model-mythos', source: 'Axios', date: '2026-04-16', rating: 4 },
+        { title: 'Claude Opus 4.7 Benchmark Full Analysis Leading GPT-5.4 Across 7 Major Leaderboards', url: 'https://help.apiyi.com/en/claude-opus-4-7-benchmark-review-2026-en.html', source: 'Apiyi Blog', date: '2026-04', rating: 3 },
+        { title: 'NVIDIA and Google Cloud Collaborate to Advance Agentic and Physical AI', url: 'https://blogs.nvidia.com/blog/google-cloud-agentic-physical-ai-factories/', source: 'NVIDIA Blog', date: '2026-04-22', rating: 5 },
+        { title: 'AI infrastructure at Next \'26', url: 'https://cloud.google.com/blog/products/compute/ai-infrastructure-at-next26', source: 'Google Cloud Blog', date: '2026-04-22', rating: 4 },
+        { title: 'Claude Opus 4.7 Pricing: The Real Cost Story Behind the "Unchanged" Price Tag', url: 'https://www.finout.io/blog/claude-opus-4.7-pricing-the-real-cost-story-behind-the-unchanged-price-tag', source: 'Finout', date: '2026-04', rating: 3 },
+        { title: 'Claude Opus 4.7 — HN Discussion (커뮤니티 벤치 재현·xhigh effort 논쟁)', url: 'https://news.ycombinator.com/item?id=47793411', source: 'HackerNews', date: '2026-04-16', rating: 3 },
+      ],
+    },
+    {
+      id: 'v12-topic-robots',
+      category: 'AI 로봇 / 피지컬 AI',
+      subtitle: '베이징 편의점 휴머노이드 실전 배치 + Hannover Messe 2026 \'휴머노이드가 주인공\'',
+      title: 'AI 로봇 / 피지컬 AI — "베이징 편의점 휴머노이드 실전 배치 + Hannover Messe 2026 \'휴머노이드가 주인공\'"',
+      images: [
+        {
+          src: '/teatime-images/2026-04-23/humanoid-robots-in-industrial-manufactur.jpg',
+          alt: 'Humanoid robots in industrial manufacturing 2026 — Figure 02, Tesla Optimus, Agility Digit deployed at BMW, Mercedes and Amazon sites | EVS International',
+          source: 'Humanoid robots in industrial manufacturing 2026 — Figure 02, Tesla Optimus, Agility Digit deployed at BMW, Mercedes and Amazon sites | EVS International',
+        },
+      ],
+      messages: [
+        { id: 'v12-rb-1', characterId: 'jem', content: '어제 진짜 상징적인 장면 있었어요 — 베이징 하이뎬구 편의점에 "embodied large model" 휴머노이드가 정식 배치됐어요. 손님 응대, 상품 문의 응답, 프로모션 안내, **구운 소시지·음료 집어서 전달** 이거 다 혼자 해요. 태블릿 주문 받아서 그리퍼로 집어서 건네는 영상이 Xinhua·인민일보에 올라왔어요. 이게 "시범 이벤트"가 아니라 정식 근무 편성이라는 게 포인트예요. 그리퍼는 사용할 때마다 직원이 소독한대요 ㅋㅋ (발생/보도 4/22)', type: 'normal' },
+        { id: 'v12-rb-2', characterId: 'oh', content: '시장 숫자도 같이 나왔어요. GlobeNewswire 리포트 기준 글로벌 휴머노이드 시장이 **2026년 $2.16B → 2035년 $8.78B** 전망이에요. 북미가 최대 점유 유지 — 프론티어 AI 연구·자본·대규모 산업체 흡수력이 이유예요. Deloitte의 앞선 전망과 합치면 Physical AI 디바이스 누적 출하는 2025~2035 사이 1.45억 대고요. 제조 현장 파일럿은 아직 "몇 개 사이트, 좁은 태스크"에 그친다는 솔직한 평가도 동시에 나오고 있어요. (보도 4/22)', type: 'normal' },
+        { id: 'v12-rb-3', characterId: 'kobu', content: '유럽 쪽 큰 이벤트 — Hannover Messe 2026이 4월 21일 개막했어. 역사상 처음으로 **"산업 AI + 휴머노이드 로봇"이 메인 테마**였어. 전시장에서 PaXini, Huayan Robotics, XPeng, Linkerbot, Agile Robots, Dassault Systemes가 휴머노이드를 동시에 공개했고 — 관객과 악수, 제스처 시연, 정밀 그리퍼 테스트까지 현장에서 돌렸어. 중국·독일 업체가 나란히 무대 올라온 게 구도 변화 신호야. (발생 4/21 · 보도 4/22)', type: 'normal' },
+        { id: 'v12-rb-4', characterId: 'oh', content: '미국 쪽 트래커도 정리해드릴게요. Figure가 여전히 현장 배치 1등이에요 — BMW Spartanburg 공장에서 Figure 02가 이미 3만 대 차 생산에 관여했고, 1,250시간+ 가동 기록이 쌓였어요. 여러 유닛이 주 5일 10시간 근무예요. Tesla Optimus는 2025년 말까지 수백 대 수준이었고, Cortex 2.0 트레이닝 슈퍼컴이 4월부터 단계적 가동에 들어갔어요. V3 여름 생산 시작, Giga Texas 부지 5.2M sqft 확장, Fremont 연 100만 대 목표 라인 전환 중 — 다만 1만 대 실전 배치는 2028~29년 예상이 현실적이라는 분석이에요. (보도 4월)', type: 'normal' },
+        { id: 'v12-rb-5', characterId: 'jem', content: 'YouTube에 베이징 편의점 영상이 이미 조회수 폭발이에요. 댓글이 극과 극인데 — "드디어 편의점 알바 대체" vs "그리퍼 소독하는 직원이 곧 그리퍼 옆에서 일하는 동료가 될 듯" 두 의견이 반반이에요. Hannover Messe 영상도 비슷한 반응이고요. 공장·소매 양쪽에서 "로봇이 사람 옆에 서 있는 장면"이 이제 시연이 아니라 뉴스 소재로 굳어지고 있어요.', type: 'normal' },
+      ],
+      references: [
+        { title: 'Humanoid robot deployed in convenience store in Beijing', url: 'https://english.news.cn/20260422/acb4bb526d4444098c742f06959c7a61/c.html', source: 'Xinhua', date: '2026-04-22', rating: 5 },
+        { title: 'Humanoid robot deployed in convenience store in Beijing — People\'s Daily Online', url: 'http://en.people.cn/n3/2026/0422/c90000-20449348.html', source: 'People\'s Daily', date: '2026-04-22', rating: 4 },
+        { title: 'Humanoid robots exhibited at Hannover Messe 2026 in Germany', url: 'https://english.news.cn/europe/20260422/743fecd88d5f44b99a271fe2e3dc4ba0/c.html', source: 'Xinhua', date: '2026-04-22', rating: 4 },
+        { title: 'Humanoid Robot Market Size Worth USD 8.78 Billion by 2035', url: 'https://www.globenewswire.com/news-release/2026/04/22/3278870/0/en/Humanoid-Robot-Market-Size-Worth-USD-8-78-Billion-by-2035-Driven-by-AI-Advancements-and-Expanding-Industrial-and-Consumer-Applications.html', source: 'GlobeNewswire', date: '2026-04-22', rating: 4 },
+        { title: 'Tesla Optimus Deployment Tracker (2026)', url: 'https://newmarketpitch.com/blogs/news/humanoid-robotics-optimus-deployment-tracker', source: 'New Market Pitch', date: '2026-04', rating: 3 },
+        { title: 'Humanoid Robots in Industrial Manufacturing: What They Can (and Can\'t) Do in 2026', url: 'https://www.evsint.com/humanoid-robots-industrial-manufacturing-2026/', source: 'EVS International', date: '2026-04', rating: 3 },
+      ],
+    },
+    {
+      id: 'v12-topic-bonus',
+      category: '보너스',
+      subtitle: 'EU AI Act D-100 카운트다운 + California SB 53 본격 적용 — 빅테크는 \'사이버 능력 자체 삭감\' 카드',
+      title: '보너스 — "EU AI Act D-100 카운트다운 + California SB 53 본격 적용 — 빅테크는 \'사이버 능력 자체 삭감\' 카드"',
+      messages: [
+        { id: 'v12-bn-1', characterId: 'oh', content: '규제 쪽 날짜 카운트다운 정리할게요. **EU AI Act 고위험 AI 조항이 2026년 8월 2일부터 본격 적용**이에요. 오늘(4/23) 기준 D-101이에요. 회원국은 그 전까지 최소 1개씩 AI 규제 샌드박스를 세워야 하고, 범용 AI(GPAI) 거버넌스 룰은 이미 2025년 8월부터 발효 중이에요. 기업 입장에서는 2분기가 컴플라이언스 체계 잡는 마지막 현실적 윈도우예요. (규제 발효일 고정)', type: 'normal' },
+        { id: 'v12-bn-2', characterId: 'kobu', content: '미국은 구도가 정반대야. 트럼프 행정부의 "Ensuring a National Policy Framework for AI" 행정명령(2025년 12월 11일)이 **주(州)법을 연방 프레임으로 무력화**하는 방향이야. Vol.11에서 다룬 GUARDRAILS Act가 민주당의 맞불이었고, 상황은 이번 주도 진행형이야. 반면에 California SB 53(TFAIA)은 2026년 1월 1일부터 이미 시행 중이야 — 연 매출 $500M 이상 프론티어 개발사는 프론티어 AI 프레임워크 문서를 공개해야 해. 현재 대상은 OpenAI·Anthropic·Google DeepMind·Meta·Microsoft 정도 5~8개 회사로 추산돼. 연방-주 충돌이 실제 기업 보고서 작성 단계에서 벌어지고 있는 거야.', type: 'normal' },
+        { id: 'v12-bn-3', characterId: 'jem', content: '재미있는 건 빅테크 자율 규제 액션이에요. Anthropic이 이번에 Opus 4.7 릴리즈하면서 **"Mythos 내부 버전 대비 사이버 공격 능력을 의도적으로 줄였다"**고 공개적으로 밝혔어요. 프론티어 랩이 자사 최신 모델의 capability를 downgrade 했다고 공식 언급한 건 전례가 드물어요. 규제 압력 들어오기 전에 "우리가 먼저 빼놨다"는 시그널을 보낸 거예요. HackerNews에서는 "이게 좋은 선례인지, 아니면 내부 Mythos는 몰래 돌리겠다는 뜻인지" 논쟁 스레드가 길게 갔어요. (보도 4/16)', type: 'normal' },
+        { id: 'v12-bn-4', characterId: 'oh', content: '사건 하나 짚고 갈게요 — Sullivan & Cromwell이라는 대형 로펌이 연방 파산법원 제출 서류에 **AI가 만든 환각(hallucination) 인용**을 그대로 포함했다가 공개 사과했어요. 내부 AI 이용 정책을 어긴 거라고 인정했고요. 전문직 서비스 영역에서 생성 AI가 만든 오류의 법적·직업 책임이 본격적으로 문제화되는 신호예요. Fortune이 이번 주 리포트로 상세히 다뤘고요. (보도 4/22)', type: 'normal' },
+        { id: 'v12-bn-5', characterId: 'kobu', content: '정리 — EU는 8월 고위험 규제 D-day 임박, 미국은 연방 vs 주 프레임 충돌 지속, 빅테크는 자율 capability 삭감으로 선제 방어. 규제 3축이 지금 모두 살아 있어. 모델·에이전트가 매주 더 강해지는 지금, 의외로 올해 하반기 승부처는 "누가 컴플라이언스 탑을 먼저 올리느냐"가 될 가능성이 높아.', type: 'normal' },
+      ],
+      references: [
+        { title: 'AI Act | Shaping Europe\'s digital future — European Commission', url: 'https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai', source: 'European Commission', date: '2026-04', rating: 5 },
+        { title: 'EU Artificial Intelligence Act — Implementation tracker', url: 'https://artificialintelligenceact.eu/', source: 'AI Act EU', date: '2026-04', rating: 4 },
+        { title: 'Governor Newsom signs SB 53, advancing California\'s AI industry', url: 'https://www.gov.ca.gov/2025/09/29/governor-newsom-signs-sb-53-advancing-californias-world-leading-artificial-intelligence-industry/', source: 'Governor of California', date: '2025-09-29', rating: 5 },
+        { title: 'SB 53: What California\'s New AI Safety Law Means for Developers', url: 'https://ai-analytics.wharton.upenn.edu/wharton-accountable-ai-lab/sb-53-what-californias-new-ai-safety-law-means-for-developers/', source: 'Wharton AI Lab', date: '2026-04', rating: 4 },
+        { title: 'Anthropic releases Claude Opus 4.7, a less risky model than Mythos', url: 'https://www.cnbc.com/2026/04/16/anthropic-claude-opus-4-7-model-mythos.html', source: 'CNBC', date: '2026-04-16', rating: 4 },
+        { title: '2026 Year in Preview: AI Regulatory Developments', url: 'https://www.wsgr.com/en/insights/2026-year-in-preview-ai-regulatory-developments.html', source: 'Wilson Sonsini', date: '2026-04', rating: 3 },
+      ],
+    },
+  ],
+};
+
 /**
  * 대표님 요청 (2026-04-12): 디폴트 토픽 재설계.
  *   1. 핫뉴스 (Hot News)        — 글로벌 트렌드, 분야 무관
@@ -856,4 +1005,4 @@ function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
 
 export const DEFAULT_TEATIME: RawTeaTime = buildDefaultTeatime();
 
-export const ALL_TEATIMES: RawTeaTime[] = [DEFAULT_TEATIME];
+export const ALL_TEATIMES: RawTeaTime[] = [TEATIME_VOL12, DEFAULT_TEATIME];
