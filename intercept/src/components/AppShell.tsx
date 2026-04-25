@@ -1,3 +1,5 @@
+'use client'
+
 import Link from 'next/link'
 import { I18nProvider, useI18n } from '@/lib/i18n/context'
 import { AuthProvider } from '@/components/AuthProvider'

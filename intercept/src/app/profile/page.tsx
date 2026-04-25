@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getSubscriptionStatus } from '@/lib/subscription'
 
 export const metadata: Metadata = {
   title: '나의 인터셉트 히스토리 — INTERCEPT', // MODIFIED: Rebranding '끼어들기' to '인터셉트'
@@ -481,7 +480,7 @@ export default function ProfilePage() {
           </p>
           <Link href="/teatime" className="btn-primary">
             티타임 바로가기 →
-          </a>
+          </Link>
         </div>
       </div>
     </div>

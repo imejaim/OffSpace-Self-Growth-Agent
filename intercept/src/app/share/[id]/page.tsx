@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { getTeatime } from '@/lib/teatime-utils'
 import ShareCard from '@/components/ShareCard'
 
 type Props = {
@@ -316,7 +315,7 @@ export default async function SharePage({ params }: Props) {
           </p>
           <Link href="/teatime" className="btn-primary">
             나도 인터셉트해 보기 → {/* MODIFIED: Rebranding '끼어들기' to '인터셉트' */}
-          </a>
+          </Link>
         </div>
       </div>
     </div>

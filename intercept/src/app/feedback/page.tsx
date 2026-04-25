@@ -61,7 +61,7 @@ export default function FeedbackPage() {
           </p>
           <Link href="/teatime" className="btn-primary">
             티타임 바로가기 →
-          </a>
+          </Link>
         </div>
       </div>
     )
@@ -162,7 +162,7 @@ export default function FeedbackPage() {
         <div style={{ textAlign: 'center', marginTop: 'var(--space-xl)' }}>
           <Link href="/teatime" style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--color-coral)' }}>
             티타임 바로가기 →
-          </a>
+          </Link>
         </div>
       </div>
     </div>
