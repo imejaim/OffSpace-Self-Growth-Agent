@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { CHARACTERS, ALL_TEATIMES, pickText } from '@/lib/teatime-data'
 import { useCharPositions } from './CharacterPositionContext'
 
@@ -31,7 +32,6 @@ const MARGIN_MIN = 90           // min side-margin width required to let a char 
 const FOLLOW_SPEED = 0.02       // lerp factor toward mouse
 const WANDER_SPEED = 0.005      // slow drift when idle
 const GATHER_SPEED = 0.04       // faster gather when user is typing
-const GATHER_RADIUS = 80        // how close they cluster when gathering
 
 /* ── Content column detection ────────────────────────────────────────
  * The main reading column (teatime article, home hero) is centered
@@ -41,8 +41,15 @@ const GATHER_RADIUS = 80        // how close they cluster when gathering
  */
 function getContentBounds(): { left: number; right: number } {
   if (typeof document === 'undefined') return { left: 0, right: 0 }
-  // Priority order: teatime article > home hero section > fallback to 720px centered
-  const selectors = ['.teatime-main', 'main section > div', 'main']
+  // Prefer the active carousel card so side pages do not pull characters away
+  // from the article the user is reading.
+  const selectors = [
+    '.carousel-card--center .teatime-main',
+    '.carousel-card--center main',
+    '.teatime-main',
+    'main section > div',
+    'main',
+  ]
   for (const sel of selectors) {
     const el = document.querySelector(sel) as HTMLElement | null
     if (!el) continue
@@ -159,6 +166,7 @@ function clampToMargin(
 /* ── Component ──────────────────────────────────────────────────────── */
 
 export default function FloatingCharacters() {
+  const [mounted, setMounted] = useState(false)
   const [visible, setVisible] = useState(true)
   const [chars, setChars] = useState<CharacterState[]>([])
   const rafRef = useRef<number | null>(null)
@@ -170,6 +178,10 @@ export default function FloatingCharacters() {
   const allMessages = useRef(getAllMessages())
   const { setPositions, anchorId, anchorRect } = useCharPositions()
   const mountedRef = useRef(true)
+
+  // Hydration-safe: set mounted after first client render.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true) }, [])
 
   // Track mount state to guard async callbacks after unmount
   useEffect(() => {
@@ -187,10 +199,14 @@ export default function FloatingCharacters() {
     const rightMargin = w - bounds.right
     const narrow = leftMargin < MARGIN_MIN && rightMargin < MARGIN_MIN
 
-    // Place chars in the centers of available margins (or corners on narrow screens)
+    // Place chars close to the active article edge, like they are reading along.
     const padding = 16
-    const leftX = narrow ? padding : Math.max(padding, leftMargin / 2 - size / 2)
-    const rightX = narrow ? w - size - padding : Math.min(w - size - padding, bounds.right + rightMargin / 2 - size / 2)
+    const leftX = narrow
+      ? padding
+      : clamp(bounds.left - size - 18, padding, w - size - padding)
+    const rightX = narrow
+      ? w - size - padding
+      : clamp(bounds.right + 18, padding, w - size - padding)
 
     const initial: CharacterState[] = [
       {
@@ -215,8 +231,8 @@ export default function FloatingCharacters() {
         flipX: true, bobPhase: Math.PI * 1.33, pinned: false,
       },
     ]
-    setChars(initial)
     charsRef.current = initial
+    queueMicrotask(() => setChars(initial))
   }, [])
 
   // ── Track mouse ──
@@ -296,7 +312,8 @@ export default function FloatingCharacters() {
         if (dragRef.current?.id === c.id) return c
         if (c.pinned) return c  // pinned characters don't move
 
-        let { x, y, targetX, targetY, action, actionTimer, flipX, bobPhase } = c
+        const { x, y } = c
+        let { targetX, targetY, action, actionTimer, flipX, bobPhase } = c
 
         // ── Determine target position ──
         const isLoading = document.body.classList.contains('intercept-loading')
@@ -348,11 +365,16 @@ export default function FloatingCharacters() {
             action = 'listening'
           }
         } else if (anchorId && anchorRect) {
-          // ADDED: Anchor Gathering
-          // Move characters to the margins of the anchored section
+          // Gather around the active topic, just outside the reading column.
           const side = preferredSides[idx]!
-          const stagger = idx * 60 - 60 // staggered vertically
-          targetX = clampToMargin(anchorRect.left, size, bounds, w, side)
+          const stagger = idx * 54 - 54
+          const columnLeft = Number.isFinite(bounds.left) ? bounds.left : anchorRect.left
+          const columnRight = Number.isFinite(bounds.right) ? bounds.right : anchorRect.right
+          const leftTarget = columnLeft - size - 18
+          const rightTarget = columnRight + 18
+          targetX = side === 'left'
+            ? clamp(leftTarget, 12, Math.max(12, w - size - 12))
+            : clamp(rightTarget, 12, Math.max(12, w - size - 12))
           targetY = clamp(anchorRect.top + anchorRect.height / 2 + stagger, 80, h - size - 80)
           
           if (action === 'listening') action = 'idle'
@@ -572,7 +594,7 @@ export default function FloatingCharacters() {
     }
   }, [])
 
-  return (
+  const floatingLayer = (
     <>
       {/* Toggle button */}
       <button
@@ -612,7 +634,7 @@ export default function FloatingCharacters() {
 
             // Scale pulse for excited
             const scale = c.action === 'excited'
-              ? 1 + Math.sin(Date.now() / 150) * 0.08
+              ? 1 + Math.sin(c.bobPhase) * 0.08
               : 1
 
             const actionEmoji = ACTION_EMOJIS[c.action]
@@ -706,4 +728,7 @@ export default function FloatingCharacters() {
       )}
     </>
   )
+
+  if (!mounted) return null
+  return createPortal(floatingLayer, document.body)
 }

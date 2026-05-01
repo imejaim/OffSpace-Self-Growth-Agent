@@ -205,6 +205,7 @@ export interface Translations {
   // Teatime page
   teatime: {
     offspaceTeatime: string
+    todaysTeatime: string
     interceptHint: string
     interceptButton: string
     referenceLinks: string

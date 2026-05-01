@@ -249,6 +249,7 @@ export const ko: Translations = {
   },
   teatime: {
     offspaceTeatime: 'Offspace 티타임',
+    todaysTeatime: '오늘의 티타임',
     interceptHint: '어디든 인터셉트하여 궁금한 것을 더 물어보고 의견 남길 수 있어요',
     interceptButton: '인터셉트',
     referenceLinks: '참고 링크',

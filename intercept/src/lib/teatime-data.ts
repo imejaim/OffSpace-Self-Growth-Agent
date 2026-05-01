@@ -985,6 +985,7 @@ export const TEATIME_VOL12: RawTeaTime = {
  * 과거 Vol.4/Vol.5 데이터는 보관용으로 남겨두지만 노출되지 않는다.
  */
 import { getTodaysDefaultTopics } from './default-topics';
+import { TEATIME_2026_05_01 } from './teatime-archive/2026-05-01';
 
 function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
   const iso = now.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -1005,4 +1006,5 @@ function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
 
 export const DEFAULT_TEATIME: RawTeaTime = buildDefaultTeatime();
 
-export const ALL_TEATIMES: RawTeaTime[] = [TEATIME_VOL12, DEFAULT_TEATIME];
+export const ALL_TEATIMES: RawTeaTime[] = [
+  TEATIME_2026_05_01,TEATIME_VOL12, DEFAULT_TEATIME];

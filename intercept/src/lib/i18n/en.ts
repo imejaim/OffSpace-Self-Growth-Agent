@@ -249,6 +249,7 @@ export const en: Translations = {
   },
   teatime: {
     offspaceTeatime: 'Offspace Teatime',
+    todaysTeatime: "Today's Teatime",
     interceptHint: 'Intercept anywhere — ask follow-ups, drop your take.',
     interceptButton: 'Intercept',
     referenceLinks: 'Reference Links',

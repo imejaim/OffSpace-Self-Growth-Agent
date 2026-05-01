@@ -9,7 +9,12 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "preview": "opennextjs-cloudflare build && wrangler dev",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "teatime:create": "python ../scripts/teatime-skeleton.py",
+    "teatime:validate": "python ../scripts/teatime-skeleton.py --validate",
+    "teatime:fetch-images": "python ../scripts/teatime-fetch-images.py",
+    "teatime:archive": "python ../scripts/teatime-md-to-archive.py",
+    "teatime:intercept": "python ../scripts/teatime-intercept-publish.py"
   },
   "dependencies": {
     "@chenglou/pretext": "^0.0.4",

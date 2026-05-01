@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { useI18n } from '@/lib/i18n/context'
 import { ALL_TEATIMES, CHARACTERS, localizeTeatime } from '@/lib/teatime-data'
 import type { Message, Reference, Topic, TopicImage } from '@/lib/teatime-data'
+import dynamic from 'next/dynamic'
 import InterceptButton from '@/app/teatime/InterceptButton'
-import FloatingCharacters from '@/components/FloatingCharacters'
 import {
   CharPositionProvider,
   useCharPositions,
@@ -14,9 +14,10 @@ import {
 import PretextMessage from '@/components/PretextMessage'
 import { useAppRouter, ViewType } from '@/lib/router-context'
 
-function topicEditKey(teatimeId: string, topicId: string) {
-  return `intercept-teatime-topic-edits-${teatimeId}-${topicId}`
-}
+const FloatingCharacters = dynamic(
+  () => import('@/components/FloatingCharacters'),
+  { ssr: false }
+)
 
 function starRating(rating: number) {
   return `${'*'.repeat(rating)}${'o'.repeat(5 - rating)}`
@@ -170,108 +171,6 @@ function TopicImages({ images }: { images: TopicImage[] }) {
   )
 }
 
-function EditableTopicHeading({
-  storageKey,
-  originalTitle,
-  index,
-}: {
-  storageKey: string
-  originalTitle: string
-  index: number
-}) {
-  const { t } = useI18n()
-  const [title, setTitle] = useState(originalTitle)
-  const [editing, setEditing] = useState(false)
-  const [draft, setDraft] = useState(originalTitle)
-  const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    try {
-      const saved = window.localStorage.getItem(storageKey)
-      if (saved && saved.trim()) {
-        setTitle(saved)
-        setDraft(saved)
-      } else {
-        setTitle(originalTitle)
-        setDraft(originalTitle)
-      }
-    } catch {
-      setTitle(originalTitle)
-      setDraft(originalTitle)
-    }
-  }, [originalTitle, storageKey])
-
-  useEffect(() => {
-    if (editing && inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
-    }
-  }, [editing])
-
-  const commit = () => {
-    const trimmed = draft.trim()
-    if (trimmed && trimmed !== title) {
-      setTitle(trimmed)
-      try {
-        localStorage.setItem(storageKey, trimmed)
-      } catch {}
-    } else {
-      setDraft(title)
-    }
-    setEditing(false)
-  }
-
-  const cancel = () => {
-    setDraft(title)
-    setEditing(false)
-  }
-
-  if (editing) {
-    return (
-      <input
-        ref={inputRef}
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={commit}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter') commit()
-          if (e.key === 'Escape') cancel()
-        }}
-        className="topic-heading topic-heading-input"
-        aria-label={t.teatime.editTopicHint}
-        style={{ color: 'var(--color-navy)', background: 'var(--color-bg-muted)' }}
-      />
-    )
-  }
-
-  return (
-    <button
-      type="button"
-      className="topic-heading topic-heading-button"
-      onClick={() => setEditing(true)}
-      title={t.teatime.editTopicHint}
-    >
-      <span
-        style={{
-          fontSize: '0.8rem',
-          opacity: 0.6,
-          marginRight: '0.5rem',
-          fontFamily: 'var(--font-geist-mono)',
-        }}
-      >
-        ISSUE #{index + 1}
-      </span>
-      <span style={{ flex: 1 }}>{title}</span>
-      <span
-        className="topic-heading-edit-icon"
-        aria-hidden="true"
-        style={{ fontSize: '0.9rem', opacity: 0.4 }}
-      >
-        edit
-      </span>
-    </button>
-  )
-}
 
 function TopicSection({
   topic,
@@ -285,7 +184,6 @@ function TopicSection({
   onNavigateView: (view: ViewType, dir: 'left' | 'right') => void
 }) {
   const { t, locale } = useI18n()
-  const storageKey = topicEditKey(teatimeId, topic.id)
   const { viewData, updateViewData } = useAppRouter()
   const viewTopicKey = `chatter-${teatimeId}-${topic.id}`
   const chatterMessages = viewData.teatime?.[viewTopicKey] || null
@@ -335,18 +233,10 @@ function TopicSection({
     updateViewData('teatime', { [viewTopicKey]: messages })
   }
 
-  const getCurrentTitle = () => {
-    try {
-      const saved = localStorage.getItem(storageKey)
-      if (saved && saved.trim()) return saved
-    } catch {}
-    return topic.title
-  }
-
   const runChatter = async () => {
     setChatterLoading(true)
     setChatterError(null)
-    const currentTitle = getCurrentTitle()
+    const currentTitle = topic.title
     const language = locale === 'ko' ? 'ko' : 'en'
 
     try {
@@ -370,9 +260,35 @@ function TopicSection({
 
   const handlePublish = async (visibility: 'private' | 'public') => {
     setPublishLoading(true)
+    setChatterError(null)
     const messages = chatterMessages ?? topic.messages
+    const title = topic.title
     const storeKey =
       visibility === 'private' ? 'intercept-my-keep' : 'intercept-public-feed'
+
+    try {
+      const res = await fetch('/api/teatime/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages,
+          title,
+          visibility,
+          teatimeId,
+          topicId: topic.id,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || data.warning) {
+        setChatterError(data.error ?? data.warning ?? 'Publish failed. Please try again.')
+        setPublishLoading(false)
+        return
+      }
+    } catch {
+      setChatterError('Publish failed. Please try again.')
+      setPublishLoading(false)
+      return
+    }
 
     try {
       const raw = localStorage.getItem(storeKey)
@@ -382,7 +298,7 @@ function TopicSection({
         id: `${teatimeId}-${topic.id}-${Date.now()}`,
         teatimeId,
         topicId: topic.id,
-        title: getCurrentTitle(),
+        title,
         messages,
         images: topic.images ?? [],
         references: topic.references ?? [],
@@ -390,7 +306,8 @@ function TopicSection({
         visibility,
       }
       const deduped = entries.filter(
-        (item: any) => !(item && item.teatimeId === teatimeId && item.topicId === topic.id)
+        (item: { teatimeId?: string; topicId?: string } | null) =>
+          !(item && item.teatimeId === teatimeId && item.topicId === topic.id)
       )
       deduped.unshift(entry)
       localStorage.setItem(storeKey, JSON.stringify(deduped))
@@ -441,11 +358,19 @@ function TopicSection({
       )}
 
       <div className="topic-heading-row">
-        <EditableTopicHeading
-          storageKey={storageKey}
-          originalTitle={topic.title}
-          index={index}
-        />
+        <div className="topic-heading topic-heading-static">
+          <span
+            style={{
+              fontSize: '0.8rem',
+              opacity: 0.6,
+              marginRight: '0.5rem',
+              fontFamily: 'var(--font-geist-mono)',
+            }}
+          >
+            ISSUE #{index + 1}
+          </span>
+          <span style={{ flex: 1 }}>{topic.title}</span>
+        </div>
         <div
           className="topic-actions-right"
           style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
@@ -523,6 +448,12 @@ export default function TeatimeView() {
   const { t, locale } = useI18n()
   const { navigate } = useAppRouter()
   const teatime = localizeTeatime(ALL_TEATIMES[0], locale)
+  const [jumpKey, setJumpKey] = useState(0)
+
+  const handleHeaderClick = () => {
+    setJumpKey((k) => k + 1)
+    window.location.reload()
+  }
 
   const dateLabel = new Date(teatime.date).toLocaleDateString(
     locale === 'ko' ? 'ko-KR' : 'en-US',
@@ -535,6 +466,8 @@ export default function TeatimeView() {
     }
   )
 
+  const JUMP_DELAYS = ['0ms', '150ms', '300ms'] as const
+
   return (
     <CharPositionProvider>
       <div className="magazine-grain" />
@@ -546,7 +479,14 @@ export default function TeatimeView() {
               style={{ borderBottom: '1px solid rgba(255, 255, 255, 0.4)' }}
             >
               <div className="teatime-header-inner">
-                <span className="teatime-pub">{t.teatime.offspaceTeatime}</span>
+                <button
+                  type="button"
+                  className="teatime-pub teatime-pub-button"
+                  onClick={handleHeaderClick}
+                  aria-label="Refresh"
+                >
+                  {t.teatime.todaysTeatime}
+                </button>
                 <span
                   className="teatime-indicator"
                   style={{
@@ -568,7 +508,7 @@ export default function TeatimeView() {
                 <h1 className="teatime-title">{teatime.title}</h1>
                 <p className="teatime-intro">{teatime.intro}</p>
                 <div className="teatime-byline">
-                  {(['kobu', 'oh', 'jem'] as const).map((id) => {
+                  {(['kobu', 'oh', 'jem'] as const).map((id, charIndex) => {
                     const character = CHARACTERS[id]
                     if (!character) return null
                     const name = id === 'kobu' ? t.characters.ko.name : t.characters[id].name
@@ -585,11 +525,17 @@ export default function TeatimeView() {
                       >
                         {character.avatar && (
                           <Image
+                            key={`${id}-${jumpKey}`}
                             src={character.avatar}
                             alt={name}
                             width={20}
                             height={20}
-                            style={{ borderRadius: '3px', imageRendering: 'pixelated' }}
+                            className="byline-char-avatar"
+                            style={{
+                              borderRadius: '3px',
+                              imageRendering: 'pixelated',
+                              animationDelay: JUMP_DELAYS[charIndex],
+                            }}
                           />
                         )}
                         {name}
