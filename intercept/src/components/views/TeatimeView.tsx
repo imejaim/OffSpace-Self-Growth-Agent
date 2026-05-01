@@ -15,7 +15,7 @@ import PretextMessage from '@/components/PretextMessage'
 import { useAppRouter, ViewType } from '@/lib/router-context'
 
 const FloatingCharacters = dynamic(
-  () => import('@/components/FloatingCharacters'),
+  () => import('@/components/FloatingCharacters').then((m) => m.default),
   { ssr: false }
 )
 
