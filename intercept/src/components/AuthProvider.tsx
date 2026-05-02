@@ -1,6 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import type { User, Session } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/client'
 
@@ -69,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [credits, setCredits] = useState(0)
   const [loading, setLoading] = useState(true)
   const supabase = useMemo(() => createClient(), [])
+  const router = useRouter()
 
   async function loadProfile(authUser: User | null) {
     if (!authUser) {
@@ -126,11 +128,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    // 1) Clear local state first so UI updates immediately even if the network
+    //    call below is slow or fails.
     setUser(null)
     setSession(null)
     setTier('guest')
     setCredits(0)
+
+    // 2) Tell Supabase to clear cookies on this device. `scope: 'local'`
+    //    avoids a server round-trip for revoke (which can fail silently when
+    //    the token is already expired) and just wipes browser storage +
+    //    cookies — exactly what we need for a UI sign-out.
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch (err) {
+      console.error('[AuthProvider] signOut failed:', err)
+    }
+
+    // 3) Force the App Router to re-fetch every server component. Without
+    //    this, server-rendered UI (header, /my, /pricing) keeps showing the
+    //    stale signed-in state because Next.js does not know cookies changed.
+    router.refresh()
   }
 
   const updateNickname = async (newNickname: string) => {

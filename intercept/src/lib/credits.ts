@@ -26,6 +26,43 @@ export async function deductCredit(
   return { success: true, balance: data as number }
 }
 
+/**
+ * Ensures a profiles row exists for the given user. Used as a safety net
+ * before crediting so the flow never fails with "Profile not found" if the
+ * DB trigger and AuthProvider both somehow missed the user.
+ *
+ * Idempotent — UPSERT with ignoreDuplicates so repeated calls are no-ops.
+ */
+async function ensureProfile(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string
+): Promise<void> {
+  const { error } = await supabase.from('profiles').upsert(
+    {
+      id: userId,
+      tier: 'free',
+      credits: 0,
+      daily_limit: 2,
+      monthly_limit: 60,
+    },
+    { onConflict: 'id', ignoreDuplicates: true }
+  )
+
+  if (error) {
+    console.error(
+      JSON.stringify({
+        type: 'ensure_profile_failed',
+        userId,
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      })
+    )
+    // Do not throw — let the caller's RPC attempt run. If the profile really
+    // is missing the RPC will return a clear error; if it exists, the upsert
+    // failure was a benign race.
+  }
+}
+
 export async function addCredits(
   userId: string,
   amount: number,
@@ -33,6 +70,13 @@ export async function addCredits(
   paymentId: string
 ): Promise<{ success: boolean; balance: number }> {
   const supabase = await createClient()
+
+  // Defense-in-depth: ensure the profile row exists before calling the RPC.
+  // The DB-side add_credits (003_profile_self_heal.sql) also self-heals, but
+  // we keep this here so production environments running the older 001 schema
+  // do not fail when a user's profile row was never written.
+  await ensureProfile(supabase, userId)
+
   const { data, error } = await supabase.rpc('add_credits', {
     p_user_id: userId,
     p_amount: amount,
