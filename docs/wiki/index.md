@@ -6,6 +6,8 @@
 - [Graphify Knowledge Graph](./architecture/graphify-knowledge-graph.md): How Graphify is installed, what environments it is connected to, and how the generated graph fits the Holonomic Brain.
 - [Local-First Development Workflow](./architecture/local-first-development.md): Rule that all development happens on localhost first and deployment is the final step, to protect the Cloudflare Workers quota.
 - [Payment And Operations Model](./architecture/payment-and-operations-model.md): Pricing snapshot, payment stack, verified provider routes, secret resolution pattern, and recurring operational dependencies.
+- [Teatime Publishing Pipeline](./architecture/teatime-publishing-pipeline.md): 정기발행·인터셉트 발행 두 모드, 공통 5단계 파이프라인, 카테고리 룰, 캐릭터 채널 분담, 사용자 권한 정책.
+- [Cloudflare Workers Deploy Checklist](./architecture/cloudflare-workers-deploy-checklist.md): deploy 전 5단계 필수 체크리스트, dev artifacts 누설 방지, curl 기반 production 검증 방법.
 
 ## Incidents
 

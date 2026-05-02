@@ -1,6 +1,6 @@
 # Holonomic Brain Operating Model
 
-Updated: 2026-04-14
+Updated: 2026-05-01
 Status: evolving
 
 ## Purpose
@@ -105,6 +105,20 @@ In this repository:
 - `LLM Wiki` explains the maintenance mechanism
 - `Holonomic Brain` explains what the shared brain must remember about itself
 - `Graphify` provides the generated structural graph layer that helps multiple agents navigate the same codebase cheaply
+
+## Capability Updates (2026-05-01)
+
+### Supabase MCP 등록 완료
+
+- `@supabase/mcp-server-supabase` 가 Claude Code 환경에 등록됨
+- 코부장이 `mcp__supabase__*` 도구로 직접 SQL 실행, 마이그레이션, RLS 정책 조작 가능
+- Personal Access Token 위치: `intercept/.env.local` → `SUPABASE_ACCESS_TOKEN`
+
+### Cloudflare Workers Deploy 책임
+
+- deploy 최종 실행 책임: 코부장 (단, Local-First 검증 완료 후)
+- deploy 전 5단계 체크리스트 필수 — `docs/wiki/architecture/cloudflare-workers-deploy-checklist.md` 참조
+- production 검증 최종 권위: `curl` SSR HTML 직접 검사 (Playwright 캐시 오염 주의)
 
 ## Related Pages
 

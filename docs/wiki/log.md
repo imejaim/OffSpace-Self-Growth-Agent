@@ -1,5 +1,14 @@
 # Wiki Log
 
+## [2026-05-01] ulw | 티타임 인터셉트 발행 v1, 정기발행 framework, Supabase 영구 자동화
+
+- 티타임 발행 두 모드 확정: 정기발행(GitHub Actions cron KST 06:30) + 인터셉트 발행(수동 `npm run teatime:intercept -- YYYY-MM-DD`). 공통 파이프라인 5단계(skeleton → fetch-images → validate-links → skeleton --validate → md-to-archive --register) 구현.
+- Supabase 영구 자동화 셋업 완료: Personal Access Token을 `intercept/.env.local`에 영구 보관, `@supabase/mcp-server-supabase` MCP 등록 — 다음 세션부터 코부장이 `mcp__supabase__*` 도구로 직접 SQL 실행 가능.
+- Cloudflare Workers deploy 전 5단계 정리 체크리스트 확립: PM2 stop / dev server kill / leftover process kill / `.next .open-next` 삭제 / `.env.local` URL 임시 변경 + `NODE_ENV=production` 명시. 빠뜨리면 dev artifacts(HMR/Fast Refresh)가 production에 누설됨.
+- Playwright production 검증 캐시 함정 발견: 세션 캐시 오염으로 정상 deploy를 오판. 최종 권위는 `curl` SSR HTML 직접 검사(`webpack-hmr` / `react-refresh` / `next-devtools` grep).
+- React 19 hydration 패턴 확립: `createPortal` 사용 컴포넌트는 `dynamic(() => import(...).then(m => m.default), { ssr: false })` 필수.
+- 4개 logical commit + 4회 deploy 완료. 모든 지식 wiki + memory에 영구 보존.
+
 ## [2026-04-25] incident | paypal profile-not-found + sign-out no-op
 
 - PayPal Sandbox capture failed with `addCredits failed: Profile not found` because profile creation was only on the client; user existed in `auth.users` but not in `public.profiles`.
