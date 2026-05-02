@@ -1,0 +1,220 @@
+name: Teatime Daily Publish
+
+# 정기발행 v1 — KST 매일 06:30 시작 → 07:00 노출
+# - schedule: UTC 21:30 (전날) = KST 06:30
+# - 무인 머지: 검증 통과만 자동 commit + push + deploy
+# - 검증 실패: abort + 텔레그램 알림
+# - 수동 트리거(workflow_dispatch) 제공 (프로덕션 활성 전 dry-run 권장)
+#
+# 흐름:
+#   skeleton → collect-news → auto-generate → fetch-images → validate-links →
+#   skeleton --validate (gate) → md-to-archive --register → git push → wrangler deploy → notify
+
+on:
+  schedule:
+    - cron: '30 21 * * *'  # KST 06:30 (= 전날 UTC 21:30)
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '발행 대상 KST 날짜 (YYYY-MM-DD, 비우면 오늘 KST)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'true로 두면 git commit/push/deploy 생략 (검증까지만)'
+        required: false
+        default: 'false'
+
+concurrency:
+  group: teatime-daily
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # commit + push to main
+
+    env:
+      # 비밀값 — Repository Settings → Secrets and variables → Actions 에 등록
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      # Phase 2 옵션 — 등록 없어도 동작
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      # Build env (Cloudflare Pages/Workers 빌드 시 인라인되는 NEXT_PUBLIC_*)
+      # — 대부분 wrangler.toml [vars]에서 주입되므로 secrets 등록 불필요
+      DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install Python deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 feedparser
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: intercept/package-lock.json
+
+      - name: Resolve KST date
+        id: date
+        run: |
+          set -euo pipefail
+          if [ -n "${{ github.event.inputs.date }}" ]; then
+            DATE="${{ github.event.inputs.date }}"
+          else
+            DATE=$(TZ=Asia/Seoul date +%Y-%m-%d)
+          fi
+          echo "DATE=$DATE" >> "$GITHUB_OUTPUT"
+          echo "MD_FILE=output/teatime/${DATE}_AI동향_티타임.md" >> "$GITHUB_OUTPUT"
+          echo "RAW_FILE=output/raw/teatime-raw-${DATE}.json" >> "$GITHUB_OUTPUT"
+          echo "[INFO] 발행 대상 KST 날짜: $DATE"
+
+      - name: Generate skeleton
+        run: |
+          set -euo pipefail
+          mkdir -p output/teatime output/raw
+          python scripts/teatime-skeleton.py "${{ steps.date.outputs.DATE }}" \
+            > "${{ steps.date.outputs.MD_FILE }}"
+          echo "[OK] skeleton: ${{ steps.date.outputs.MD_FILE }}"
+
+      - name: Collect raw news (RSS, KST 24h filter)
+        run: |
+          python scripts/teatime-collect-news.py \
+            --date "${{ steps.date.outputs.DATE }}" \
+            --output "${{ steps.date.outputs.RAW_FILE }}"
+
+      - name: Auto-generate teatime MD (Gemini 2.5-flash)
+        run: |
+          python scripts/teatime-auto-generate.py \
+            "${{ steps.date.outputs.RAW_FILE }}" \
+            --output "${{ steps.date.outputs.MD_FILE }}"
+
+      - name: Fetch images (og:image localization)
+        run: |
+          python scripts/teatime-fetch-images.py "${{ steps.date.outputs.MD_FILE }}"
+
+      - name: Validate external links (HEAD probe)
+        run: |
+          python scripts/teatime-validate-links.py "${{ steps.date.outputs.MD_FILE }}"
+
+      - name: Validation gate (errors must be 0)
+        run: |
+          python scripts/teatime-skeleton.py --validate "${{ steps.date.outputs.MD_FILE }}"
+
+      - name: Convert MD → TS archive (--register)
+        run: |
+          python scripts/teatime-md-to-archive.py \
+            "${{ steps.date.outputs.MD_FILE }}" --register
+
+      - name: Configure git bot user
+        if: env.DRY_RUN != 'true'
+        run: |
+          git config user.name "offspace-teatime-bot"
+          git config user.email "bot@interceptnews.app"
+
+      - name: Commit + push
+        if: env.DRY_RUN != 'true'
+        env:
+          DATE: ${{ steps.date.outputs.DATE }}
+        run: |
+          set -euo pipefail
+          git add output/teatime/ output/raw/ \
+            intercept/src/lib/teatime-archive/ \
+            intercept/src/lib/teatime-data.ts \
+            intercept/public/teatime-images/
+          if git diff --cached --quiet; then
+            echo "[INFO] no changes to commit"
+            exit 0
+          fi
+          MSG_FILE="$(mktemp)"
+          {
+            printf 'feat(teatime): %s 자동 발행\n\n' "$DATE"
+            printf -- '- skeleton + collect-news + Gemini 2.5-flash 합성\n'
+            printf -- '- 이미지 로컬화 / 링크 검증 / 룰북 검증 통과\n'
+            printf -- '- MD→TS archive 등록\n\n'
+            printf 'Co-authored-by: offspace-teatime-bot <bot@interceptnews.app>\n'
+          } > "$MSG_FILE"
+          git commit -F "$MSG_FILE"
+          rm -f "$MSG_FILE"
+          git push origin HEAD:${GITHUB_REF#refs/heads/}
+
+      - name: Install intercept deps
+        if: env.DRY_RUN != 'true'
+        working-directory: intercept
+        run: npm ci
+
+      - name: Deploy to Cloudflare (wrangler)
+        if: env.DRY_RUN != 'true'
+        working-directory: intercept
+        env:
+          NODE_ENV: production
+        run: npm run deploy
+
+      - name: Telegram success notification
+        if: success() && env.DRY_RUN != 'true'
+        env:
+          DATE: ${{ steps.date.outputs.DATE }}
+          WF_NAME: ${{ github.workflow }}
+          WF_RUN: ${{ github.run_number }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          set +e
+          if [ -z "${TELEGRAM_BOT_TOKEN}" ] || [ -z "${TELEGRAM_CHAT_ID}" ]; then
+            echo "[INFO] telegram secrets 미등록 — 알림 건너뜀"
+            exit 0
+          fi
+          MSG=$(printf '[Teatime] OK %s 자동 발행 완료\n- Workflow: %s #%s\n- Commit: %s\n- URL: https://interceptnews.app/teatime' \
+            "$DATE" "$WF_NAME" "$WF_RUN" "$COMMIT_SHA")
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MSG}" || true
+
+      - name: Telegram dry-run notification
+        if: success() && env.DRY_RUN == 'true'
+        env:
+          DATE: ${{ steps.date.outputs.DATE }}
+        run: |
+          if [ -z "${TELEGRAM_BOT_TOKEN}" ] || [ -z "${TELEGRAM_CHAT_ID}" ]; then
+            exit 0
+          fi
+          MSG=$(printf '[Teatime] dry-run OK %s (commit/deploy skipped)' "$DATE")
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MSG}" || true
+
+      - name: Telegram failure notification
+        if: failure()
+        env:
+          DATE: ${{ steps.date.outputs.DATE }}
+          WF_NAME: ${{ github.workflow }}
+          WF_RUN: ${{ github.run_number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "${TELEGRAM_BOT_TOKEN}" ] || [ -z "${TELEGRAM_CHAT_ID}" ]; then
+            echo "[WARN] telegram secrets 미등록 — 실패 알림 못 보냄"
+            exit 0
+          fi
+          MSG=$(printf '[Teatime] FAIL %s 발행 실패\n- Workflow: %s #%s\n- Run: %s\n- abort 사유: 직전 step 로그 확인' \
+            "$DATE" "$WF_NAME" "$WF_RUN" "$RUN_URL")
+          curl -sS -X POST \
+            "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            --data-urlencode "text=${MSG}" || true
