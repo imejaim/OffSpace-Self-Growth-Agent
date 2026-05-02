@@ -30,3 +30,17 @@ docs/사업자등록증_오프스페이스.png
 docs/*통장사본*
 docs/*신분증*
 
+# OMX 도구 상태 (OMC 변종)
+.omx/
+
+# QA/검증 임시 산출물 (루트)
+qa-*.png
+smoke-test-*.png
+production-*.png
+*-hydration-check.png
+intercept-production-*.png
+
+# 검증 출력
+output/chrome-verify/
+output/verify-*
+
