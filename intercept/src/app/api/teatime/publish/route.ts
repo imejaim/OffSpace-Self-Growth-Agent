@@ -99,9 +99,13 @@ export async function POST(request: NextRequest) {
 
   const interceptData: Record<string, unknown> = {
     id: interceptId,
-    user_message: `[Topic: ${title.slice(0, 200)}]`,
+    user_message: title.slice(0, 500),
     ai_responses: aiResponses,
-    conversation_context: `Teatime: ${teatimeId ?? 'unknown'}, Topic: ${topicId ?? 'unknown'}`,
+    teatime_id: teatimeId || 'unknown',
+    topic_id: topicId || 'unknown',
+    message_id: messages[0]?.id || `${teatimeId || 'teatime'}-${topicId || 'topic'}`,
+    character_id: messages[0]?.characterId || 'teatime',
+    is_public: resolvedVisibility === 'public',
     visibility: resolvedVisibility,
     nickname: resolvedNickname,
   }

@@ -25,16 +25,12 @@ export async function GET(request: NextRequest) {
       .from('intercepts')
       .select(`
         id,
+        nickname,
         user_message,
         ai_responses,
         created_at,
         visibility,
-        user_id,
-        profiles!inner (
-          id,
-          nickname,
-          avatar_url
-        )
+        user_id
       `) // MODIFIED: Added user_id to select
       .eq('visibility', 'public')
       .order('created_at', { ascending: false })
