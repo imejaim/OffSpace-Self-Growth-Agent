@@ -1,5 +1,12 @@
 # Wiki Log
 
+## [2026-04-25] incident | paypal profile-not-found + sign-out no-op
+
+- PayPal Sandbox capture failed with `addCredits failed: Profile not found` because profile creation was only on the client; user existed in `auth.users` but not in `public.profiles`.
+- Sign-out cleared local React state but left SSR cache stale, so server-rendered UI kept showing the previous user.
+- Fix: added `auth.users` insert trigger and self-healing `add_credits` in `003_profile_self_heal.sql`; `auth/callback` and `addCredits` now ensure the profile row server-side; `signOut` now calls `router.refresh()` to invalidate the App Router cache.
+- Recorded in `docs/wiki/incidents/2026-04-25-paypal-profile-not-found-and-signout.md`.
+
 ## [2026-04-14] wiki | bootstrap
 
 - Created `docs/raw/` as the immutable source layer.

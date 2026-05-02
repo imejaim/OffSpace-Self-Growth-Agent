@@ -11,6 +11,8 @@
 
 - [2026-04-14 Login Hydration Regression](./incidents/2026-04-14-login-hydration-regression.md): Production login pill stayed in loading state or became non-interactive because hydration integrity and view initialization were broken.
 - [2026-04-14 Payment Provider Regression](./incidents/2026-04-14-payment-provider-regression.md): Credits checkout failed because TossPayments easy-pay requests omitted `easyPayProvider`, and PayPal subscription setup needed fail-closed plan validation.
+- [2026-04-25 PayPal Profile-Not-Found + Sign-out No-op](./incidents/2026-04-25-paypal-profile-not-found-and-signout.md): PayPal capture-order failed with `Profile not found` because profile creation was client-only; sign-out left server-rendered UI signed-in. Fixed via auth.users trigger, self-healing `add_credits`, server-side ensure on auth callback, and `router.refresh()` on sign-out.
+- [2026-05-01 Teatime Publish, Feed, and Floating Characters](./incidents/2026-05-01-teatime-publish-feed-floating-characters.md): Publish did not persist to the public feed and floating characters drifted because of stale dev server state, missing publish API calls/schema fields, profile inner joins, placeholder feed UI, and fixed positioning inside a transformed carousel card.
 
 ## Strategy
 
