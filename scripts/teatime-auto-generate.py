@@ -261,8 +261,45 @@ def build_user_prompt(raw_data: dict, vol: int) -> str:
     return "\n".join(lines)
 
 
+def _repair_truncated_json(text: str) -> str:
+    """잘린 JSON 을 닫아서 재파싱 가능하게 repair 시도."""
+    # 열린 bracket/brace 카운트로 닫기
+    stack = []
+    in_string = False
+    escape_next = False
+    for ch in text:
+        if escape_next:
+            escape_next = False
+            continue
+        if ch == "\\" and in_string:
+            escape_next = True
+            continue
+        if ch == '"':
+            in_string = not in_string
+            continue
+        if in_string:
+            continue
+        if ch in ("{", "["):
+            stack.append("}" if ch == "{" else "]")
+        elif ch in ("}", "]"):
+            if stack and stack[-1] == ch:
+                stack.pop()
+    # 미닫힌 문자열이 있으면 따옴표 닫기
+    if in_string:
+        text += '"'
+    # 스택 역순으로 닫기
+    text += "".join(reversed(stack))
+    return text
+
+
 def call_gemini(system_prompt: str, user_prompt: str, api_key: str) -> dict:
-    """Gemini 2.5-flash REST 호출 → JSON dict 반환."""
+    """Gemini 2.5-flash REST 호출 → JSON dict 반환.
+
+    - maxOutputTokens=8192 명시 (gemini-2.5-flash 최대)
+    - finishReason=MAX_TOKENS 감지 시 경고 출력
+    - JSON 잘림 시 repair 시도 후 재파싱
+    - 파싱 실패 시 마지막 800자 stderr 노출
+    """
     payload = {
         "systemInstruction": {
             "role": "system",
@@ -274,7 +311,7 @@ def call_gemini(system_prompt: str, user_prompt: str, api_key: str) -> dict:
         "generationConfig": {
             "temperature": 0.7,
             "topP": 0.95,
-            "maxOutputTokens": 8192,
+            "maxOutputTokens": 32000,  # gemini-2.5-flash 실제 한도 65536 — 5카테고리 전체 커버
             "responseMimeType": "application/json",
             "responseSchema": RESPONSE_SCHEMA,
         },
@@ -283,11 +320,23 @@ def call_gemini(system_prompt: str, user_prompt: str, api_key: str) -> dict:
     last_err = None
     for attempt in range(3):
         try:
-            resp = requests.post(url, json=payload, timeout=120)
+            resp = requests.post(url, json=payload, timeout=180)
             if resp.status_code == 200:
                 data = resp.json()
                 # candidates[0].content.parts[0].text
                 cand = (data.get("candidates") or [{}])[0]
+
+                # C. finishReason 확인
+                finish_reason = cand.get("finishReason", "")
+                if finish_reason == "MAX_TOKENS":
+                    print(
+                        "[WARN] Gemini finishReason=MAX_TOKENS — 응답이 토큰 한도로 잘렸습니다. "
+                        "JSON repair 를 시도합니다.",
+                        file=sys.stderr,
+                    )
+                elif finish_reason and finish_reason not in ("STOP", ""):
+                    print(f"[WARN] Gemini finishReason={finish_reason}", file=sys.stderr)
+
                 parts = ((cand.get("content") or {}).get("parts") or [])
                 text = ""
                 for p in parts:
@@ -295,7 +344,32 @@ def call_gemini(system_prompt: str, user_prompt: str, api_key: str) -> dict:
                         text += p["text"]
                 if not text:
                     raise RuntimeError(f"빈 응답: {data}")
-                return json.loads(text)
+
+                # B. JSON 파싱 robust화
+                try:
+                    return json.loads(text)
+                except json.JSONDecodeError as e:
+                    # 마지막 800자 stderr 노출 (디버그용)
+                    tail = text[-800:] if len(text) > 800 else text
+                    print(
+                        f"[WARN] JSON 파싱 실패 ({e}) — repair 시도 중...\n"
+                        f"[DEBUG] 응답 마지막 800자:\n{tail}",
+                        file=sys.stderr,
+                    )
+                    # JSON repair 시도
+                    repaired = _repair_truncated_json(text)
+                    try:
+                        result = json.loads(repaired)
+                        print("[INFO] JSON repair 성공.", file=sys.stderr)
+                        return result
+                    except json.JSONDecodeError as e2:
+                        tail2 = text[-200:] if len(text) > 200 else text
+                        raise RuntimeError(
+                            f"Gemini 응답이 불완전 (truncation 의심) — "
+                            f"원본 오류: {e}, repair 오류: {e2}\n"
+                            f"마지막 200자: {tail2!r}"
+                        ) from e2
+
             elif resp.status_code in (429, 500, 502, 503, 504):
                 last_err = f"HTTP {resp.status_code}: {resp.text[:300]}"
                 wait = 2 ** attempt

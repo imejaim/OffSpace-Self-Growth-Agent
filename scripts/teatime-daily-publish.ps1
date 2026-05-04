@@ -68,8 +68,8 @@ function Get-KstDate {
 function Read-DotEnv {
     param([string]$Path)
     # 단순 줄 단위 파서. 라이브러리 의존 없음.
+    # KEY=VALUE 형식만 인식 (메모 형식 무시: - KEY = VALUE 등)
     if (-not (Test-Path $Path)) {
-        Write-LogLine "[WARN] .env.local 미발견: $Path"
         return @{}
     }
     $env_map = @{}
@@ -78,9 +78,12 @@ function Read-DotEnv {
         if ([string]::IsNullOrWhiteSpace($line)) { return }
         $trim = $line.Trim()
         if ($trim.StartsWith("#")) { return }
+        if ($trim.StartsWith("-")) { return }  # 메모 형식 무시
         $eq = $trim.IndexOf("=")
         if ($eq -lt 1) { return }
         $key = $trim.Substring(0, $eq).Trim()
+        # 키가 표준 형식 [A-Z_][A-Z0-9_]* 인지 확인
+        if (-not ($key -match '^[A-Z_][A-Z0-9_]*$')) { return }
         $val = $trim.Substring($eq + 1).Trim()
         # 양쪽 따옴표 제거
         if ($val.Length -ge 2) {
@@ -89,6 +92,8 @@ function Read-DotEnv {
                 $val = $val.Substring(1, $val.Length - 2)
             }
         }
+        # 빈 값은 hashtable에 추가하지 않음 (기존 값 덮어쓰기 사고 방지)
+        if ([string]::IsNullOrEmpty($val)) { return }
         $env_map[$key] = $val
     }
     return $env_map
@@ -97,7 +102,9 @@ function Read-DotEnv {
 function Set-EnvFromMap {
     param([hashtable]$Map)
     foreach ($k in $Map.Keys) {
-        # 이미 호스트 환경에 있어도 .env.local 값을 우선 적용
+        # null 이거나 빈 문자열이면 skip (기존 환경변수 보호)
+        if ([string]::IsNullOrEmpty($Map[$k])) { continue }
+        # 이미 호스트 환경에 있어도 .env 값을 우선 적용
         Set-Item -Path "Env:$k" -Value $Map[$k]
     }
 }
@@ -250,19 +257,38 @@ Write-LogLine " ProjectRoot: $ProjectRoot"
 Write-LogLine " Log file:    $Global:LogPath"
 Write-LogLine "================================================================"
 
-# ----- .env.local 로드 (intercept/.env.local 우선) ---------------------------
-$envPath = Join-Path $ProjectRoot "intercept\.env.local"
-if (-not (Test-Path $envPath)) {
-    # 폴백: 루트의 .env.local 도 한 번 더 시도
-    $envPath = Join-Path $ProjectRoot ".env.local"
+# ----- .env 로드 (intercept/.env.local 먼저, 그 다음 root .env로 덮어쓰기) ------
+$envMap = @{}
+
+# 1단계: intercept/.env.local 로드 (빌드/Supabase/Gemini 등)
+$envPath1 = Join-Path $ProjectRoot "intercept\.env.local"
+if (Test-Path $envPath1) {
+    $map1 = Read-DotEnv -Path $envPath1
+    foreach ($k in $map1.Keys) { $envMap[$k] = $map1[$k] }
+    Write-LogLine "[INFO] intercept/.env.local 로드: $($map1.Count) 키"
+} else {
+    Write-LogLine "[WARN] intercept/.env.local 미발견"
 }
-$envMap = Read-DotEnv -Path $envPath
+
+# 2단계: 루트 .env 로드 (텔레그램 토큰 등, 같은 키면 덮어쓰기)
+$envPath2 = Join-Path $ProjectRoot ".env"
+if (Test-Path $envPath2) {
+    $map2 = Read-DotEnv -Path $envPath2
+    foreach ($k in $map2.Keys) { $envMap[$k] = $map2[$k] }
+    Write-LogLine "[INFO] root .env 로드: $($map2.Count) 키 (우선 적용)"
+} else {
+    Write-LogLine "[WARN] root .env 미발견"
+}
+
+# 환경변수에 적용
 Set-EnvFromMap -Map $envMap
-Write-LogLine "[INFO] .env.local 로드: $envPath ($($envMap.Count) 키)"
+Write-LogLine "[INFO] 최종 환경변수 적용: $($envMap.Count) 키"
 
 # 필수 변수 검증
+Write-LogLine "[DEBUG] env keys with GEMINI: $((Get-ChildItem Env: | Where-Object { $_.Name -like 'GEMINI*' } | Select-Object -ExpandProperty Name) -join ', ')"
+Write-LogLine "[DEBUG] GEMINI_API_KEY length: $($env:GEMINI_API_KEY.Length)"
 if (-not $env:GEMINI_API_KEY) {
-    $msg = "GEMINI_API_KEY 누락 — .env.local 확인 필요 ($envPath)"
+    $msg = "GEMINI_API_KEY 누락 — .env.local 확인 필요 ($envPath1)"
     Write-LogLine "[FATAL] $msg"
     Send-TelegramAlert -Mode failure -Text (Build-FailureMessage -DateStr $DateStr -ErrText $msg -TotalSec 0)
     exit 1
@@ -282,7 +308,7 @@ New-Item -ItemType Directory -Force -Path (Split-Path $MdFile)  | Out-Null
 New-Item -ItemType Directory -Force -Path (Split-Path $RawFile) | Out-Null
 
 # ----- env 백업/복구 변수 (deploy 전후) ---------------------------------------
-$envBackupPath = "$envPath.bak.$([DateTime]::Now.ToString('yyyyMMddHHmmss'))"
+$envBackupPath = "$envPath1.bak.$([DateTime]::Now.ToString('yyyyMMddHHmmss'))"
 $envBackedUp   = $false
 
 # =============================================================================
@@ -407,18 +433,18 @@ try {
 
             # 8-4. .env.local 임시 production 값으로 변경 (백업 후)
             #      NEXT_PUBLIC_BASE_URL / NEXT_PUBLIC_SITE_URL → https://interceptnews.app
-            if (Test-Path $envPath) {
-                Copy-Item -LiteralPath $envPath -Destination $envBackupPath -Force
+            if (Test-Path $envPath1) {
+                Copy-Item -LiteralPath $envPath1 -Destination $envBackupPath -Force
                 $envBackedUp = $true
-                Write-LogLine "[BACKUP] $envPath → $envBackupPath"
-                $content = Get-Content -LiteralPath $envPath -Raw -Encoding UTF8
+                Write-LogLine "[BACKUP] $envPath1 → $envBackupPath"
+                $content = Get-Content -LiteralPath $envPath1 -Raw -Encoding UTF8
                 $content = [regex]::Replace($content,
                     'NEXT_PUBLIC_BASE_URL\s*=\s*"[^"]*"',
                     'NEXT_PUBLIC_BASE_URL="https://interceptnews.app"')
                 $content = [regex]::Replace($content,
                     'NEXT_PUBLIC_SITE_URL\s*=\s*"[^"]*"',
                     'NEXT_PUBLIC_SITE_URL="https://interceptnews.app"')
-                Set-Content -LiteralPath $envPath -Value $content -Encoding UTF8 -NoNewline
+                Set-Content -LiteralPath $envPath1 -Value $content -Encoding UTF8 -NoNewline
                 Write-LogLine "[ENV] BASE_URL/SITE_URL → production 값 임시 적용"
             }
         }
@@ -479,7 +505,7 @@ feat(teatime): $DateStr 자동 발행 (local scheduler)
     # 11. .env.local 복구 ------------------------------------------------------
     if ($envBackedUp -and (Test-Path $envBackupPath)) {
         Invoke-Step -Name "env-restore" -Action {
-            Copy-Item -LiteralPath $envBackupPath -Destination $envPath -Force
+            Copy-Item -LiteralPath $envBackupPath -Destination $envPath1 -Force
             Remove-Item -LiteralPath $envBackupPath -Force -ErrorAction SilentlyContinue
             Write-LogLine "[OK] .env.local 복구 완료"
         }
@@ -504,7 +530,7 @@ feat(teatime): $DateStr 자동 발행 (local scheduler)
     # .env.local 복구 시도 (deploy 전후 백업이 살아 있다면)
     if ($envBackedUp -and (Test-Path $envBackupPath)) {
         try {
-            Copy-Item -LiteralPath $envBackupPath -Destination $envPath -Force
+            Copy-Item -LiteralPath $envBackupPath -Destination $envPath1 -Force
             Remove-Item -LiteralPath $envBackupPath -Force -ErrorAction SilentlyContinue
             Write-LogLine "[OK] 실패 직후 .env.local 복구 완료"
         } catch {
