@@ -44,3 +44,10 @@ intercept-production-*.png
 output/chrome-verify/
 output/verify-*
 
+# 정기발행 로컬 로그 (TeatimeDailyPublish task)
+output/teatime/logs/
+
+# .env.local 임시 백업 (deploy 단계에서 생성/복구)
+intercept/.env.local.bak.*
+.env.local.bak.*
+
