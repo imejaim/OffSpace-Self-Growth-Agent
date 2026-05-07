@@ -986,6 +986,7 @@ export const TEATIME_VOL12: RawTeaTime = {
  */
 import { getTodaysDefaultTopics } from './default-topics';
 import { TEATIME_2026_05_01 } from './teatime-archive/2026-05-01';
+import { TEATIME_2026_05_06 } from './teatime-archive/2026-05-06';
 
 function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
   const iso = now.toISOString().slice(0, 10); // YYYY-MM-DD
@@ -1007,4 +1008,5 @@ function buildDefaultTeatime(now: Date = new Date()): RawTeaTime {
 export const DEFAULT_TEATIME: RawTeaTime = buildDefaultTeatime();
 
 export const ALL_TEATIMES: RawTeaTime[] = [
+  TEATIME_2026_05_06,
   TEATIME_2026_05_01,TEATIME_VOL12, DEFAULT_TEATIME];

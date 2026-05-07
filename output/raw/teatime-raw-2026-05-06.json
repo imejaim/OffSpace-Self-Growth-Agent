@@ -1,0 +1,387 @@
+{
+  "date": "2026-05-06",
+  "weekday_ko": "수",
+  "collected_at": "2026-05-06T12:26:18.039062+00:00",
+  "window_utc": {
+    "start": "2026-05-04T15:00:00+00:00",
+    "end": "2026-05-05T21:30:00+00:00"
+  },
+  "categories": {
+    "AI 핫뉴스": [
+      {
+        "title": "New ways to buy ChatGPT ads",
+        "url": "https://openai.com/index/new-ways-to-buy-chatgpt-ads",
+        "source": "OpenAI News",
+        "trust": 5,
+        "published": "2026-05-05T00:00:00+00:00",
+        "summary": "OpenAI expands ChatGPT ads with a beta self-serve Ads Manager, CPC bidding, and enhanced measurement tools—built to protect privacy and keep conversations separate from ads.",
+        "author": ""
+      },
+      {
+        "title": "The latest AI news we announced in April 2026",
+        "url": "https://blog.google/innovation-and-ai/technology/ai/google-ai-updates-april-2026/",
+        "source": "Google AI Blog",
+        "trust": 5,
+        "published": "2026-05-04T17:00:00+00:00",
+        "summary": "mp4 featuring an underwater video and a mobile AI video mockup.",
+        "author": "The Keyword Team"
+      },
+      {
+        "title": "Reduce friction and latency for long-running jobs with Webhooks in Gemini API",
+        "url": "https://blog.google/innovation-and-ai/technology/developers-tools/event-driven-webhooks/",
+        "source": "Google AI Blog",
+        "trust": 5,
+        "published": "2026-05-04T15:30:00+00:00",
+        "summary": "Gemini API",
+        "author": "Hussein Hassan Harrirou"
+      },
+      {
+        "title": "Enabling a new model for healthcare with AI co-clinician",
+        "url": "https://deepmind.google/blog/ai-co-clinician/",
+        "source": "DeepMind Blog",
+        "trust": 5,
+        "published": "2026-04-30T12:14:15+00:00",
+        "summary": "Researching the path to AI-augmented care and development of an AI co-clinician.",
+        "author": ""
+      },
+      {
+        "title": "Announcing our partnership with the Republic of Korea",
+        "url": "https://deepmind.google/blog/announcing-our-partnership-with-the-republic-of-korea/",
+        "source": "DeepMind Blog",
+        "trust": 5,
+        "published": "2026-04-27T07:00:06+00:00",
+        "summary": "Google DeepMind and Korea partner to accelerate scientific breakthroughs using frontier AI models",
+        "author": ""
+      },
+      {
+        "title": "Decoupled DiLoCo: A new frontier for resilient, distributed AI training",
+        "url": "https://deepmind.google/blog/decoupled-diloco/",
+        "source": "DeepMind Blog",
+        "trust": 5,
+        "published": "2026-04-22T10:20:03+00:00",
+        "summary": "",
+        "author": ""
+      },
+      {
+        "title": "Partnering with industry leaders to accelerate AI transformation",
+        "url": "https://deepmind.google/blog/partnering-with-industry-leaders-to-accelerate-ai-transformation/",
+        "source": "DeepMind Blog",
+        "trust": 5,
+        "published": "2026-04-21T14:54:15+00:00",
+        "summary": "Google DeepMind partners with global consultancies to bring the power of frontier AI to organizations around the world.",
+        "author": ""
+      },
+      {
+        "title": "Gemini 3.1 Flash TTS: the next generation of expressive AI speech",
+        "url": "https://deepmind.google/blog/gemini-3-1-flash-tts-the-next-generation-of-expressive-ai-speech/",
+        "source": "DeepMind Blog",
+        "trust": 5,
+        "published": "2026-04-15T16:03:19+00:00",
+        "summary": "Our newest audio model introduces granular audio tags that give you precise control to direct AI speech for expressive audio generation.",
+        "author": ""
+      },
+      {
+        "title": "A conversation with Kevin Scott: What’s next in AI",
+        "url": "https://blogs.microsoft.com/ai/a-conversation-with-kevin-scott-whats-next-in-ai/",
+        "source": "Microsoft AI Blog",
+        "trust": 5,
+        "published": "2022-12-06T17:29:09+00:00",
+        "summary": "The post A conversation with Kevin Scott: What’s next in AI appeared first on The AI Blog.",
+        "author": "Allison Linn"
+      },
+      {
+        "title": "From Hot Wheels to handling content: How brands are using Microsoft AI to be more productive and imaginative",
+        "url": "https://blogs.microsoft.com/ai/from-hot-wheels-to-handling-content-how-brands-are-using-microsoft-ai-to-be-more-productive-and-imaginative/",
+        "source": "Microsoft AI Blog",
+        "trust": 5,
+        "published": "2022-10-12T16:00:02+00:00",
+        "summary": "The post From Hot Wheels to handling content: How brands are using Microsoft AI to be more productive and imaginative appeared first on The AI Blog.",
+        "author": "John Roach"
+      }
+    ],
+    "AI 에이전트": [
+      {
+        "title": "OpenAI and PwC collaborate to reimagine the office of the CFO",
+        "url": "https://openai.com/index/openai-pwc-finance-collaboration",
+        "source": "OpenAI News",
+        "trust": 5,
+        "published": "2026-05-04T21:00:00+00:00",
+        "summary": "OpenAI and PwC are partnering to help enterprises use AI agents to automate finance workflows, improve forecasting, strengthen controls, and modernize the CFO function.",
+        "author": ""
+      },
+      {
+        "title": "CopilotKit raises $27M to help devs deploy app-native AI agents",
+        "url": "https://techcrunch.com/2026/05/05/copilotkit-raises-27m-to-help-devs-deploy-app-native-ai-agents/",
+        "source": "TechCrunch AI",
+        "trust": 4,
+        "published": "2026-05-05T14:07:47+00:00",
+        "summary": "The Seattle-based startup's Series A round was led by Glilot Capital, NFX, and SignalFire, TechCrunch has exclusively learned.",
+        "author": "Ram Iyer"
+      },
+      {
+        "title": "Why run local? Count the money",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1t4qwzf/why_run_local_count_the_money/",
+        "source": "Reddit r/LocalLLaMA",
+        "trust": 3,
+        "published": "2026-05-05T20:09:57+00:00",
+        "summary": "I’m not a coder, but I run local models. I gave in to agent hype (I was building my own, but there is so much to do) and installed Hermes. Running with Qwen-397b out of a 2 spark cluster. So…I asked Hermes today to tally the token count, and the result…200 million tokens. In 5 days. At this rate, using an agent for tasks like installing software and debugging things I want to try out, what is the cost I am saving? Artificial Analysis says the price is about 1.25 dollars per million tokens on average from providers. At current pricing per Artificial Analysis, that gives me about 1250 dollars pe",
+        "author": "/u/Badger-Purple"
+      },
+      {
+        "title": "Gemma 4 MTP released",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1t4jq6h/gemma_4_mtp_released/",
+        "source": "Reddit r/LocalLLaMA",
+        "trust": 3,
+        "published": "2026-05-05T16:01:17+00:00",
+        "summary": "Blog post: https://blog.google/innovation-and-ai/technology/developers-tools/multi-token-prediction-gemma-4/ MTP draft models: https://huggingface.co/google/gemma-4-31B-it-assistant https://huggingface.co/google/gemma-4-26B-A4B-it-assistant https://huggingface.co/google/gemma-4-E4B-it-assistant https://huggingface.co/google/gemma-4-E2B-it-assistant This model card is for the Multi-Token Prediction (MTP) drafters for the Gemma 4 models. MTP is implemented by extending the base model with a smaller, faster draft model. When used in a Speculative Decoding pipeline, the draft model predicts severa",
+        "author": "/u/rerri"
+      },
+      {
+        "title": "ProgramBench: Can we really rebuild huge binaries from scratch? (doesn't look like it)",
+        "url": "https://www.reddit.com/r/LocalLLaMA/comments/1t4j4s9/programbench_can_we_really_rebuild_huge_binaries/",
+        "source": "Reddit r/LocalLLaMA",
+        "trust": 3,
+        "published": "2026-05-05T15:40:52+00:00",
+        "summary": "There's been quite a few case studies recently on agents building whole programs from scratch, but most of them test a single or just a few projects with hand-tuned setups. We've spent the last couple of months formalizing this setting and building a benchmark of 200 tasks while doubling down on testing, cheat prevention, and task diversity. Our agent ONLY gets a target executable and some readme/usage files. The agent must choose a language, design abstraction layers, and architect the entire program. No internet access or any other way of cheating. No decompilation. We've also spent some 50k",
+        "author": "/u/klieret"
+      },
+      {
+        "title": "Visual graph classification for blockchain security: Experiences fine-tuning Qwen2-VL on AMD MI300X [D]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4dcej/visual_graph_classification_for_blockchain/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T12:00:05+00:00",
+        "summary": "Hi everyone, I’ve been working on a computer vision approach to a specific security problem in the &quot;Agentic Economy&quot;: identifying malicious transaction patterns that are mathematically obfuscated but topologically distinct. The Problem Traditional rule-based security engines and even standard GNNs often struggle with &quot;splitting attacks&quot;—where a high-value transaction is fragmented into thousands of micro-transactions to bypass statistical thresholds. However, when these flows are projected as a 2D graph topology, they exhibit very specific adversarial signatures (Star patte",
+        "author": "/u/Any_Good_2682"
+      }
+    ],
+    "AI 논문과 모델": [
+      {
+        "title": "GPT-5.5 Instant System Card",
+        "url": "https://openai.com/index/gpt-5-5-instant-system-card",
+        "source": "OpenAI News",
+        "trust": 5,
+        "published": "2026-05-05T10:00:00+00:00",
+        "summary": "",
+        "author": ""
+      },
+      {
+        "title": "Unlocking large scale AI training networks with MRC (Multipath Reliable Connection)",
+        "url": "https://openai.com/index/mrc-supercomputer-networking",
+        "source": "OpenAI News",
+        "trust": 5,
+        "published": "2026-05-05T10:00:00+00:00",
+        "summary": "OpenAI introduces MRC (Multipath Reliable Connection), a new supercomputer networking protocol released via OCP to improve resilience and performance in large-scale AI training clusters.",
+        "author": ""
+      },
+      {
+        "title": "GPT-5.5 Instant: smarter, clearer, and more personalized",
+        "url": "https://openai.com/index/gpt-5-5-instant",
+        "source": "OpenAI News",
+        "trust": 5,
+        "published": "2026-05-05T10:00:00+00:00",
+        "summary": "GPT-5.5 Instant updates ChatGPT’s default model with smarter, more accurate answers, reduced hallucinations, and improved personalization controls.",
+        "author": ""
+      },
+      {
+        "title": "Microsoft open sources its ‘farm of the future’ toolkit",
+        "url": "https://blogs.microsoft.com/ai/microsoft-open-sources-its-farm-of-the-future-toolkit/",
+        "source": "Microsoft AI Blog",
+        "trust": 5,
+        "published": "2022-10-06T14:58:15+00:00",
+        "summary": "The post Microsoft open sources its ‘farm of the future’ toolkit appeared first on The AI Blog.",
+        "author": "nbayraktepe"
+      },
+      {
+        "title": "StateSMix: Online Lossless Compression via Mamba State Space Models and Sparse N-gram Context Mixing",
+        "url": "https://arxiv.org/abs/2605.02904",
+        "source": "arXiv cs.LG",
+        "trust": 4,
+        "published": "2026-05-06T04:00:00+00:00",
+        "summary": "arXiv:2605.02904v1 Announce Type: new Abstract: We present StateSMix, a fully self-contained lossless compressor that couples an online-trained Mamba-style State Space Model (SSM) with sparse n-gram context mixing and arithmetic coding. The model is initialised from scratch and trained token-by-token on the file being compressed, requiring no pre-trained weights, no GPU, and no external dependencies. The SSM (DM=32, NL=2, approximately 120K active parameters per file) provides a continuously-updated probability estimate over BPE tokens, while nine sparse n-gram hash tables (bigram through 32-g",
+        "author": "Roberto Tacconelli"
+      },
+      {
+        "title": "eOptShrinkQ: Near-Lossless KV Cache Compression Through Optimal Spectral Denoising and Quantization",
+        "url": "https://arxiv.org/abs/2605.02905",
+        "source": "arXiv cs.LG",
+        "trust": 4,
+        "published": "2026-05-06T04:00:00+00:00",
+        "summary": "arXiv:2605.02905v1 Announce Type: new Abstract: We show that the key-value (KV) cache in transformer attention heads admits a natural decomposition into a low-rank \\emph{shared context} component and a full-rank \\emph{per-token} residual, well described by the spiked random matrix model. This observation leads to eOptShrinkQ, a two-stage compression pipeline: optimal singular value shrinkage (eOptShrink) automatically extracts the shared structure, and the residual -- which satisfies the \\emph{thin shell property} with delocalized coordinates -- is quantized by TurboQuant~\\citep{zandieh2025tur",
+        "author": "Pei-Chun Su"
+      },
+      {
+        "title": "An End-to-End Framework for Building Large Language Models for Software Operations",
+        "url": "https://arxiv.org/abs/2605.02906",
+        "source": "arXiv cs.LG",
+        "trust": 4,
+        "published": "2026-05-06T04:00:00+00:00",
+        "summary": "arXiv:2605.02906v1 Announce Type: new Abstract: In the field of software operations, Large Language Models (LLMs) have attracted increasing attention. However, existing research has not yet achieved efficient and effective end-to-end intelligent operations due to low-quality data, fragmented knowledge and insufficient learning. To explore the potential of LLMs in software operations, we propose OpsLLM, a domain-specific LLM that supports both knowledge-based question answering (QA) and root cause analysis (RCA). Moreover, we disclose the detailed workflow for building LLMs specifically in the ",
+        "author": "Jingkai He, Pengfei Chen, Chenghui Wu, Shuang Liang, Ye Li, Gou Tan, Xiadao Wen, Chuanfu Zhang"
+      },
+      {
+        "title": "On the Invariants of Softmax Attention",
+        "url": "https://arxiv.org/abs/2605.02907",
+        "source": "arXiv cs.LG",
+        "trust": 4,
+        "published": "2026-05-06T04:00:00+00:00",
+        "summary": "arXiv:2605.02907v1 Announce Type: new Abstract: Softmax attention maps every query--key interaction into a probability distribution, but the underlying structure remains largely unexplored. We define the \\emph{energy field}, the row-centered attention logit, and show that it exhibits invariant properties across models, architectures, and inputs. Two classes of invariants emerge. \\emph{Mechanism-level} invariants follow from the algebraic structure of softmax attention. They include a per-row zero-sum constraint, a rank bound determined by the head dimension, and spectral signatures that follow",
+        "author": "Wonsuk Lee"
+      },
+      {
+        "title": "Delay, Plateau, or Collapse: Evaluating the Impact of Systematic Verification Error on RLVR",
+        "url": "https://arxiv.org/abs/2605.02909",
+        "source": "arXiv cs.LG",
+        "trust": 4,
+        "published": "2026-05-06T04:00:00+00:00",
+        "summary": "arXiv:2605.02909v1 Announce Type: new Abstract: Reinforcement Learning with Verifiable Rewards (RLVR) has become a powerful approach for improving the reasoning capabilities of large language models (LLMs). While RLVR is designed for tasks with verifiable ground-truth answers, real-world verifiers (e.g., static code checkers) can introduce errors into the reward signal. Prior analyses have largely treated such errors as random and independent across samples, concluding that errors merely slow training with limited effect on final performance. However, practical verifiers tend to exhibit system",
+        "author": "Kazuki Egashira, Mark Vero, Jasper Dekoninck, Florian E. Dorner, Robin Staab, Martin Vechev"
+      },
+      {
+        "title": "OpenAI releases GPT-5.5 Instant, a new default model for ChatGPT",
+        "url": "https://techcrunch.com/2026/05/05/openai-releases-gpt-5-5-instant-a-new-default-model-for-chatgpt/",
+        "source": "TechCrunch AI",
+        "trust": 4,
+        "published": "2026-05-05T17:00:00+00:00",
+        "summary": "The company said the model reduces hallucination in sensitive areas such as law, medicine, and finance, while maintaining the low latency of its predecessor.",
+        "author": "Ivan Mehta"
+      }
+    ],
+    "AI 로봇 / 피지컬 AI": [
+      {
+        "title": "Competition - League of Robot Runners 2026: Multi-robot coordination under uncertainty [N]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4sjr7/competition_league_of_robot_runners_2026/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T21:09:19+00:00",
+        "summary": "Hello ML and RL community We are inviting participants to the League of Robot Runners (LoRR) 2026: https://www.leagueofrobotrunners.org Co-located with AAMAS 2026, LoRR is a research competition on large-scale multi-robot coordination. These are important problems in a number of areas including logistics, manufacturing and computer games! In this competition, hundreds or even thousands of robots work together to complete tasks and move efficiently across diverse maps, continuously, in real-time and at scale. We believe ML and RL methods could be especially useful for these kinds of problems: T",
+        "author": "/u/robotrunnersofficial"
+      },
+      {
+        "title": "Radar Engineer to Autonomy/AI [D]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4ombd/radar_engineer_to_autonomyai_d/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T18:49:28+00:00",
+        "summary": "Hi all, I’ve spent the last 3 years working on Radar Perception for a legacy automotive project in Germany. My background is an MSc in Robotics &amp; AI. Currently, I spend my time analyzing point clouds and SNR distributions to debug failures. It’s mathematically complex, but I’m not implementing any models or designing systems. I feel like I'm becoming a &quot;PowerPoint Engineer&quot; who knows a lot about noise but isn't building the future of autonomy. I want to move into Applied ML/Autonomy, but I’m worried my 3 years of &quot;analysis&quot; don't count as &quot;development experience.&q",
+        "author": "/u/Huge-Leek844"
+      },
+      {
+        "title": "Three Inverse Laws of AI",
+        "url": "https://susam.net/inverse-laws-of-robotics.html",
+        "source": "Hacker News (front page)",
+        "trust": 3,
+        "published": "2026-05-05T15:27:18+00:00",
+        "summary": "Article URL: https://susam.net/inverse-laws-of-robotics.html Comments URL: https://news.ycombinator.com/item?id=48023861 Points: 468 # Comments: 319",
+        "author": "blenderob"
+      }
+    ],
+    "보너스": [
+      {
+        "title": "Google is partnering with XPRIZE and Range Media Partners on the $3.5 million Future Vision film competition.",
+        "url": "https://blog.google/innovation-and-ai/technology/ai/future-vision-film-competition-xprize/",
+        "source": "Google AI Blog",
+        "trust": 5,
+        "published": "2026-05-05T16:00:00+00:00",
+        "summary": "Google is partnering with XPRIZE and Range Media Partners on the $3.5 million Future Vision film competition.",
+        "author": ""
+      },
+      {
+        "title": "How data and AI will transform contact centres for financial services",
+        "url": "https://cloudblogs.microsoft.com/industry-blog/en-gb/financial-services/2022/07/25/how-data-and-ai-will-transform-contact-centres-for-financial-services/",
+        "source": "Microsoft AI Blog",
+        "trust": 5,
+        "published": "2022-07-25T14:49:33+00:00",
+        "summary": "The post How data and AI will transform contact centres for financial services appeared first on The AI Blog.",
+        "author": "Ben Ryon"
+      },
+      {
+        "title": "4 days left: Get 50% off a second TechCrunch Disrupt 2026 pass to make more deals faster",
+        "url": "https://techcrunch.com/2026/05/05/4-days-left-get-50-off-a-second-techcrunch-disrupt-2026-pass-to-make-more-deals-faster/",
+        "source": "TechCrunch AI",
+        "trust": 4,
+        "published": "2026-05-05T14:00:00+00:00",
+        "summary": "For the next four days only, you can buy one pass to TechCrunch Disrupt 2026 and get 50% off a second of the same ticket type. That window closes May 8 at 11:59 p.m. PT. After that, prices go up, and you’ll pay more to bring a partner or colleague. Register today to get your plus-one pass at 50% off.",
+        "author": "TechCrunch Events"
+      },
+      {
+        "title": "Write some software, give it away for free",
+        "url": "https://nonogra.ph/write-some-software-give-it-away-for-free-05-05-2026",
+        "source": "Hacker News (front page)",
+        "trust": 3,
+        "published": "2026-05-05T21:26:50+00:00",
+        "summary": "Article URL: https://nonogra.ph/write-some-software-give-it-away-for-free-05-05-2026 Comments URL: https://news.ycombinator.com/item?id=48028842 Points: 290 # Comments: 200",
+        "author": "nohell"
+      },
+      {
+        "title": "Question about PLS-DA hyperparameter tuning [R]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4pe8c/question_about_plsda_hyperparameter_tuning_r/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T19:15:53+00:00",
+        "summary": "Hi all! I am a bioinformatician and I am working on learning some ML tools for some disease/biomarker stuff. I am working with sparse PLS-DA at the moment. Before actually tuning the model, I run on overall global model (without sparsity) to get an idea of what my data looks like and to get to a starting point. Here is what that global model ends up looking like: global model So from this, I'm seeing that I should include 2 latent components in my model tuning and I chose to use the centroids.dist. So I tune the model with two components, it gives me the # of features to keep on each component",
+        "author": "/u/dacherrr"
+      },
+      {
+        "title": "NeurIPS Submission Number [D]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4oykt/neurips_submission_number_d/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T19:00:53+00:00",
+        "summary": "Hey guys, Just saw that NeurIPS this year might be exceeding 40k, what submission number did you get? The max I know of was 29k, that was 24 hours ago &#32; submitted by &#32; /u/StriderKing27 [link] &#32; [comments]",
+        "author": "/u/StriderKing27"
+      },
+      {
+        "title": "Proliferate (YC S25) Is Hiring- 200k for junior engineers",
+        "url": "https://www.ycombinator.com/companies/proliferate/jobs/L3copvK-founding-engineer",
+        "source": "Hacker News (front page)",
+        "trust": 3,
+        "published": "2026-05-05T17:00:16+00:00",
+        "summary": "Article URL: https://www.ycombinator.com/companies/proliferate/jobs/L3copvK-founding-engineer Comments URL: https://news.ycombinator.com/item?id=48025244 Points: 0 # Comments: 0",
+        "author": "pablo24602"
+      },
+      {
+        "title": "Charting the AI Perception Gap: Across 71 scenarios, AI experts (N=119) and the public (N=1100) have differing views on the risks, benefits, and value of AI. More importantly, AI experts discount the influence of risks stronger than the public does when forming their value judgments [R]",
+        "url": "https://www.reddit.com/r/MachineLearning/comments/1t4kvb2/charting_the_ai_perception_gap_across_71/",
+        "source": "Reddit r/MachineLearning",
+        "trust": 3,
+        "published": "2026-05-05T16:40:52+00:00",
+        "summary": "https://preview.redd.it/evw6ah88kczg1.png?width=1024&amp;format=png&amp;auto=webp&amp;s=be8bafe0099c362a187489f95cbfa5398f537107 Abstract: Artificial intelligence (AI) is reshaping society, raising questions about trust, risks, and the asymmetries between public and academic perspectives. We examine how the German public (N = 1,110), comprising individuals who interact with or are affected by AI, and academic AI experts (N = 119, mainly from Germany), who contribute to research, educate practitioners, and inform policymaking, construct mental models of AI’s capabilities and impacts across 71 s",
+        "author": "/u/lipflip"
+      },
+      {
+        "title": "Computer Use is 45x more expensive than structured APIs",
+        "url": "https://reflex.dev/blog/computer-use-is-45x-more-expensive-than-structured-apis/",
+        "source": "Hacker News (front page)",
+        "trust": 3,
+        "published": "2026-05-05T16:34:48+00:00",
+        "summary": "Article URL: https://reflex.dev/blog/computer-use-is-45x-more-expensive-than-structured-apis/ Comments URL: https://news.ycombinator.com/item?id=48024859 Points: 415 # Comments: 240",
+        "author": "palashawas"
+      },
+      {
+        "title": "I'm scared about biological computing",
+        "url": "https://kuber.studio/blog/Reflections/I%27m-Scared-About-Biological-Computing",
+        "source": "Hacker News (front page)",
+        "trust": 3,
+        "published": "2026-05-05T16:03:06+00:00",
+        "summary": "Article URL: https://kuber.studio/blog/Reflections/I%27m-Scared-About-Biological-Computing Comments URL: https://news.ycombinator.com/item?id=48024358 Points: 236 # Comments: 190",
+        "author": "kuberwastaken"
+      }
+    ]
+  },
+  "sources_attempted": [
+    "TechCrunch AI",
+    "Anthropic News",
+    "Google AI Blog",
+    "OpenAI News",
+    "Microsoft AI Blog",
+    "DeepMind Blog",
+    "Hacker News (front page)",
+    "Reddit r/MachineLearning",
+    "Reddit r/LocalLLaMA",
+    "arXiv cs.LG"
+  ],
+  "sources_failed": [
+    "Anthropic News"
+  ]
+}
