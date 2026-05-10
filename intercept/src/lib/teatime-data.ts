@@ -1010,3 +1010,23 @@ export const DEFAULT_TEATIME: RawTeaTime = buildDefaultTeatime();
 export const ALL_TEATIMES: RawTeaTime[] = [
   TEATIME_2026_05_06,
   TEATIME_2026_05_01,TEATIME_VOL12, DEFAULT_TEATIME];
+
+/**
+ * Look up a (teatime, topic) pair by id. Used by /api/intercept to inject the
+ * topic body + references into the AI prompt so character responses are
+ * grounded in the actual published content (not training-data hallucination).
+ *
+ * Returns null if either id does not match — caller should fall back to the
+ * client-provided conversationContext only.
+ */
+export function getTopicById(
+  teatimeId: string | undefined,
+  topicId: string | undefined
+): { teatime: RawTeaTime; topic: RawTopic } | null {
+  if (!teatimeId || !topicId) return null;
+  const teatime = ALL_TEATIMES.find((t) => t.id === teatimeId);
+  if (!teatime) return null;
+  const topic = teatime.topics.find((t) => t.id === topicId);
+  if (!topic) return null;
+  return { teatime, topic };
+}

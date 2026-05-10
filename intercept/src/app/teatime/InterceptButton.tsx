@@ -29,6 +29,8 @@ interface InterceptButtonProps {
   messageId: string
   conversationContext: string
   characterId: string
+  teatimeId?: string
+  topicId?: string
   onClose: () => void
 }
 
@@ -36,6 +38,8 @@ export default function InterceptButton({
   messageId,
   conversationContext,
   characterId,
+  teatimeId,
+  topicId,
   onClose,
 }: InterceptButtonProps) {
   const { t } = useI18n()
@@ -109,6 +113,8 @@ export default function InterceptButton({
           userMessage: msg,
           characterId,
           messageId,
+          teatimeId,
+          topicId,
           nickname: localStorage.getItem('intercept-nickname'),
           sessionId: localStorage.getItem('intercept-session-id'),
         }),

@@ -23,7 +23,7 @@
 | Backend | Next.js App Router (Route Handlers, `nodejs` runtime) |
 | DB/Auth | Supabase (us-east-1) — Google OAuth + Anonymous |
 | Payments | PayPal (global) + PortOne/NaverPay (Korea) |
-| AI Models | Cloudflare Workers AI Gemma 4 (intercepts) / Gemini 2.5-flash (newsletters) |
+| AI Models | Cloudflare Workers AI 체인 (Llama 3.3 70B → Qwen2.5-Coder 32B → Gemma 3 12B) + Gemini 2.5-flash 폴백 (intercepts) / Gemini 2.5-flash (newsletters) |
 | Deploy | Cloudflare Pages |
 | Dev server | `localhost:3000` / PM2 port `4000` |
 

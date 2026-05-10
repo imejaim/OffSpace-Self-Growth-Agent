@@ -38,7 +38,15 @@ function InlineMarkdown({ text }: { text: string }) {
   )
 }
 
-function ConversationMessage({ message }: { message: Message }) {
+function ConversationMessage({
+  message,
+  teatimeId,
+  topicId,
+}: {
+  message: Message
+  teatimeId: string
+  topicId: string
+}) {
   const { t } = useI18n()
   const character = CHARACTERS[message.characterId]
   const [interceptOpen, setInterceptOpen] = useState(false)
@@ -118,6 +126,8 @@ function ConversationMessage({ message }: { message: Message }) {
           messageId={message.id}
           conversationContext={context}
           characterId={message.characterId}
+          teatimeId={teatimeId}
+          topicId={topicId}
           onClose={() => setInterceptOpen(false)}
         />
       )}
@@ -417,7 +427,7 @@ function TopicSection({
       >
         {messagesToRender.map((msg: Message, messageIndex: number) => (
           <div key={msg.id} className={`stagger-${Math.min(5, messageIndex + 1)}`}>
-            <ConversationMessage message={msg} />
+            <ConversationMessage message={msg} teatimeId={teatimeId} topicId={topic.id} />
           </div>
         ))}
       </div>

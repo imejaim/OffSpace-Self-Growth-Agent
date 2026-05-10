@@ -5,15 +5,23 @@ import { rateLimit } from '@/lib/rate-limit'
 import { getSessionInfo, checkInterceptAllowance } from '@/lib/auth-helpers'
 import { generateInterceptResponse } from '@/lib/ai-router'
 import { generateNickname } from '@/lib/nicknames'
+import { getTopicById, pickText } from '@/lib/teatime-data'
 
 export const dynamic = 'force-dynamic'
 
 const SYSTEM_PROMPT = `당신은 INTERCEPT라는 AI 뉴스 토론 플랫폼의 세 캐릭터입니다. 사용자가 AI 캐릭터들의 대화를 인터셉트했을 때, 해당 캐릭터들이 자연스럽게 반응해야 합니다. // MODIFIED: Rebranding '끼어들기' to '인터셉트'
 
-캐릭터 정보:
-1. 코부장 (kobu): 베테랑 개발 팀장. 냉철하고 기술적인 분석을 선호하지만 동료들에게는 따뜻함.
-2. 오과장 (oh): 트렌디한 기획자. 사용자 가치와 비즈니스 임팩트를 중시함.
-3. 젬대리 (jem): 의욕 넘치는 주니어 개발자. 최신 기술 스택에 열광하며 선배들의 조언을 경청함.
+캐릭터 정보 (출처 채널 분담):
+1. 코부장 (kobu): 베테랑 개발 팀장. 냉철하고 기술적인 분석을 선호하지만 동료들에게는 따뜻함. 공식 블로그, arXiv, 기술 문서, 백서 등 1차 자료를 우선 인용한다.
+2. 오과장 (oh): 트렌디한 기획자. 사용자 가치와 비즈니스 임팩트를 중시함. HackerNews, TechCrunch, Crunchbase, 시장 리포트 등 팩트/숫자 출처를 우선 인용한다. 차분하고 정량적인 톤.
+3. 젬대리 (jem): 의욕 넘치는 주니어 개발자. 최신 기술 스택에 열광하며 선배들의 조언을 경청함. Reddit, YouTube, X.com, GitHub 같은 커뮤니티 출처를 우선 인용한다.
+
+[엄격한 사실 가드]
+- 사용자 프롬프트의 [참고 출처] 에 명시된 링크/제품명/연도/숫자/모델명 외 정보는 절대 추측하지 마라.
+- references 에 없는 사실을 물으면 "제공된 출처에서 확인되지 않습니다. 검색이 필요한 질문이에요." 라고 솔직히 답하라.
+- 학습 데이터로 그럴듯한 답을 합성하는 것은 거짓말로 간주된다.
+- 사용자가 링크를 요청하면 [참고 출처] 의 실제 URL 만 제시하라. URL 을 지어내지 마라.
+- references 에서 자기 채널과 일치하는 출처가 있으면 그걸 인용하라. 없으면 자기 채널이 비었음을 솔직히 말하고 다른 캐릭터에게 넘겨라.
 
 응답 규칙:
 - 사용자가 방금 대화를 인터셉트한 것처럼 자연스럽게 반응하세요. // MODIFIED: Rebranding '끼어들기' to '인터셉트'
@@ -32,6 +40,8 @@ interface InterceptRequest {
   characterId?: string
   sessionId?: string
   nickname?: string // ADDED: Nickname from user
+  teatimeId?: string // ADDED: source teatime id for grounding context
+  topicId?: string // ADDED: source topic id for grounding context
 }
 
 interface CharacterResponse {
@@ -46,12 +56,81 @@ const CHARACTER_NAMES: Record<string, string> = {
   jem: '젬대리',
 }
 
+// Cap message lines fed into the prompt — protects against pathological topics
+// with huge message bodies. References are cheap so we always include all of them.
+const MAX_TOPIC_MESSAGES = 12
+
+function buildTopicGroundingBlock(
+  teatimeId: string | undefined,
+  topicId: string | undefined
+): string | null {
+  const found = getTopicById(teatimeId, topicId)
+  if (!found) return null
+
+  const { teatime, topic } = found
+  // Always grounded in Korean — the intercept response is Korean and the
+  // archive ko strings are the canonical source of truth for grounding.
+  const locale = 'ko' as const
+
+  const category = pickText(topic.category, locale)
+  const subtitle = pickText(topic.subtitle, locale)
+
+  const characterName: Record<string, string> = {
+    kobu: '코부장',
+    oh: '오과장',
+    jem: '젬대리',
+  }
+
+  const messages = topic.messages.slice(-MAX_TOPIC_MESSAGES).map((m) => {
+    const name = characterName[m.characterId] ?? m.characterId
+    return `${name}: ${pickText(m.content, locale)}`
+  })
+
+  const references = topic.references.map((r) => {
+    const title = pickText(r.title, locale)
+    const source = pickText(r.source, locale)
+    return `- "${title}" — ${source} (${r.date}) — ${r.url}`
+  })
+
+  const lines: string[] = []
+  lines.push(`[오늘 날짜] ${teatime.date}`)
+  lines.push(`[토픽 카테고리] ${category} — ${subtitle}`)
+  lines.push('')
+  lines.push('[토픽 본문 — 캐릭터 대화 전체]')
+  lines.push(...messages)
+  lines.push('')
+  lines.push('[참고 출처 (이 토픽에서 사용된 실제 references — 이 안에서만 사실 인용 가능)]')
+  if (references.length === 0) {
+    lines.push('(이 토픽에는 참고 출처가 없습니다.)')
+  } else {
+    lines.push(...references)
+  }
+
+  return lines.join('\n')
+}
+
 function buildUserPrompt(
   conversationContext: string,
   userMessage: string,
-  characterId?: string
+  characterId?: string,
+  teatimeId?: string,
+  topicId?: string
 ): string {
-  let prompt = `[현재 대화 맥락]\n${conversationContext}\n\n[사용자의 인터셉트]\n${userMessage}` // MODIFIED: Rebranding '끼어들기' to '인터셉트'
+  const groundingBlock = buildTopicGroundingBlock(teatimeId, topicId)
+
+  let prompt = ''
+  if (groundingBlock) {
+    prompt += `${groundingBlock}\n\n`
+  } else {
+    console.log(JSON.stringify({
+      type: 'intercept-grounding',
+      status: 'topic-not-found',
+      teatimeId: teatimeId ?? null,
+      topicId: topicId ?? null,
+    }))
+  }
+
+  prompt += `[현재 대화 맥락]\n${conversationContext}\n\n[사용자의 인터셉트]\n${userMessage}` // MODIFIED: Rebranding '끼어들기' to '인터셉트'
 
   if (characterId && CHARACTER_NAMES[characterId]) {
     prompt += `\n\n위 메시지는 ${CHARACTER_NAMES[characterId]}의 발언에 대한 반응입니다. ${CHARACTER_NAMES[characterId]}는 반드시 응답에 포함해야 합니다.`
@@ -81,7 +160,18 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const { conversationContext, userMessage, characterId, sessionId, nickname } = body // MODIFIED: Added nickname
+  const { conversationContext, userMessage, characterId, sessionId, nickname, teatimeId, topicId } = body // MODIFIED: Added nickname + teatimeId/topicId for grounding
+
+  // Light shape validation — both ids are optional but must be strings if present.
+  // Bounded to keep prompt size sane and prevent obvious abuse.
+  const safeTeatimeId =
+    typeof teatimeId === 'string' && teatimeId.length > 0 && teatimeId.length <= 64
+      ? teatimeId
+      : undefined
+  const safeTopicId =
+    typeof topicId === 'string' && topicId.length > 0 && topicId.length <= 64
+      ? topicId
+      : undefined
 
   if (!conversationContext || !userMessage) {
     return NextResponse.json(
@@ -154,7 +244,7 @@ export async function POST(request: NextRequest) {
     try {
       rawText = await generateInterceptResponse(
         SYSTEM_PROMPT,
-        buildUserPrompt(conversationContext, userMessage, characterId)
+        buildUserPrompt(conversationContext, userMessage, characterId, safeTeatimeId, safeTopicId)
       )
     } catch (aiErr) {
       console.error('[AI Router Error]', aiErr)
