@@ -51,3 +51,7 @@ output/teatime/logs/
 intercept/.env.local.bak.*
 .env.local.bak.*
 
+# Wrangler deploy 로그 부산물 (intercept/ 하위에서 생성)
+intercept/.deploy-*.log
+intercept/*.deploy.log
+
