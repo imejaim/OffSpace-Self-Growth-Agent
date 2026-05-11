@@ -1,5 +1,27 @@
 # Wiki Log
 
+## [2026-05-11] architecture | option B follow-up 8건 통합 정리
+
+- 2026-05-06 발행 사고 + 2026-05-10 hallucination 사고 후속 작업 8건을 한 문서에 통합.
+- 항목: collect-news robotics 소스 보강(M/高), fetch-images og fallback(M/中), daily-publish -StartFrom 플래그(S/中), wrangler deploy try/finally(S/高), Task Scheduler 등록 검증(S/中), Gemini Google Search grounding(M/高), 캐릭터 채널 hard constraint(S/中), .gitignore deploy 부산물(S/低·완료).
+- 문서: `docs/wiki/architecture/option-b-followups-2026-05-11.md`
+
+## [2026-05-10] incident + architecture | intercept hallucination + Pack A grounding 구조
+
+- Production Vol.12 끼어들기 테스트에서 모델이 archive references 를 전혀 참조하지 않고 학습 데이터(2023~2024)로 답변 생성.
+- 근본 원인: 클라이언트가 `teatimeId`/`topicId` 를 페이로드에 미포함 → 서버가 archive references 조회 불가 → 모델에 grounding block 미주입. 추가로 시스템 프롬프트에 abstention 가드 없음, 캐릭터 채널 분담 미명시, CLAUDE.md 모델 표기 오류.
+- Pack A 패치(commit 1df6b0b): A1 페이로드 contract 추가, A2 abstention 가드, A3 채널 분담 명시, A4 CLAUDE.md 정정.
+- 회귀 검증 통과: 동일 페이로드 재시험 — 올바른 reference URL 인용, 학습 데이터 hallucination 0, abstention 가드 발현.
+- 문서: `docs/wiki/incidents/2026-05-10-intercept-hallucination-llama2.md`, `docs/wiki/architecture/intercept-grounding-architecture.md`
+- 회귀 페이로드 보존: `output/packA-regression-payload.json`
+
+## [2026-05-06] incident | 티타임 발행 stderr 함정 + env-restore 누락
+
+- 자동 발행(06:30 KST) abort. 직접 원인: `validate-links.py` 가 `[WARN]` 을 stderr 출력 → PowerShell 5.1 `2>&1` 가 ErrorRecord 로 wrap → `$ErrorActionPreference=Stop` 환경에서 throw → exit 0 임에도 파이프라인 중단.
+- 부수 사고: deploy 단계의 env-restore 가 try/finally 미적용 상태에서 모니터 루프 비정상 종료 → `.env.local` 미복구. 매니저 수동 복구.
+- 적용 패치: `validate-links.py` [WARN] → stdout 전환, `.claude/settings.local.json` 발행/Agent 권한 allowlist 등록.
+- 문서: `docs/wiki/incidents/2026-05-06-teatime-publish-stderr-trap.md`
+
 ## [2026-05-01] ulw | 티타임 인터셉트 발행 v1, 정기발행 framework, Supabase 영구 자동화
 
 - 티타임 발행 두 모드 확정: 정기발행(GitHub Actions cron KST 06:30) + 인터셉트 발행(수동 `npm run teatime:intercept -- YYYY-MM-DD`). 공통 파이프라인 5단계(skeleton → fetch-images → validate-links → skeleton --validate → md-to-archive --register) 구현.
