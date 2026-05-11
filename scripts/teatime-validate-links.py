@@ -193,11 +193,14 @@ def validate(md_path: Path, dry_run: bool = False) -> int:
     print(f"  - 전체 참고 링크 : {total}")
     print(f"{'='*60}")
 
+    # NOTE: stdout 으로 출력해야 함. PowerShell 5.1 의 Invoke-Native 가
+    # 2>&1 로 stderr 를 ErrorRecord 로 wrap 하기 때문에, 단순 경고도
+    # ErrorActionPreference=Stop 환경에서 throw 로 변환되어 발행이 abort 됨.
     short_topics = [t for t, c in per_topic.items() if c < 3]
     if short_topics:
-        print(f"[WARN] 토픽 {short_topics} 가 3개 미만 — 룰북 위반 위험", file=sys.stderr)
+        print(f"[WARN] 토픽 {short_topics} 가 3개 미만 — 룰북 위반 위험")
     if total < 12:
-        print(f"[WARN] 전체 참고 링크 {total} 개 — 룰북 12+ 미달", file=sys.stderr)
+        print(f"[WARN] 전체 참고 링크 {total} 개 — 룰북 12+ 미달")
 
     return drop_count
 

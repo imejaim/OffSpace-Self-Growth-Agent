@@ -21,7 +21,43 @@
       "mcp__plugin_playwright_playwright__browser_close",
       "mcp__plugin_oh-my-claudecode_t__lsp_diagnostics",
       "mcp__plugin_playwright_playwright__browser_tabs",
-      "mcp__plugin_playwright_playwright__browser_run_code"
+      "mcp__plugin_playwright_playwright__browser_run_code",
+      "PowerShell($env:SUPABASE_ACCESS_TOKEN_SET = if \\($env:SUPABASE_ACCESS_TOKEN\\) { \"yes \\(length=$\\($env:SUPABASE_ACCESS_TOKEN.Length\\)\\)\" } else { \"no\" }; Write-Output \"TOKEN: $env:SUPABASE_ACCESS_TOKEN_SET\")",
+      "PowerShell(supabase *)",
+      "PowerShell(npm *)",
+      "PowerShell(winget search *)",
+      "PowerShell(New-Item *)",
+      "PowerShell($env:PATH = \"C:\\\\Users\\\\asiti\\\\.local\\\\bin\\\\supabase-cli;\" + $env:PATH; $v = & \"C:\\\\Users\\\\asiti\\\\.local\\\\bin\\\\supabase-cli\\\\supabase.exe\" --version 2>&1; Write-Output \"supabase version: $v\")",
+      "PowerShell(if \\($env:SUPABASE_ACCESS_TOKEN\\) { Write-Output \"TOKEN: present \\(len=$\\($env:SUPABASE_ACCESS_TOKEN.Length\\)\\)\" } else { Write-Output \"TOKEN: MISSING\" })",
+      "PowerShell(npm run *)",
+      "PowerShell($ErrorActionPreference = 'Stop'; $files = @\\('C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\teatime-daily-publish.ps1','C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\install-teatime-scheduler.ps1'\\); foreach \\($f in $files\\) { Write-Host \"=== Parsing: $f ===\"; $tokens = $null; $errs = $null; $ast = [System.Management.Automation.Language.Parser]::ParseFile\\($f, [ref]$tokens, [ref]$errs\\); if \\($errs.Count -gt 0\\) { Write-Host \"FAIL — $\\($errs.Count\\) error\\(s\\):\"; $errs | ForEach-Object { Write-Host \"  Line $\\($_.Extent.StartLineNumber\\): $\\($_.Message\\)\" } } else { Write-Host \"OK — no syntax errors\" } })",
+      "PowerShell($f='C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\teatime-daily-publish.ps1'; $tokens=$null; $errs=$null; $ast=[System.Management.Automation.Language.Parser]::ParseFile\\($f,[ref]$tokens,[ref]$errs\\); $errs | ForEach-Object { Write-Host \"Line $\\($_.Extent.StartLineNumber\\) Col $\\($_.Extent.StartColumnNumber\\): $\\($_.Message\\)\"; Write-Host \"  Text: '$\\($_.Extent.Text\\)'\" })",
+      "PowerShell(Get-Content *)",
+      "PowerShell($f='C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\install-teatime-scheduler.ps1'; $bytes=[System.IO.File]::ReadAllBytes\\($f\\); if \\($bytes.Length -ge 3 -and $bytes[0] -eq 0xEF -and $bytes[1] -eq 0xBB -and $bytes[2] -eq 0xBF\\) { Write-Host \"BOM already present\" } else { $bom = [byte[]]\\(0xEF,0xBB,0xBF\\); [System.IO.File]::WriteAllBytes\\($f, $bom + $bytes\\); Write-Host \"BOM added\" }; $tokens=$null; $errs=$null; $ast=[System.Management.Automation.Language.Parser]::ParseFile\\($f,[ref]$tokens,[ref]$errs\\); if \\($errs.Count -eq 0\\) { Write-Host \"OK — no syntax errors\" } else { $errs | ForEach-Object { Write-Host \"Line $\\($_.Extent.StartLineNumber\\): $\\($_.Message\\)\" } })",
+      "PowerShell(Get-Command *)",
+      "PowerShell($files = @\\('C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\teatime-daily-publish.ps1','C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent\\\\scripts\\\\install-teatime-scheduler.ps1'\\); $allOk = $true; foreach \\($f in $files\\) { $tokens=$null; $errs=$null; $null=[System.Management.Automation.Language.Parser]::ParseFile\\($f,[ref]$tokens,[ref]$errs\\); if \\($errs.Count -eq 0\\) { Write-Host \"[OK] $\\($f | Split-Path -Leaf\\)\" } else { $allOk=$false; Write-Host \"[FAIL] $\\($f | Split-Path -Leaf\\)\"; $errs | ForEach-Object { Write-Host \"  Line $\\($_.Extent.StartLineNumber\\): $\\($_.Message\\)\" } } }; Write-Host \"\"; if \\($allOk\\) { Write-Host \"ALL GREEN — both scripts parse cleanly under Windows PowerShell 5.1\" -ForegroundColor Green })",
+      "PowerShell(python -c \"import json; d=json.load\\(open\\('C:/Project/18_OffSpace_Self_Growth_Agent/output/raw/teatime-raw-2026-05-02.json', encoding='utf-8'\\)\\); [print\\(f'{k}: {len\\(v\\)}'\\) for k,v in d['categories'].items\\(\\)]; print\\('date:', d['date']\\)\")",
+      "PowerShell(cd C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent; $env:GEMINI_API_KEY = \\(Get-Content .env | Where-Object { $_ -match \"^GEMINI_API_KEY=\" } | Select-Object -First 1\\) -replace \"^GEMINI_API_KEY=\",\"\" -replace '\"',''; Write-Host \"API key length: $\\($env:GEMINI_API_KEY.Length\\)\")",
+      "PowerShell(cd C:\\\\Project\\\\18_OffSpace_Self_Growth_Agent; $env:GEMINI_API_KEY = \\(Get-Content .env | Where-Object { $_ -match \"^GEMINI_API_KEY=\" } | Select-Object -First 1\\) -replace \"^GEMINI_API_KEY=\",\"\" -replace '\"',''; python scripts/teatime-auto-generate.py output/raw/teatime-raw-2026-05-02.json --output C:/tmp/test-out.md 2>&1)",
+      "PowerShell(python -c \"import json; d=json.load\\(open\\('C:/raw/teatime-gen-2026-05-02.json', encoding='utf-8'\\)\\); print\\('topics:', len\\(d.get\\('topics',[]\\)\\)\\); [print\\(f'  {t[\\\\\"category\\\\\"]}: messages={len\\(t[\\\\\"messages\\\\\"]\\)}, refs={len\\(t[\\\\\"references\\\\\"]\\)}'\\) for t in d.get\\('topics',[]\\)]\" 2>&1)",
+      "PowerShell($lines = Get-Content C:\\\\tmp\\\\test-out.md -Encoding UTF8; Write-Host \"=== 첫 3줄 ===\"; $lines[0..2] | ForEach-Object { Write-Host $_ }; Write-Host \"=== 마지막 3줄 ===\"; $lines[-3..-1] | ForEach-Object { Write-Host $_ }; Write-Host \"=== 카테고리 헤더 ===\"; $lines | Where-Object { $_ -match \"^## \\\\d\\\\.\" } | ForEach-Object { Write-Host $_ })",
+      "Agent",
+      "PowerShell(python *)",
+      "PowerShell(scripts/teatime-* *)",
+      "PowerShell(powershell *)",
+      "PowerShell(git *)",
+      "PowerShell(npm run deploy*)",
+      "Bash(python *)",
+      "Bash(scripts/teatime-* *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(grep *)",
+      "Bash(schtasks *)",
+      "mcp__plugin_oh-my-claudecode_t__lsp_document_symbols"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "paypal"
+  ]
 }
